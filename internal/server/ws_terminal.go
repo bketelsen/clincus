@@ -34,7 +34,7 @@ func (s *Server) handleTerminalWS(w http.ResponseWriter, r *http.Request) {
 	}
 	defer ws.Close()
 
-	tmuxSession := fmt.Sprintf("coi-%s", containerID)
+	tmuxSession := fmt.Sprintf("clincus-%s", containerID)
 
 	codeUID := 1000
 	if s.cfg.AppConfig != nil && s.cfg.AppConfig.Incus.CodeUID != 0 {

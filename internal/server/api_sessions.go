@@ -57,13 +57,13 @@ func (s *Server) handleListSessions(w http.ResponseWriter, r *http.Request) {
 			ID:     c.Name,
 			Status: strings.ToLower(c.Status),
 		}
-		if ws, ok := c.Config["user.coi.workspace"]; ok {
+		if ws, ok := c.Config["user.clincus.workspace"]; ok {
 			si.Workspace = ws
 		}
-		if t, ok := c.Config["user.coi.tool"]; ok {
+		if t, ok := c.Config["user.clincus.tool"]; ok {
 			si.Tool = t
 		}
-		if p, ok := c.Config["user.coi.persistent"]; ok {
+		if p, ok := c.Config["user.clincus.persistent"]; ok {
 			si.Persistent = p == "true"
 		}
 		if _, slot, err := session.ParseContainerName(c.Name); err == nil {
@@ -132,7 +132,6 @@ func (s *Server) handleCreateSession(w http.ResponseWriter, r *http.Request) {
 		setupOpts.Image = s.cfg.AppConfig.Defaults.Image
 		setupOpts.IncusProject = s.cfg.AppConfig.Incus.Project
 		setupOpts.ProtectedPaths = s.cfg.AppConfig.Security.GetEffectiveProtectedPaths()
-		setupOpts.NetworkConfig = &s.cfg.AppConfig.Network
 		setupOpts.LimitsConfig = &s.cfg.AppConfig.Limits
 		setupOpts.PreserveWorkspacePath = s.cfg.AppConfig.Paths.PreserveWorkspacePath
 	}
@@ -143,7 +142,7 @@ func (s *Server) handleCreateSession(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmuxName := fmt.Sprintf("coi-%s", resolved.ContainerName)
+	tmuxName := fmt.Sprintf("clincus-%s", resolved.ContainerName)
 	toolCmd := t.BuildCommand(resolved.SessionID, false, "")
 	cmdStr := fmt.Sprintf("tmux new-session -d -s %s %s", tmuxName, strings.Join(toolCmd, " "))
 	codeUID := 1000
@@ -209,7 +208,7 @@ func (s *Server) handleResumeSession(w http.ResponseWriter, r *http.Request) {
 	}
 
 	toolName := "claude"
-	if cfg, err := mgr.GetConfig("user.coi.tool"); err == nil && cfg != "" {
+	if cfg, err := mgr.GetConfig("user.clincus.tool"); err == nil && cfg != "" {
 		toolName = strings.TrimSpace(cfg)
 	}
 	t, err := tool.Get(toolName)
@@ -218,7 +217,7 @@ func (s *Server) handleResumeSession(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmuxName := fmt.Sprintf("coi-%s", id)
+	tmuxName := fmt.Sprintf("clincus-%s", id)
 	toolCmd := t.BuildCommand("", true, "")
 	cmdStr := fmt.Sprintf("tmux new-session -d -s %s %s", tmuxName, strings.Join(toolCmd, " "))
 	if _, err := mgr.ExecCommand(cmdStr, container.ExecCommandOptions{}); err != nil {

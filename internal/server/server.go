@@ -82,5 +82,5 @@ func (s *Server) writeError(w http.ResponseWriter, msg string, code int) {
 
 func (s *Server) historyPath() string {
 	home, _ := os.UserHomeDir()
-	return filepath.Join(home, ".coi", "history.jsonl")
+	return filepath.Join(home, ".clincus", "history.jsonl")
 }

@@ -24,7 +24,7 @@ type WorkspacesResponse struct {
 
 var projectMarkers = []string{
 	".git", "go.mod", "package.json", "Cargo.toml",
-	"pyproject.toml", ".coi.toml", "Makefile",
+	"pyproject.toml", ".clincus.toml", "Makefile",
 	"pom.xml", "build.gradle",
 }
 
@@ -46,7 +46,7 @@ func (s *Server) handleListWorkspaces(w http.ResponseWriter, r *http.Request) {
 			if !isProject(fullPath) {
 				continue
 			}
-			_, coiErr := os.Stat(filepath.Join(fullPath, ".coi.toml"))
+			_, coiErr := os.Stat(filepath.Join(fullPath, ".clincus.toml"))
 			workspaces = append(workspaces, WorkspaceInfo{
 				Path:      fullPath,
 				Name:      e.Name(),
