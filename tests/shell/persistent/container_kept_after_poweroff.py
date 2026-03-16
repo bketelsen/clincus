@@ -1,5 +1,5 @@
 """
-Test for coi shell --persistent - container kept after poweroff.
+Test for clincus shell --persistent - container kept after poweroff.
 
 Tests that in persistent mode:
 1. Start dummy in persistent mode
@@ -20,7 +20,7 @@ from support.helpers import (
     calculate_container_name,
     get_container_list,
     send_prompt,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
     wait_for_text_in_monitor,
@@ -28,12 +28,12 @@ from support.helpers import (
 )
 
 
-def test_persistent_container_kept_after_poweroff(coi_binary, cleanup_containers, workspace_dir):
+def test_persistent_container_kept_after_poweroff(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test persistent session keeps container after poweroff.
 
     Flow:
-    1. Start coi shell --persistent
+    1. Start clincus shell --persistent
     2. Interact with dummy
     3. Exit claude to get to bash
     4. Run sudo poweroff to stop container
@@ -44,8 +44,8 @@ def test_persistent_container_kept_after_poweroff(coi_binary, cleanup_containers
     env = {"COI_USE_DUMMY": "1"}
 
     # Launch persistent container
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell", "--persistent"],
         cwd=workspace_dir,
         env=env,
@@ -130,7 +130,7 @@ def test_persistent_container_kept_after_poweroff(coi_binary, cleanup_containers
 
     # === Cleanup ===
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

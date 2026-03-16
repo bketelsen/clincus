@@ -1,5 +1,5 @@
 """
-Test for coi file pull - pull a single file from container.
+Test for clincus file pull - pull a single file from container.
 
 Tests that:
 1. Launch a container
@@ -15,7 +15,7 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_pull_single_file(coi_binary, cleanup_containers, workspace_dir):
+def test_pull_single_file(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test pulling a single file from a container.
 
@@ -31,7 +31,7 @@ def test_pull_single_file(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -45,7 +45,7 @@ def test_pull_single_file(coi_binary, cleanup_containers, workspace_dir):
     test_content = "hello-from-pull-test-67890"
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,
@@ -64,7 +64,7 @@ def test_pull_single_file(coi_binary, cleanup_containers, workspace_dir):
 
     local_file = os.path.join(workspace_dir, "pulled-file.txt")
     result = subprocess.run(
-        [coi_binary, "file", "pull", f"{container_name}:/tmp/test-pull.txt", local_file],
+        [clincus_binary, "file", "pull", f"{container_name}:/tmp/test-pull.txt", local_file],
         capture_output=True,
         text=True,
         timeout=30,
@@ -89,7 +89,7 @@ def test_pull_single_file(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 5: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

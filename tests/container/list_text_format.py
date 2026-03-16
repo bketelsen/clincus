@@ -1,5 +1,5 @@
 """
-Test for coi container list - text format output.
+Test for clincus container list - text format output.
 
 Tests that:
 1. Container list returns text format by default
@@ -9,19 +9,19 @@ Tests that:
 import subprocess
 
 
-def test_container_list_text_format(coi_binary):
+def test_container_list_text_format(clincus_binary):
     """
     Test container list with text format (default).
 
     Flow:
-    1. Run coi container list (without format flag)
+    1. Run clincus container list (without format flag)
     2. Verify text output contains expected headers
     3. Verify exit code is 0
     """
     # === Test: List containers in text format ===
 
     result = subprocess.run(
-        [coi_binary, "container", "list"],
+        [clincus_binary, "container", "list"],
         capture_output=True,
         text=True,
         timeout=30,

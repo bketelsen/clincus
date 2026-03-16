@@ -1,5 +1,5 @@
 """
-Test for coi run - with --persistent flag.
+Test for clincus run - with --persistent flag.
 
 Tests that:
 1. Run with --persistent flag
@@ -13,12 +13,12 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_run_with_persistent(coi_binary, cleanup_containers, workspace_dir):
+def test_run_with_persistent(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test running with --persistent flag.
 
     Flow:
-    1. Run coi run --persistent --slot N
+    1. Run clincus run --persistent --slot N
     2. Verify command succeeds
     3. Verify container still exists (stopped)
     4. Run again and verify it reuses container
@@ -31,7 +31,7 @@ def test_run_with_persistent(coi_binary, cleanup_containers, workspace_dir):
 
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -58,7 +58,7 @@ def test_run_with_persistent(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 2: Verify container exists (stopped) ===
 
     result = subprocess.run(
-        [coi_binary, "container", "exists", container_name],
+        [clincus_binary, "container", "exists", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -70,7 +70,7 @@ def test_run_with_persistent(coi_binary, cleanup_containers, workspace_dir):
 
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -100,7 +100,7 @@ def test_run_with_persistent(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 4: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

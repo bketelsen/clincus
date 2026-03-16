@@ -1,5 +1,5 @@
 """
-Test for coi file push -r - push directory recursively.
+Test for clincus file push -r - push directory recursively.
 
 Tests that:
 1. Launch a container
@@ -15,7 +15,7 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_push_directory_recursive(coi_binary, cleanup_containers, workspace_dir):
+def test_push_directory_recursive(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test pushing a directory recursively to a container.
 
@@ -31,7 +31,7 @@ def test_push_directory_recursive(coi_binary, cleanup_containers, workspace_dir)
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -57,7 +57,7 @@ def test_push_directory_recursive(coi_binary, cleanup_containers, workspace_dir)
     # === Phase 3: Push directory with -r flag ===
 
     result = subprocess.run(
-        [coi_binary, "file", "push", "-r", test_dir, f"{container_name}:/tmp/push-dir-test"],
+        [clincus_binary, "file", "push", "-r", test_dir, f"{container_name}:/tmp/push-dir-test"],
         capture_output=True,
         text=True,
         timeout=60,
@@ -75,7 +75,7 @@ def test_push_directory_recursive(coi_binary, cleanup_containers, workspace_dir)
     # Check first file
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,
@@ -96,7 +96,7 @@ def test_push_directory_recursive(coi_binary, cleanup_containers, workspace_dir)
     # Check nested file
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,
@@ -117,7 +117,7 @@ def test_push_directory_recursive(coi_binary, cleanup_containers, workspace_dir)
     # === Phase 5: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

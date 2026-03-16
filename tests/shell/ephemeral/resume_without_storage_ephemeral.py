@@ -1,5 +1,5 @@
 """
-Test for coi shell - ephemeral resume does NOT persist home directory files.
+Test for clincus shell - ephemeral resume does NOT persist home directory files.
 
 Verifies that:
 1. Start dummy, exit to bash
@@ -18,7 +18,7 @@ from support.helpers import (
     calculate_container_name,
     get_container_list,
     send_prompt,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
     wait_for_specific_container_deletion,
@@ -28,12 +28,12 @@ from support.helpers import (
 )
 
 
-def test_resume_does_not_persist_home_files(coi_binary, cleanup_containers, workspace_dir):
+def test_resume_does_not_persist_home_files(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that ephemeral resume only restores .claude, not other home files.
 
     Flow:
-    1. Start coi shell
+    1. Start clincus shell
     2. Exit claude to bash
     3. Create ~/test.txt file
     4. Poweroff
@@ -45,8 +45,8 @@ def test_resume_does_not_persist_home_files(coi_binary, cleanup_containers, work
 
     # === Phase 1: Create file in container ===
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell"],
         cwd=workspace_dir,
         env=env,
@@ -128,8 +128,8 @@ def test_resume_does_not_persist_home_files(coi_binary, cleanup_containers, work
 
     # === Phase 2: Resume and verify file is gone ===
 
-    child2 = spawn_coi(
-        coi_binary,
+    child2 = spawn_clincus(
+        clincus_binary,
         ["shell", "--resume"],
         cwd=workspace_dir,
         env=env,
@@ -194,7 +194,7 @@ def test_resume_does_not_persist_home_files(coi_binary, cleanup_containers, work
     # Force cleanup any remaining
     containers = get_container_list()
     for c in containers:
-        if c.startswith("coi-test-"):
+        if c.startswith("clincus-test-"):
             subprocess.run(
                 ["sg", "incus-admin", "-c", f"incus delete --force {c}"],
                 capture_output=True,

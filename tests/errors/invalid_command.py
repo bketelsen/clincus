@@ -1,8 +1,8 @@
 """
-Test for coi <invalid-command> - error handling.
+Test for clincus <invalid-command> - error handling.
 
 Tests that:
-1. Run coi with an invalid command
+1. Run clincus with an invalid command
 2. Verify it returns non-zero exit code
 3. Verify error message is helpful
 """
@@ -10,17 +10,17 @@ Tests that:
 import subprocess
 
 
-def test_invalid_command(coi_binary):
+def test_invalid_command(clincus_binary):
     """
     Test behavior with invalid command.
 
     Flow:
-    1. Run coi with non-existent command
+    1. Run clincus with non-existent command
     2. Verify exit code is non-zero
     3. Verify error message mentions the invalid command
     """
     result = subprocess.run(
-        [coi_binary, "nonexistent-command"],
+        [clincus_binary, "nonexistent-command"],
         capture_output=True,
         text=True,
         timeout=10,

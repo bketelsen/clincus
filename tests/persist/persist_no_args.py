@@ -1,16 +1,16 @@
 """
-Test for coi persist - error handling when no arguments provided.
+Test for clincus persist - error handling when no arguments provided.
 
 Tests that:
-1. Run coi persist with no arguments
+1. Run clincus persist with no arguments
 2. Verify error message about no containers specified
-3. Verify helpful message pointing to 'coi list'
+3. Verify helpful message pointing to 'clincus list'
 """
 
 import subprocess
 
 
-def test_persist_no_args(coi_binary):
+def test_persist_no_args(clincus_binary):
     """
     Test persist command with no arguments.
 
@@ -23,7 +23,7 @@ def test_persist_no_args(coi_binary):
     # === Phase 1: Run persist with no arguments ===
 
     result = subprocess.run(
-        [coi_binary, "persist"],
+        [clincus_binary, "persist"],
         capture_output=True,
         text=True,
         timeout=60,
@@ -41,7 +41,7 @@ def test_persist_no_args(coi_binary):
         or "required" in combined_output.lower()
     ), f"Should show error about no containers. Got:\n{combined_output}"
 
-    # Should point to 'coi list' for help
-    assert "coi list" in combined_output, (
-        f"Should suggest 'coi list' to see active containers. Got:\n{combined_output}"
+    # Should point to 'clincus list' for help
+    assert "clincus list" in combined_output, (
+        f"Should suggest 'clincus list' to see active containers. Got:\n{combined_output}"
     )

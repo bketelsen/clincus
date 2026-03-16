@@ -2,7 +2,7 @@
 Integration tests for custom image building.
 
 Tests:
-- coi build custom with script
+- clincus build custom with script
 - Custom image with base specified
 - Custom image with privileged base
 """
@@ -10,10 +10,10 @@ Tests:
 import subprocess
 
 
-def test_build_custom_script_not_found(coi_binary):
+def test_build_custom_script_not_found(clincus_binary):
     """Test that build fails with nonexistent script."""
     result = subprocess.run(
-        [coi_binary, "build", "custom", "test-image", "--script", "/nonexistent/script.sh"],
+        [clincus_binary, "build", "custom", "test-image", "--script", "/nonexistent/script.sh"],
         capture_output=True,
         text=True,
     )

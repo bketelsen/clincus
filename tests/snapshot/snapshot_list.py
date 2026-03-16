@@ -1,5 +1,5 @@
 """
-Test for coi snapshot list - listing container snapshots.
+Test for clincus snapshot list - listing container snapshots.
 
 Tests that:
 1. Can list snapshots in text format
@@ -15,7 +15,7 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_snapshot_list_text_format(coi_binary, cleanup_containers, workspace_dir):
+def test_snapshot_list_text_format(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test listing snapshots in text format (default).
 
@@ -31,7 +31,7 @@ def test_snapshot_list_text_format(coi_binary, cleanup_containers, workspace_dir
 
     # === Phase 1: Launch container ===
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -41,7 +41,7 @@ def test_snapshot_list_text_format(coi_binary, cleanup_containers, workspace_dir
 
     # === Phase 2: Create snapshot ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "create", snapshot_name, "-c", container_name],
+        [clincus_binary, "snapshot", "create", snapshot_name, "-c", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -50,7 +50,7 @@ def test_snapshot_list_text_format(coi_binary, cleanup_containers, workspace_dir
 
     # === Phase 3: List snapshots in text format ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "list", "-c", container_name],
+        [clincus_binary, "snapshot", "list", "-c", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -69,13 +69,13 @@ def test_snapshot_list_text_format(coi_binary, cleanup_containers, workspace_dir
 
     # === Cleanup ===
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
 
 
-def test_snapshot_list_json_format(coi_binary, cleanup_containers, workspace_dir):
+def test_snapshot_list_json_format(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test listing snapshots in JSON format.
 
@@ -91,7 +91,7 @@ def test_snapshot_list_json_format(coi_binary, cleanup_containers, workspace_dir
 
     # === Phase 1: Launch container ===
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -101,7 +101,7 @@ def test_snapshot_list_json_format(coi_binary, cleanup_containers, workspace_dir
 
     # === Phase 2: Create snapshot ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "create", snapshot_name, "-c", container_name],
+        [clincus_binary, "snapshot", "create", snapshot_name, "-c", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -110,7 +110,7 @@ def test_snapshot_list_json_format(coi_binary, cleanup_containers, workspace_dir
 
     # === Phase 3: List snapshots in JSON format ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "list", "-c", container_name, "--format", "json"],
+        [clincus_binary, "snapshot", "list", "-c", container_name, "--format", "json"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -129,13 +129,13 @@ def test_snapshot_list_json_format(coi_binary, cleanup_containers, workspace_dir
 
     # === Cleanup ===
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
 
 
-def test_snapshot_list_empty(coi_binary, cleanup_containers, workspace_dir):
+def test_snapshot_list_empty(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test listing snapshots when there are none.
 
@@ -149,7 +149,7 @@ def test_snapshot_list_empty(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 1: Launch container ===
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -159,7 +159,7 @@ def test_snapshot_list_empty(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 2: List snapshots (should be empty) ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "list", "-c", container_name],
+        [clincus_binary, "snapshot", "list", "-c", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -170,13 +170,13 @@ def test_snapshot_list_empty(coi_binary, cleanup_containers, workspace_dir):
 
     # === Cleanup ===
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
 
 
-def test_snapshot_list_empty_json(coi_binary, cleanup_containers, workspace_dir):
+def test_snapshot_list_empty_json(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test listing snapshots in JSON format when there are none.
 
@@ -190,7 +190,7 @@ def test_snapshot_list_empty_json(coi_binary, cleanup_containers, workspace_dir)
 
     # === Phase 1: Launch container ===
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -200,7 +200,7 @@ def test_snapshot_list_empty_json(coi_binary, cleanup_containers, workspace_dir)
 
     # === Phase 2: List snapshots in JSON (should be empty) ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "list", "-c", container_name, "--format", "json"],
+        [clincus_binary, "snapshot", "list", "-c", container_name, "--format", "json"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -216,13 +216,13 @@ def test_snapshot_list_empty_json(coi_binary, cleanup_containers, workspace_dir)
 
     # === Cleanup ===
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
 
 
-def test_snapshot_list_invalid_format(coi_binary, cleanup_containers, workspace_dir):
+def test_snapshot_list_invalid_format(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that invalid format value is rejected.
     """
@@ -230,7 +230,7 @@ def test_snapshot_list_invalid_format(coi_binary, cleanup_containers, workspace_
 
     # === Phase 1: Launch container ===
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -240,7 +240,7 @@ def test_snapshot_list_invalid_format(coi_binary, cleanup_containers, workspace_
 
     # === Phase 2: Try invalid format ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "list", "-c", container_name, "--format", "invalid"],
+        [clincus_binary, "snapshot", "list", "-c", container_name, "--format", "invalid"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -250,18 +250,18 @@ def test_snapshot_list_invalid_format(coi_binary, cleanup_containers, workspace_
 
     # === Cleanup ===
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
 
 
-def test_snapshot_list_nonexistent_container(coi_binary):
+def test_snapshot_list_nonexistent_container(clincus_binary):
     """
     Test that snapshot list fails for nonexistent container.
     """
     result = subprocess.run(
-        [coi_binary, "snapshot", "list", "-c", "nonexistent-container-xyz"],
+        [clincus_binary, "snapshot", "list", "-c", "nonexistent-container-xyz"],
         capture_output=True,
         text=True,
         timeout=30,

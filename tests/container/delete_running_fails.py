@@ -1,5 +1,5 @@
 """
-Test for coi container delete - fails for running container without --force.
+Test for clincus container delete - fails for running container without --force.
 
 Tests that:
 1. Launch a container (keep it running)
@@ -16,7 +16,7 @@ from support.helpers import (
 )
 
 
-def test_delete_running_fails(coi_binary, cleanup_containers, workspace_dir):
+def test_delete_running_fails(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that deleting running container without --force fails.
 
@@ -32,7 +32,7 @@ def test_delete_running_fails(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -44,7 +44,7 @@ def test_delete_running_fails(coi_binary, cleanup_containers, workspace_dir):
 
     # Verify running
     result = subprocess.run(
-        [coi_binary, "container", "running", container_name],
+        [clincus_binary, "container", "running", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -55,7 +55,7 @@ def test_delete_running_fails(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 2: Try to delete without --force ===
 
     result = subprocess.run(
-        [coi_binary, "container", "delete", container_name],
+        [clincus_binary, "container", "delete", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -72,7 +72,7 @@ def test_delete_running_fails(coi_binary, cleanup_containers, workspace_dir):
 
     # Still running
     result = subprocess.run(
-        [coi_binary, "container", "running", container_name],
+        [clincus_binary, "container", "running", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -83,7 +83,7 @@ def test_delete_running_fails(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 5: Cleanup with --force ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

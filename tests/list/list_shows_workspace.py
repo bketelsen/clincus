@@ -1,9 +1,9 @@
 """
-Test for coi list - shows workspace for containers with session metadata.
+Test for clincus list - shows workspace for containers with session metadata.
 
 Tests that:
 1. Start a shell (creates session metadata with workspace)
-2. Run coi list while container running
+2. Run clincus list while container running
 3. Verify it shows Workspace field
 """
 
@@ -14,19 +14,19 @@ from pexpect import EOF, TIMEOUT
 
 from support.helpers import (
     calculate_container_name,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
 )
 
 
-def test_list_shows_workspace(coi_binary, cleanup_containers, workspace_dir):
+def test_list_shows_workspace(clincus_binary, cleanup_containers, workspace_dir):
     """
-    Test that coi list shows workspace for containers.
+    Test that clincus list shows workspace for containers.
 
     Flow:
     1. Start a shell session (creates metadata)
-    2. Run coi list while container running
+    2. Run clincus list while container running
     3. Verify Workspace field appears
     4. Cleanup
     """
@@ -35,8 +35,8 @@ def test_list_shows_workspace(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 1: Start shell session ===
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell"],
         cwd=workspace_dir,
         env=env,
@@ -51,7 +51,7 @@ def test_list_shows_workspace(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 2: Run list while container running ===
 
     result = subprocess.run(
-        [coi_binary, "list"],
+        [clincus_binary, "list"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -95,7 +95,7 @@ def test_list_shows_workspace(coi_binary, cleanup_containers, workspace_dir):
     time.sleep(3)
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

@@ -1,28 +1,28 @@
 """
-Test for coi image exists - check existing image.
+Test for clincus image exists - check existing image.
 
 Tests that:
-1. Check for coi image (should exist after build)
+1. Check for clincus image (should exist after build)
 2. Verify exit code is 0
 """
 
 import subprocess
 
 
-def test_exists_coi_image(coi_binary, cleanup_containers):
+def test_exists_coi_image(clincus_binary, cleanup_containers):
     """
-    Test checking if the coi image exists.
+    Test checking if the clincus image exists.
 
     Flow:
-    1. Run coi image exists coi
+    1. Run clincus image exists clincus
     2. Verify exit code is 0 (image exists)
 
-    Note: This test assumes the coi image has been built.
+    Note: This test assumes the clincus image has been built.
     """
-    # === Phase 1: Check if coi image exists ===
+    # === Phase 1: Check if clincus image exists ===
 
     result = subprocess.run(
-        [coi_binary, "image", "exists", "coi"],
+        [clincus_binary, "image", "exists", "clincus"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -30,4 +30,4 @@ def test_exists_coi_image(coi_binary, cleanup_containers):
 
     # === Phase 2: Verify success ===
 
-    assert result.returncode == 0, f"coi image should exist. stderr: {result.stderr}"
+    assert result.returncode == 0, f"clincus image should exist. stderr: {result.stderr}"

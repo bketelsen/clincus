@@ -1,8 +1,8 @@
 """
-Test for coi persist - error handling for nonexistent container.
+Test for clincus persist - error handling for nonexistent container.
 
 Tests that:
-1. Run coi persist on nonexistent container
+1. Run clincus persist on nonexistent container
 2. Verify error/warning about container not existing
 3. Verify appropriate exit code or warning message
 """
@@ -10,7 +10,7 @@ Tests that:
 import subprocess
 
 
-def test_persist_nonexistent_container(coi_binary):
+def test_persist_nonexistent_container(clincus_binary):
     """
     Test persist command with nonexistent container.
 
@@ -19,12 +19,12 @@ def test_persist_nonexistent_container(coi_binary):
     2. Verify warning/error message
     3. Verify command behavior
     """
-    nonexistent_container = "coi-test-nonexistent-xyz123"
+    nonexistent_container = "clincus-test-nonexistent-xyz123"
 
     # === Phase 1: Try to persist nonexistent container ===
 
     result = subprocess.run(
-        [coi_binary, "persist", nonexistent_container],
+        [clincus_binary, "persist", nonexistent_container],
         capture_output=True,
         text=True,
         timeout=60,

@@ -1,8 +1,8 @@
 """
-Test for coi build - no spurious errors during cleanup.
+Test for clincus build - no spurious errors during cleanup.
 
 Tests that:
-1. Run coi build custom with a simple script
+1. Run clincus build custom with a simple script
 2. Verify build succeeds
 3. Verify no spurious error messages appear (e.g., "already stopped")
 
@@ -14,7 +14,7 @@ function trying to stop an already-stopped container.
 import subprocess
 
 
-def test_build_no_spurious_errors(coi_binary, tmp_path):
+def test_build_no_spurious_errors(clincus_binary, tmp_path):
     """
     Test that successful builds don't show spurious error messages.
 
@@ -25,7 +25,7 @@ def test_build_no_spurious_errors(coi_binary, tmp_path):
     4. Verify no "Error: The instance is already stopped" message
     5. Cleanup
     """
-    image_name = "coi-test-no-errors"
+    image_name = "clincus-test-no-errors"
 
     # Create minimal build script
     build_script = tmp_path / "build.sh"
@@ -38,16 +38,16 @@ echo "Test build - no spurious errors"
 
     # Skip if base doesn't exist
     result = subprocess.run(
-        [coi_binary, "image", "exists", "coi"],
+        [clincus_binary, "image", "exists", "clincus"],
         capture_output=True,
     )
     if result.returncode != 0:
-        # Skip test if coi base image doesn't exist
+        # Skip test if clincus base image doesn't exist
         return
 
     # Build custom image
     result = subprocess.run(
-        [coi_binary, "build", "custom", image_name, "--script", str(build_script)],
+        [clincus_binary, "build", "custom", image_name, "--script", str(build_script)],
         capture_output=True,
         text=True,
         timeout=300,
@@ -78,4 +78,4 @@ echo "Test build - no spurious errors"
         )
 
     # Cleanup
-    subprocess.run([coi_binary, "image", "delete", image_name], check=False)
+    subprocess.run([clincus_binary, "image", "delete", image_name], check=False)

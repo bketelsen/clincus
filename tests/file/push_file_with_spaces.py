@@ -1,5 +1,5 @@
 """
-Test for coi file push - push file with spaces in name.
+Test for clincus file push - push file with spaces in name.
 
 Tests that:
 1. Launch a container
@@ -15,7 +15,7 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_push_file_with_spaces(coi_binary, cleanup_containers, workspace_dir):
+def test_push_file_with_spaces(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test pushing a file with spaces in its name.
 
@@ -31,7 +31,7 @@ def test_push_file_with_spaces(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -50,7 +50,7 @@ def test_push_file_with_spaces(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 3: Push file to container ===
 
     result = subprocess.run(
-        [coi_binary, "file", "push", local_file, f"{container_name}:/tmp/file with spaces.txt"],
+        [clincus_binary, "file", "push", local_file, f"{container_name}:/tmp/file with spaces.txt"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -61,7 +61,7 @@ def test_push_file_with_spaces(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 4: Verify file exists in container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--", "cat", "/tmp/file with spaces.txt"],
+        [clincus_binary, "container", "exec", container_name, "--", "cat", "/tmp/file with spaces.txt"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -75,7 +75,7 @@ def test_push_file_with_spaces(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 5: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

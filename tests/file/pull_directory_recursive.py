@@ -1,5 +1,5 @@
 """
-Test for coi file pull -r - pull directory recursively.
+Test for clincus file pull -r - pull directory recursively.
 
 Tests that:
 1. Launch a container
@@ -15,7 +15,7 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_pull_directory_recursive(coi_binary, cleanup_containers, workspace_dir):
+def test_pull_directory_recursive(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test pulling a directory recursively from a container.
 
@@ -31,7 +31,7 @@ def test_pull_directory_recursive(coi_binary, cleanup_containers, workspace_dir)
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -51,7 +51,7 @@ def test_pull_directory_recursive(coi_binary, cleanup_containers, workspace_dir)
 
     for cmd in commands:
         result = subprocess.run(
-            [coi_binary, "container", "exec", container_name, "--", "sh", "-c", cmd],
+            [clincus_binary, "container", "exec", container_name, "--", "sh", "-c", cmd],
             capture_output=True,
             text=True,
             timeout=30,
@@ -62,7 +62,7 @@ def test_pull_directory_recursive(coi_binary, cleanup_containers, workspace_dir)
 
     local_dir = os.path.join(workspace_dir, "pulled-dir")
     result = subprocess.run(
-        [coi_binary, "file", "pull", "-r", f"{container_name}:/tmp/pull-dir-test", local_dir],
+        [clincus_binary, "file", "pull", "-r", f"{container_name}:/tmp/pull-dir-test", local_dir],
         capture_output=True,
         text=True,
         timeout=60,
@@ -94,7 +94,7 @@ def test_pull_directory_recursive(coi_binary, cleanup_containers, workspace_dir)
     # === Phase 5: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

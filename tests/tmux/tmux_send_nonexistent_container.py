@@ -1,5 +1,5 @@
 """
-Test for coi tmux send - error when container doesn't exist.
+Test for clincus tmux send - error when container doesn't exist.
 
 Tests that:
 1. Try to send command to nonexistent container
@@ -9,20 +9,20 @@ Tests that:
 import subprocess
 
 
-def test_tmux_send_nonexistent_container(coi_binary, cleanup_containers):
+def test_tmux_send_nonexistent_container(clincus_binary, cleanup_containers):
     """
     Test tmux send fails gracefully when container doesn't exist.
 
     Flow:
-    1. Try to use coi tmux send on nonexistent container
+    1. Try to use clincus tmux send on nonexistent container
     2. Verify error message
     """
-    fake_container = "coi-nonexistent-tmux-test-99999"
+    fake_container = "clincus-nonexistent-tmux-test-99999"
 
     # === Phase 1: Try to send command to nonexistent container ===
 
     result = subprocess.run(
-        [coi_binary, "tmux", "send", fake_container, "echo test"],
+        [clincus_binary, "tmux", "send", fake_container, "echo test"],
         capture_output=True,
         text=True,
         timeout=30,

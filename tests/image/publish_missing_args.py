@@ -1,25 +1,25 @@
 """
-Test for coi image publish - missing arguments.
+Test for clincus image publish - missing arguments.
 
 Tests that:
-1. Run coi image publish without arguments
-2. Run coi image publish with only one argument
+1. Run clincus image publish without arguments
+2. Run clincus image publish with only one argument
 3. Verify usage errors
 """
 
 import subprocess
 
 
-def test_publish_no_args(coi_binary, cleanup_containers):
+def test_publish_no_args(clincus_binary, cleanup_containers):
     """
-    Test that coi image publish without arguments shows error.
+    Test that clincus image publish without arguments shows error.
 
     Flow:
-    1. Run coi image publish (no args)
+    1. Run clincus image publish (no args)
     2. Verify it fails with usage message
     """
     result = subprocess.run(
-        [coi_binary, "image", "publish"],
+        [clincus_binary, "image", "publish"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -33,16 +33,16 @@ def test_publish_no_args(coi_binary, cleanup_containers):
     ), f"Should show usage error. Got:\n{result.stdout + result.stderr}"
 
 
-def test_publish_one_arg(coi_binary, cleanup_containers):
+def test_publish_one_arg(clincus_binary, cleanup_containers):
     """
-    Test that coi image publish with only container shows error.
+    Test that clincus image publish with only container shows error.
 
     Flow:
-    1. Run coi image publish container-name (missing alias)
+    1. Run clincus image publish container-name (missing alias)
     2. Verify it fails with usage message
     """
     result = subprocess.run(
-        [coi_binary, "image", "publish", "some-container"],
+        [clincus_binary, "image", "publish", "some-container"],
         capture_output=True,
         text=True,
         timeout=30,

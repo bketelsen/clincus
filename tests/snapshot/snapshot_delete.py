@@ -1,5 +1,5 @@
 """
-Test for coi snapshot delete - deleting container snapshots.
+Test for clincus snapshot delete - deleting container snapshots.
 
 Tests that:
 1. Can delete a single snapshot
@@ -14,7 +14,7 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_snapshot_delete_single(coi_binary, cleanup_containers, workspace_dir):
+def test_snapshot_delete_single(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test deleting a single snapshot.
 
@@ -30,7 +30,7 @@ def test_snapshot_delete_single(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 1: Launch container ===
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -40,7 +40,7 @@ def test_snapshot_delete_single(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 2: Create snapshot ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "create", snapshot_name, "-c", container_name],
+        [clincus_binary, "snapshot", "create", snapshot_name, "-c", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -49,7 +49,7 @@ def test_snapshot_delete_single(coi_binary, cleanup_containers, workspace_dir):
 
     # Verify snapshot exists
     result = subprocess.run(
-        [coi_binary, "snapshot", "list", "-c", container_name],
+        [clincus_binary, "snapshot", "list", "-c", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -58,7 +58,7 @@ def test_snapshot_delete_single(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 3: Delete snapshot ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "delete", snapshot_name, "-c", container_name],
+        [clincus_binary, "snapshot", "delete", snapshot_name, "-c", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -68,7 +68,7 @@ def test_snapshot_delete_single(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 4: Verify snapshot is gone ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "list", "-c", container_name],
+        [clincus_binary, "snapshot", "list", "-c", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -81,13 +81,13 @@ def test_snapshot_delete_single(coi_binary, cleanup_containers, workspace_dir):
 
     # === Cleanup ===
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
 
 
-def test_snapshot_delete_all_with_force(coi_binary, cleanup_containers, workspace_dir):
+def test_snapshot_delete_all_with_force(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test deleting all snapshots with --all and --force flags.
 
@@ -102,7 +102,7 @@ def test_snapshot_delete_all_with_force(coi_binary, cleanup_containers, workspac
 
     # === Phase 1: Launch container ===
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -113,7 +113,7 @@ def test_snapshot_delete_all_with_force(coi_binary, cleanup_containers, workspac
     # === Phase 2: Create multiple snapshots ===
     for name in ["snap1", "snap2", "snap3"]:
         result = subprocess.run(
-            [coi_binary, "snapshot", "create", name, "-c", container_name],
+            [clincus_binary, "snapshot", "create", name, "-c", container_name],
             capture_output=True,
             text=True,
             timeout=60,
@@ -122,7 +122,7 @@ def test_snapshot_delete_all_with_force(coi_binary, cleanup_containers, workspac
 
     # Verify all exist
     result = subprocess.run(
-        [coi_binary, "snapshot", "list", "-c", container_name],
+        [clincus_binary, "snapshot", "list", "-c", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -131,7 +131,7 @@ def test_snapshot_delete_all_with_force(coi_binary, cleanup_containers, workspac
 
     # === Phase 3: Delete all with --all --force ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "delete", "--all", "-f", "-c", container_name],
+        [clincus_binary, "snapshot", "delete", "--all", "-f", "-c", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -143,7 +143,7 @@ def test_snapshot_delete_all_with_force(coi_binary, cleanup_containers, workspac
 
     # === Phase 4: Verify all snapshots are gone ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "list", "-c", container_name],
+        [clincus_binary, "snapshot", "list", "-c", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -155,13 +155,13 @@ def test_snapshot_delete_all_with_force(coi_binary, cleanup_containers, workspac
 
     # === Cleanup ===
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
 
 
-def test_snapshot_delete_all_empty(coi_binary, cleanup_containers, workspace_dir):
+def test_snapshot_delete_all_empty(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test delete --all when there are no snapshots.
 
@@ -175,7 +175,7 @@ def test_snapshot_delete_all_empty(coi_binary, cleanup_containers, workspace_dir
 
     # === Phase 1: Launch container ===
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -185,7 +185,7 @@ def test_snapshot_delete_all_empty(coi_binary, cleanup_containers, workspace_dir
 
     # === Phase 2: Delete all (no snapshots exist) ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "delete", "--all", "-f", "-c", container_name],
+        [clincus_binary, "snapshot", "delete", "--all", "-f", "-c", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -197,13 +197,13 @@ def test_snapshot_delete_all_empty(coi_binary, cleanup_containers, workspace_dir
 
     # === Cleanup ===
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
 
 
-def test_snapshot_delete_nonexistent_snapshot(coi_binary, cleanup_containers, workspace_dir):
+def test_snapshot_delete_nonexistent_snapshot(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that deleting nonexistent snapshot fails.
 
@@ -217,7 +217,7 @@ def test_snapshot_delete_nonexistent_snapshot(coi_binary, cleanup_containers, wo
 
     # === Phase 1: Launch container ===
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -227,7 +227,7 @@ def test_snapshot_delete_nonexistent_snapshot(coi_binary, cleanup_containers, wo
 
     # === Phase 2: Try to delete nonexistent snapshot ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "delete", "nonexistent-snapshot", "-c", container_name],
+        [clincus_binary, "snapshot", "delete", "nonexistent-snapshot", "-c", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -237,18 +237,18 @@ def test_snapshot_delete_nonexistent_snapshot(coi_binary, cleanup_containers, wo
 
     # === Cleanup ===
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
 
 
-def test_snapshot_delete_nonexistent_container(coi_binary):
+def test_snapshot_delete_nonexistent_container(clincus_binary):
     """
     Test that delete fails for nonexistent container.
     """
     result = subprocess.run(
-        [coi_binary, "snapshot", "delete", "test-snap", "-c", "nonexistent-container-xyz"],
+        [clincus_binary, "snapshot", "delete", "test-snap", "-c", "nonexistent-container-xyz"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -257,7 +257,7 @@ def test_snapshot_delete_nonexistent_container(coi_binary):
     assert "not found" in result.stderr, "Should mention container not found"
 
 
-def test_snapshot_delete_missing_name_without_all(coi_binary, cleanup_containers, workspace_dir):
+def test_snapshot_delete_missing_name_without_all(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that delete requires snapshot name or --all flag.
     """
@@ -265,7 +265,7 @@ def test_snapshot_delete_missing_name_without_all(coi_binary, cleanup_containers
 
     # === Phase 1: Launch container ===
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -275,7 +275,7 @@ def test_snapshot_delete_missing_name_without_all(coi_binary, cleanup_containers
 
     # === Phase 2: Try to delete without name or --all ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "delete", "-c", container_name],
+        [clincus_binary, "snapshot", "delete", "-c", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -287,13 +287,13 @@ def test_snapshot_delete_missing_name_without_all(coi_binary, cleanup_containers
 
     # === Cleanup ===
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
 
 
-def test_snapshot_delete_selective(coi_binary, cleanup_containers, workspace_dir):
+def test_snapshot_delete_selective(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test deleting one snapshot while keeping others.
 
@@ -308,7 +308,7 @@ def test_snapshot_delete_selective(coi_binary, cleanup_containers, workspace_dir
 
     # === Phase 1: Launch container ===
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -319,7 +319,7 @@ def test_snapshot_delete_selective(coi_binary, cleanup_containers, workspace_dir
     # === Phase 2: Create multiple snapshots ===
     for name in ["keep1", "delete-me", "keep2"]:
         result = subprocess.run(
-            [coi_binary, "snapshot", "create", name, "-c", container_name],
+            [clincus_binary, "snapshot", "create", name, "-c", container_name],
             capture_output=True,
             text=True,
             timeout=60,
@@ -328,7 +328,7 @@ def test_snapshot_delete_selective(coi_binary, cleanup_containers, workspace_dir
 
     # === Phase 3: Delete one specific snapshot ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "delete", "delete-me", "-c", container_name],
+        [clincus_binary, "snapshot", "delete", "delete-me", "-c", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -337,7 +337,7 @@ def test_snapshot_delete_selective(coi_binary, cleanup_containers, workspace_dir
 
     # === Phase 4: Verify selective deletion ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "list", "-c", container_name],
+        [clincus_binary, "snapshot", "list", "-c", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -350,7 +350,7 @@ def test_snapshot_delete_selective(coi_binary, cleanup_containers, workspace_dir
 
     # === Cleanup ===
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

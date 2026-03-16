@@ -16,7 +16,7 @@ from support.helpers import (
 )
 
 
-def test_docker_works_in_container(coi_binary, cleanup_containers, workspace_dir):
+def test_docker_works_in_container(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that Docker actually works inside the container with nesting enabled.
 
@@ -33,7 +33,7 @@ def test_docker_works_in_container(coi_binary, cleanup_containers, workspace_dir
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -47,7 +47,7 @@ def test_docker_works_in_container(coi_binary, cleanup_containers, workspace_dir
 
     # Check if Docker is installed
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--", "which", "docker"],
+        [clincus_binary, "container", "exec", container_name, "--", "which", "docker"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -67,7 +67,7 @@ def test_docker_works_in_container(coi_binary, cleanup_containers, workspace_dir
         """
 
         result = subprocess.run(
-            [coi_binary, "container", "exec", container_name, "--", "bash", "-c", install_commands],
+            [clincus_binary, "container", "exec", container_name, "--", "bash", "-c", install_commands],
             capture_output=True,
             text=True,
             timeout=300,
@@ -80,7 +80,7 @@ def test_docker_works_in_container(coi_binary, cleanup_containers, workspace_dir
     # === Phase 3: Start Docker daemon ===
 
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--", "systemctl", "start", "docker"],
+        [clincus_binary, "container", "exec", container_name, "--", "systemctl", "start", "docker"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -91,7 +91,7 @@ def test_docker_works_in_container(coi_binary, cleanup_containers, workspace_dir
 
     # Verify Docker daemon is running
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--", "systemctl", "is-active", "docker"],
+        [clincus_binary, "container", "exec", container_name, "--", "systemctl", "is-active", "docker"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -106,7 +106,7 @@ def test_docker_works_in_container(coi_binary, cleanup_containers, workspace_dir
     # Pull alpine image and run a simple command
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,
@@ -151,7 +151,7 @@ def test_docker_works_in_container(coi_binary, cleanup_containers, workspace_dir
 
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,
@@ -186,7 +186,7 @@ def test_docker_works_in_container(coi_binary, cleanup_containers, workspace_dir
     # Run another container to verify network namespaces work properly
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,
@@ -216,7 +216,7 @@ def test_docker_works_in_container(coi_binary, cleanup_containers, workspace_dir
     # === Phase 7: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

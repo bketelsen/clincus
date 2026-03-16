@@ -1,5 +1,5 @@
 """
-Test for coi shell - workspace files persist even in ephemeral mode.
+Test for clincus shell - workspace files persist even in ephemeral mode.
 
 Tests that:
 1. Start ephemeral shell
@@ -17,7 +17,7 @@ from pexpect import EOF, TIMEOUT
 from support.helpers import (
     calculate_container_name,
     get_container_list,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
     wait_for_text_in_monitor,
@@ -25,12 +25,12 @@ from support.helpers import (
 )
 
 
-def test_workspace_files_persist_ephemeral(coi_binary, cleanup_containers, workspace_dir):
+def test_workspace_files_persist_ephemeral(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that files created in /workspace persist after ephemeral container deletion.
 
     Flow:
-    1. Start coi shell (ephemeral)
+    1. Start clincus shell (ephemeral)
     2. Exit claude to bash
     3. Create a file in /workspace
     4. Exit (poweroff to trigger container deletion)
@@ -45,8 +45,8 @@ def test_workspace_files_persist_ephemeral(coi_binary, cleanup_containers, works
 
     # === Phase 1: Start ephemeral session ===
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell"],  # Ephemeral mode (default)
         cwd=workspace_dir,
         env=env,
@@ -145,7 +145,7 @@ def test_workspace_files_persist_ephemeral(coi_binary, cleanup_containers, works
     # Container might still exist briefly, force delete if needed
     if container_name in containers:
         subprocess.run(
-            [coi_binary, "container", "delete", container_name, "--force"],
+            [clincus_binary, "container", "delete", container_name, "--force"],
             capture_output=True,
             timeout=30,
         )
@@ -178,7 +178,7 @@ def test_workspace_files_persist_ephemeral(coi_binary, cleanup_containers, works
         # Check if incus device was actually added
         print("\nChecking container device mounts:")
         result = subprocess.run(
-            [coi_binary, "container", "show", container_name],
+            [clincus_binary, "container", "show", container_name],
             capture_output=True,
             text=True,
         )

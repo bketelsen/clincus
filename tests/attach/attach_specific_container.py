@@ -1,9 +1,9 @@
 """
-Test for coi attach <container-name> - attach to specific container.
+Test for clincus attach <container-name> - attach to specific container.
 
 Tests that:
 1. Start a shell session and detach
-2. Run coi attach <container-name>
+2. Run clincus attach <container-name>
 3. Verify it attaches to the specified container
 """
 
@@ -15,20 +15,20 @@ from pexpect import EOF, TIMEOUT
 from support.helpers import (
     calculate_container_name,
     get_container_list,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
 )
 
 
-def test_attach_specific_container(coi_binary, cleanup_containers, workspace_dir):
+def test_attach_specific_container(clincus_binary, cleanup_containers, workspace_dir):
     """
-    Test that coi attach <name> attaches to the specified container.
+    Test that clincus attach <name> attaches to the specified container.
 
     Flow:
-    1. Start coi shell --persistent
+    1. Start clincus shell --persistent
     2. Detach from session
-    3. Run coi attach <container-name>
+    3. Run clincus attach <container-name>
     4. Verify it attaches to that specific container
     5. Cleanup
     """
@@ -37,8 +37,8 @@ def test_attach_specific_container(coi_binary, cleanup_containers, workspace_dir
 
     # === Phase 1: Start persistent session ===
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell", "--persistent"],
         cwd=workspace_dir,
         env=env,
@@ -78,11 +78,11 @@ def test_attach_specific_container(coi_binary, cleanup_containers, workspace_dir
     containers = get_container_list()
     assert container_name in containers, f"Container {container_name} should still be running"
 
-    # === Phase 3: Test coi attach <container-name> ===
+    # === Phase 3: Test clincus attach <container-name> ===
 
     # Use subprocess with a short timeout - we just want to verify it starts attaching
     result = subprocess.run(
-        [coi_binary, "attach", container_name],
+        [clincus_binary, "attach", container_name],
         capture_output=True,
         text=True,
         timeout=5,
@@ -99,7 +99,7 @@ def test_attach_specific_container(coi_binary, cleanup_containers, workspace_dir
     # === Phase 4: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

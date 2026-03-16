@@ -1,5 +1,5 @@
 """
-Test for coi container exists - returns false for nonexistent container.
+Test for clincus container exists - returns false for nonexistent container.
 
 Tests that:
 1. Check exists for nonexistent container
@@ -9,7 +9,7 @@ Tests that:
 import subprocess
 
 
-def test_exists_nonexistent(coi_binary, cleanup_containers):
+def test_exists_nonexistent(clincus_binary, cleanup_containers):
     """
     Test that exists returns non-zero for nonexistent container.
 
@@ -22,7 +22,7 @@ def test_exists_nonexistent(coi_binary, cleanup_containers):
     # === Phase 1: Check exists ===
 
     result = subprocess.run(
-        [coi_binary, "container", "exists", nonexistent_name],
+        [clincus_binary, "container", "exists", nonexistent_name],
         capture_output=True,
         text=True,
         timeout=30,

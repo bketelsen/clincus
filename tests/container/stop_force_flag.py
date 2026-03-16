@@ -1,5 +1,5 @@
 """
-Test for coi container stop --force - force stops container.
+Test for clincus container stop --force - force stops container.
 
 Tests that:
 1. Launch a container
@@ -15,7 +15,7 @@ from support.helpers import (
 )
 
 
-def test_stop_force_flag(coi_binary, cleanup_containers, workspace_dir):
+def test_stop_force_flag(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test force stopping a container.
 
@@ -30,7 +30,7 @@ def test_stop_force_flag(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -42,7 +42,7 @@ def test_stop_force_flag(coi_binary, cleanup_containers, workspace_dir):
 
     # Verify running
     result = subprocess.run(
-        [coi_binary, "container", "running", container_name],
+        [clincus_binary, "container", "running", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -54,7 +54,7 @@ def test_stop_force_flag(coi_binary, cleanup_containers, workspace_dir):
 
     start_time = time.time()
     result = subprocess.run(
-        [coi_binary, "container", "stop", container_name, "--force"],
+        [clincus_binary, "container", "stop", container_name, "--force"],
         capture_output=True,
         text=True,
         timeout=60,
@@ -73,7 +73,7 @@ def test_stop_force_flag(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 3: Verify not running ===
 
     result = subprocess.run(
-        [coi_binary, "container", "running", container_name],
+        [clincus_binary, "container", "running", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -84,7 +84,7 @@ def test_stop_force_flag(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 4: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

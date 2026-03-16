@@ -1,8 +1,8 @@
 """
-Test for coi --invalid-flag - error handling.
+Test for clincus --invalid-flag - error handling.
 
 Tests that:
-1. Run coi with an invalid global flag
+1. Run clincus with an invalid global flag
 2. Verify it returns non-zero exit code
 3. Verify error message is helpful
 """
@@ -10,17 +10,17 @@ Tests that:
 import subprocess
 
 
-def test_invalid_global_flag(coi_binary):
+def test_invalid_global_flag(clincus_binary):
     """
     Test behavior with invalid global flag.
 
     Flow:
-    1. Run coi with non-existent flag
+    1. Run clincus with non-existent flag
     2. Verify exit code is non-zero
     3. Verify error message mentions the invalid flag
     """
     result = subprocess.run(
-        [coi_binary, "--nonexistent-flag"],
+        [clincus_binary, "--nonexistent-flag"],
         capture_output=True,
         text=True,
         timeout=10,

@@ -1,4 +1,4 @@
-"""Test coi list --format=json includes IPv4 field"""
+"""Test clincus list --format=json includes IPv4 field"""
 
 import json
 import subprocess
@@ -7,13 +7,13 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_list_json_includes_ipv4(coi_binary, cleanup_containers, workspace_dir):
-    """Test that coi list --format=json includes ipv4 field for containers."""
+def test_list_json_includes_ipv4(clincus_binary, cleanup_containers, workspace_dir):
+    """Test that clincus list --format=json includes ipv4 field for containers."""
     container_name = calculate_container_name(workspace_dir, 1)
 
     # Phase 1: Launch container
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -24,7 +24,7 @@ def test_list_json_includes_ipv4(coi_binary, cleanup_containers, workspace_dir):
 
     # Phase 2: Run list with JSON format
     result = subprocess.run(
-        [coi_binary, "list", "--format=json"],
+        [clincus_binary, "list", "--format=json"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -57,7 +57,7 @@ def test_list_json_includes_ipv4(coi_binary, cleanup_containers, workspace_dir):
 
     # Phase 4: Stop container and verify IPv4 becomes empty
     result = subprocess.run(
-        [coi_binary, "container", "stop", container_name],
+        [clincus_binary, "container", "stop", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -68,7 +68,7 @@ def test_list_json_includes_ipv4(coi_binary, cleanup_containers, workspace_dir):
 
     # Phase 5: Check JSON again
     result = subprocess.run(
-        [coi_binary, "list", "--format=json"],
+        [clincus_binary, "list", "--format=json"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -94,7 +94,7 @@ def test_list_json_includes_ipv4(coi_binary, cleanup_containers, workspace_dir):
 
     # Phase 6: Cleanup
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

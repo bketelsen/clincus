@@ -5,13 +5,13 @@ import subprocess
 from support.helpers import calculate_container_name
 
 
-def test_exec_exit_code_preservation_raw(coi_binary, cleanup_containers, workspace_dir):
+def test_exec_exit_code_preservation_raw(clincus_binary, cleanup_containers, workspace_dir):
     """Test that actual exit codes are preserved in raw format."""
     container_name = calculate_container_name(workspace_dir, 1)
 
     # Launch container
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -21,7 +21,7 @@ def test_exec_exit_code_preservation_raw(coi_binary, cleanup_containers, workspa
     # Test exit code 2
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             "--capture",
@@ -41,7 +41,7 @@ def test_exec_exit_code_preservation_raw(coi_binary, cleanup_containers, workspa
     # Test exit code 42
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             "--capture",
@@ -61,7 +61,7 @@ def test_exec_exit_code_preservation_raw(coi_binary, cleanup_containers, workspa
     # Test exit code 127 (command not found)
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             "--capture",
@@ -80,19 +80,19 @@ def test_exec_exit_code_preservation_raw(coi_binary, cleanup_containers, workspa
 
     # Cleanup
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
 
 
-def test_exec_exit_code_preservation_json(coi_binary, cleanup_containers, workspace_dir):
+def test_exec_exit_code_preservation_json(clincus_binary, cleanup_containers, workspace_dir):
     """Test that actual exit codes are preserved in JSON format."""
     container_name = calculate_container_name(workspace_dir, 1)
 
     # Launch container
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -102,7 +102,7 @@ def test_exec_exit_code_preservation_json(coi_binary, cleanup_containers, worksp
     # Test exit code 2 in JSON format
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             "--capture",
@@ -117,7 +117,7 @@ def test_exec_exit_code_preservation_json(coi_binary, cleanup_containers, worksp
         text=True,
         timeout=30,
     )
-    assert result.returncode == 0, "JSON format should return 0 for coi itself"
+    assert result.returncode == 0, "JSON format should return 0 for clincus itself"
 
     # Parse JSON and check exit_code field
     import json
@@ -128,7 +128,7 @@ def test_exec_exit_code_preservation_json(coi_binary, cleanup_containers, worksp
     # Test exit code 42 in JSON format
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             "--capture",
@@ -148,7 +148,7 @@ def test_exec_exit_code_preservation_json(coi_binary, cleanup_containers, worksp
 
     # Cleanup
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

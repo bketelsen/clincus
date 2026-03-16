@@ -5,13 +5,13 @@ import subprocess
 from support.helpers import calculate_container_name
 
 
-def test_exec_format_requires_capture(coi_binary, cleanup_containers, workspace_dir):
+def test_exec_format_requires_capture(clincus_binary, cleanup_containers, workspace_dir):
     """Test that --format flag requires --capture flag."""
     container_name = calculate_container_name(workspace_dir, 1)
 
     # Launch container
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -21,7 +21,7 @@ def test_exec_format_requires_capture(coi_binary, cleanup_containers, workspace_
     # Try to use --format without --capture (should fail)
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             "--format=raw",
@@ -41,7 +41,7 @@ def test_exec_format_requires_capture(coi_binary, cleanup_containers, workspace_
 
     # Cleanup
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

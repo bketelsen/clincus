@@ -1,5 +1,5 @@
 """
-Test for coi container delete --force - force deletes running container.
+Test for clincus container delete --force - force deletes running container.
 
 Tests that:
 1. Launch a container (keep it running)
@@ -16,7 +16,7 @@ from support.helpers import (
 )
 
 
-def test_delete_force_running(coi_binary, cleanup_containers, workspace_dir):
+def test_delete_force_running(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test force deleting a running container.
 
@@ -30,7 +30,7 @@ def test_delete_force_running(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -42,7 +42,7 @@ def test_delete_force_running(coi_binary, cleanup_containers, workspace_dir):
 
     # Verify running
     result = subprocess.run(
-        [coi_binary, "container", "running", container_name],
+        [clincus_binary, "container", "running", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -53,7 +53,7 @@ def test_delete_force_running(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 2: Force delete ===
 
     result = subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         text=True,
         timeout=60,

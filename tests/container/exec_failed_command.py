@@ -1,5 +1,5 @@
 """
-Test for coi container exec - propagates exit code from failed command.
+Test for clincus container exec - propagates exit code from failed command.
 
 Tests that:
 1. Launch a container
@@ -15,7 +15,7 @@ from support.helpers import (
 )
 
 
-def test_exec_failed_command(coi_binary, cleanup_containers, workspace_dir):
+def test_exec_failed_command(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that exit codes from failed commands are propagated.
 
@@ -30,7 +30,7 @@ def test_exec_failed_command(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -43,7 +43,7 @@ def test_exec_failed_command(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 2: Execute failing command ===
 
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--", "sh", "-c", "exit 42"],
+        [clincus_binary, "container", "exec", container_name, "--", "sh", "-c", "exit 42"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -56,7 +56,7 @@ def test_exec_failed_command(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 4: Test command not found ===
 
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--", "nonexistent-command-12345"],
+        [clincus_binary, "container", "exec", container_name, "--", "nonexistent-command-12345"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -67,7 +67,7 @@ def test_exec_failed_command(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 5: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

@@ -1,5 +1,5 @@
 """
-Test for coi image delete - delete nonexistent image.
+Test for clincus image delete - delete nonexistent image.
 
 Tests that:
 1. Try to delete an image that doesn't exist
@@ -9,18 +9,18 @@ Tests that:
 import subprocess
 
 
-def test_delete_nonexistent_image(coi_binary, cleanup_containers):
+def test_delete_nonexistent_image(clincus_binary, cleanup_containers):
     """
     Test deleting a nonexistent image fails gracefully.
 
     Flow:
-    1. Run coi image delete nonexistent-image
+    1. Run clincus image delete nonexistent-image
     2. Verify it fails with error message
     """
     # === Phase 1: Try to delete nonexistent image ===
 
     result = subprocess.run(
-        [coi_binary, "image", "delete", "nonexistent-image-xyz-123"],
+        [clincus_binary, "image", "delete", "nonexistent-image-xyz-123"],
         capture_output=True,
         text=True,
         timeout=30,

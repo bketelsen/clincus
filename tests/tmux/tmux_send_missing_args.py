@@ -1,5 +1,5 @@
 """
-Test for coi tmux send - error when missing required arguments.
+Test for clincus tmux send - error when missing required arguments.
 
 Tests that:
 1. Try to use tmux send with missing arguments
@@ -9,20 +9,20 @@ Tests that:
 import subprocess
 
 
-def test_tmux_send_missing_args(coi_binary, cleanup_containers):
+def test_tmux_send_missing_args(clincus_binary, cleanup_containers):
     """
     Test tmux send fails when arguments are missing.
 
     Flow:
-    1. Try coi tmux send with no args
-    2. Try coi tmux send with only session name (no command)
+    1. Try clincus tmux send with no args
+    2. Try clincus tmux send with only session name (no command)
     3. Verify both show usage/error
     """
 
     # === Phase 1: No arguments ===
 
     result = subprocess.run(
-        [coi_binary, "tmux", "send"],
+        [clincus_binary, "tmux", "send"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -44,7 +44,7 @@ def test_tmux_send_missing_args(coi_binary, cleanup_containers):
     # === Phase 2: Only session name (missing command) ===
 
     result = subprocess.run(
-        [coi_binary, "tmux", "send", "some-container"],
+        [clincus_binary, "tmux", "send", "some-container"],
         capture_output=True,
         text=True,
         timeout=30,

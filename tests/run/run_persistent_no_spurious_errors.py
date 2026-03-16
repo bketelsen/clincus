@@ -1,5 +1,5 @@
 """
-Test for coi run --persistent - no spurious errors during cleanup.
+Test for clincus run --persistent - no spurious errors during cleanup.
 
 Tests that:
 1. Run with --persistent flag
@@ -15,12 +15,12 @@ import subprocess
 from support.helpers import calculate_container_name
 
 
-def test_run_persistent_no_spurious_errors(coi_binary, cleanup_containers, workspace_dir):
+def test_run_persistent_no_spurious_errors(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that persistent run cleanup doesn't show spurious stop errors.
 
     Flow:
-    1. Run coi run --persistent with a simple command
+    1. Run clincus run --persistent with a simple command
     2. Command completes and container stops itself
     3. Verify no "Error: The instance is already stopped" message
     4. Cleanup
@@ -31,7 +31,7 @@ def test_run_persistent_no_spurious_errors(coi_binary, cleanup_containers, works
     # Run with persistent - container will stop after command completes
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -77,7 +77,7 @@ def test_run_persistent_no_spurious_errors(coi_binary, cleanup_containers, works
 
     # Cleanup
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

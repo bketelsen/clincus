@@ -1,17 +1,17 @@
-"""Test coi container exec --capture --format=raw"""
+"""Test clincus container exec --capture --format=raw"""
 
 import subprocess
 
 from support.helpers import calculate_container_name
 
 
-def test_exec_capture_format_raw(coi_binary, cleanup_containers, workspace_dir):
+def test_exec_capture_format_raw(clincus_binary, cleanup_containers, workspace_dir):
     """Test that --capture --format=raw outputs raw stdout."""
     container_name = calculate_container_name(workspace_dir, 1)
 
     # Phase 1: Launch container
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -21,7 +21,7 @@ def test_exec_capture_format_raw(coi_binary, cleanup_containers, workspace_dir):
     # Phase 2: Execute command with raw format
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             "--capture",
@@ -46,7 +46,7 @@ def test_exec_capture_format_raw(coi_binary, cleanup_containers, workspace_dir):
     # Phase 3: Test command failure
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             "--capture",
@@ -65,7 +65,7 @@ def test_exec_capture_format_raw(coi_binary, cleanup_containers, workspace_dir):
 
     # Phase 4: Cleanup
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

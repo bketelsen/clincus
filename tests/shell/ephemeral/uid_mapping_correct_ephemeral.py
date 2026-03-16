@@ -1,5 +1,5 @@
 """
-Test for coi shell - UID mapping ensures correct file ownership.
+Test for clincus shell - UID mapping ensures correct file ownership.
 
 Tests that:
 1. Start shell
@@ -15,7 +15,7 @@ from pexpect import EOF, TIMEOUT
 
 from support.helpers import (
     calculate_container_name,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
     wait_for_text_in_monitor,
@@ -23,12 +23,12 @@ from support.helpers import (
 )
 
 
-def test_uid_mapping_correct(coi_binary, cleanup_containers, workspace_dir):
+def test_uid_mapping_correct(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that files created inside container have correct UID on host.
 
     Flow:
-    1. Start coi shell
+    1. Start clincus shell
     2. Exit claude to bash
     3. Create a file in /workspace
     4. Exit container
@@ -46,8 +46,8 @@ def test_uid_mapping_correct(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 1: Start session ===
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell"],
         cwd=workspace_dir,
         env=env,
@@ -101,7 +101,7 @@ def test_uid_mapping_correct(coi_binary, cleanup_containers, workspace_dir):
 
     # Force cleanup
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

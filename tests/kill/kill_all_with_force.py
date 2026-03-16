@@ -1,5 +1,5 @@
 """
-Test for coi kill --all --force - kill all containers without confirmation.
+Test for clincus kill --all --force - kill all containers without confirmation.
 
 Tests that:
 1. Launch multiple containers
@@ -13,7 +13,7 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_kill_all_with_force(coi_binary, cleanup_containers, workspace_dir):
+def test_kill_all_with_force(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test killing all containers with --all --force.
 
@@ -29,7 +29,7 @@ def test_kill_all_with_force(coi_binary, cleanup_containers, workspace_dir):
 
     for container_name in [container1, container2]:
         result = subprocess.run(
-            [coi_binary, "container", "launch", "coi", container_name],
+            [clincus_binary, "container", "launch", "clincus", container_name],
             capture_output=True,
             text=True,
             timeout=120,
@@ -41,7 +41,7 @@ def test_kill_all_with_force(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 2: Kill all with --all --force ===
 
     result = subprocess.run(
-        [coi_binary, "kill", "--all", "--force"],
+        [clincus_binary, "kill", "--all", "--force"],
         capture_output=True,
         text=True,
         timeout=120,
@@ -58,7 +58,7 @@ def test_kill_all_with_force(coi_binary, cleanup_containers, workspace_dir):
 
     for container_name in [container1, container2]:
         result = subprocess.run(
-            [coi_binary, "container", "exists", container_name],
+            [clincus_binary, "container", "exists", container_name],
             capture_output=True,
             text=True,
             timeout=30,

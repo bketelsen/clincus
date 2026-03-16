@@ -1,5 +1,5 @@
 """
-Test for coi container list --format=json - JSON format output.
+Test for clincus container list --format=json - JSON format output.
 
 Tests that:
 1. Container list returns valid JSON with --format=json
@@ -10,12 +10,12 @@ import json
 import subprocess
 
 
-def test_container_list_json_format(coi_binary):
+def test_container_list_json_format(clincus_binary):
     """
     Test container list with JSON format.
 
     Flow:
-    1. Run coi container list --format=json
+    1. Run clincus container list --format=json
     2. Verify output is valid JSON
     3. Verify JSON structure is a list
     4. Verify exit code is 0
@@ -23,7 +23,7 @@ def test_container_list_json_format(coi_binary):
     # === Test: List containers in JSON format ===
 
     result = subprocess.run(
-        [coi_binary, "container", "list", "--format=json"],
+        [clincus_binary, "container", "list", "--format=json"],
         capture_output=True,
         text=True,
         timeout=30,

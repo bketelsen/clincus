@@ -1,5 +1,5 @@
 """
-Test for coi snapshot create - creating container snapshots.
+Test for clincus snapshot create - creating container snapshots.
 
 Tests that:
 1. Can create a snapshot with auto-generated name
@@ -14,7 +14,7 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_snapshot_create_auto_name(coi_binary, cleanup_containers, workspace_dir):
+def test_snapshot_create_auto_name(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test creating a snapshot with auto-generated name.
 
@@ -28,7 +28,7 @@ def test_snapshot_create_auto_name(coi_binary, cleanup_containers, workspace_dir
 
     # === Phase 1: Launch container ===
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -38,7 +38,7 @@ def test_snapshot_create_auto_name(coi_binary, cleanup_containers, workspace_dir
 
     # === Phase 2: Create snapshot with auto-generated name ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "create", "-c", container_name],
+        [clincus_binary, "snapshot", "create", "-c", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -49,7 +49,7 @@ def test_snapshot_create_auto_name(coi_binary, cleanup_containers, workspace_dir
 
     # === Phase 3: Verify snapshot exists ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "list", "-c", container_name],
+        [clincus_binary, "snapshot", "list", "-c", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -60,13 +60,13 @@ def test_snapshot_create_auto_name(coi_binary, cleanup_containers, workspace_dir
 
     # === Cleanup ===
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
 
 
-def test_snapshot_create_explicit_name(coi_binary, cleanup_containers, workspace_dir):
+def test_snapshot_create_explicit_name(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test creating a snapshot with explicit name.
 
@@ -81,7 +81,7 @@ def test_snapshot_create_explicit_name(coi_binary, cleanup_containers, workspace
 
     # === Phase 1: Launch container ===
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -91,7 +91,7 @@ def test_snapshot_create_explicit_name(coi_binary, cleanup_containers, workspace
 
     # === Phase 2: Create snapshot with explicit name ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "create", snapshot_name, "-c", container_name],
+        [clincus_binary, "snapshot", "create", snapshot_name, "-c", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -103,7 +103,7 @@ def test_snapshot_create_explicit_name(coi_binary, cleanup_containers, workspace
 
     # === Phase 3: Verify snapshot exists ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "list", "-c", container_name],
+        [clincus_binary, "snapshot", "list", "-c", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -113,13 +113,13 @@ def test_snapshot_create_explicit_name(coi_binary, cleanup_containers, workspace
 
     # === Cleanup ===
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
 
 
-def test_snapshot_create_duplicate_name_fails(coi_binary, cleanup_containers, workspace_dir):
+def test_snapshot_create_duplicate_name_fails(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that creating a snapshot with duplicate name fails.
 
@@ -135,7 +135,7 @@ def test_snapshot_create_duplicate_name_fails(coi_binary, cleanup_containers, wo
 
     # === Phase 1: Launch container ===
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -145,7 +145,7 @@ def test_snapshot_create_duplicate_name_fails(coi_binary, cleanup_containers, wo
 
     # === Phase 2: Create first snapshot ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "create", snapshot_name, "-c", container_name],
+        [clincus_binary, "snapshot", "create", snapshot_name, "-c", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -154,7 +154,7 @@ def test_snapshot_create_duplicate_name_fails(coi_binary, cleanup_containers, wo
 
     # === Phase 3: Try to create duplicate ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "create", snapshot_name, "-c", container_name],
+        [clincus_binary, "snapshot", "create", snapshot_name, "-c", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -164,13 +164,13 @@ def test_snapshot_create_duplicate_name_fails(coi_binary, cleanup_containers, wo
 
     # === Cleanup ===
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
 
 
-def test_snapshot_create_multiple(coi_binary, cleanup_containers, workspace_dir):
+def test_snapshot_create_multiple(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test creating multiple snapshots.
 
@@ -184,7 +184,7 @@ def test_snapshot_create_multiple(coi_binary, cleanup_containers, workspace_dir)
 
     # === Phase 1: Launch container ===
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -195,7 +195,7 @@ def test_snapshot_create_multiple(coi_binary, cleanup_containers, workspace_dir)
     # === Phase 2: Create multiple snapshots ===
     for name in ["snap1", "snap2", "snap3"]:
         result = subprocess.run(
-            [coi_binary, "snapshot", "create", name, "-c", container_name],
+            [clincus_binary, "snapshot", "create", name, "-c", container_name],
             capture_output=True,
             text=True,
             timeout=60,
@@ -204,7 +204,7 @@ def test_snapshot_create_multiple(coi_binary, cleanup_containers, workspace_dir)
 
     # === Phase 3: Verify all snapshots exist ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "list", "-c", container_name],
+        [clincus_binary, "snapshot", "list", "-c", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -217,18 +217,18 @@ def test_snapshot_create_multiple(coi_binary, cleanup_containers, workspace_dir)
 
     # === Cleanup ===
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
 
 
-def test_snapshot_create_nonexistent_container(coi_binary):
+def test_snapshot_create_nonexistent_container(clincus_binary):
     """
     Test that snapshot create fails for nonexistent container.
     """
     result = subprocess.run(
-        [coi_binary, "snapshot", "create", "test-snap", "-c", "nonexistent-container-xyz"],
+        [clincus_binary, "snapshot", "create", "test-snap", "-c", "nonexistent-container-xyz"],
         capture_output=True,
         text=True,
         timeout=30,

@@ -1,5 +1,5 @@
 """
-Test for coi container exec - basic command execution.
+Test for clincus container exec - basic command execution.
 
 Tests that:
 1. Launch a container
@@ -15,7 +15,7 @@ from support.helpers import (
 )
 
 
-def test_exec_basic_command(coi_binary, cleanup_containers, workspace_dir):
+def test_exec_basic_command(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test basic command execution in container.
 
@@ -30,7 +30,7 @@ def test_exec_basic_command(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -43,7 +43,7 @@ def test_exec_basic_command(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 2: Execute command ===
 
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--", "echo", "hello-test-123"],
+        [clincus_binary, "container", "exec", container_name, "--", "echo", "hello-test-123"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -61,7 +61,7 @@ def test_exec_basic_command(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 4: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

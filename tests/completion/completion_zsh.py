@@ -1,8 +1,8 @@
 """
-Test for coi completion zsh - zsh completion generation.
+Test for clincus completion zsh - zsh completion generation.
 
 Tests that:
-1. Run coi completion zsh
+1. Run clincus completion zsh
 2. Verify it generates valid zsh completion script
 3. Verify exit code is 0
 """
@@ -10,17 +10,17 @@ Tests that:
 import subprocess
 
 
-def test_completion_zsh(coi_binary):
+def test_completion_zsh(clincus_binary):
     """
     Test zsh completion script generation.
 
     Flow:
-    1. Run coi completion zsh
+    1. Run clincus completion zsh
     2. Verify exit code is 0
     3. Verify output contains zsh completion directives
     """
     result = subprocess.run(
-        [coi_binary, "completion", "zsh"],
+        [clincus_binary, "completion", "zsh"],
         capture_output=True,
         text=True,
         timeout=10,
@@ -40,4 +40,4 @@ def test_completion_zsh(coi_binary):
     assert len(lines) > 10, f"Should generate substantial completion script. Got {len(lines)} lines"
 
     # Should mention the binary name
-    assert "coi" in output.lower(), f"Should mention coi binary. Got:\n{output[:200]}..."
+    assert "clincus" in output.lower(), f"Should mention clincus binary. Got:\n{output[:200]}..."

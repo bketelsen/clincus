@@ -1,5 +1,5 @@
 """
-Test for coi health - Incus storage pool check.
+Test for clincus health - Incus storage pool check.
 
 Verifies that:
 1. The incus_storage_pool check is present in health output
@@ -12,12 +12,12 @@ import json
 import subprocess
 
 
-def test_health_storage_pool_present_in_json(coi_binary):
+def test_health_storage_pool_present_in_json(clincus_binary):
     """
     Verify incus_storage_pool check is present with correct structure in JSON output.
     """
     result = subprocess.run(
-        [coi_binary, "health", "--format", "json"],
+        [clincus_binary, "health", "--format", "json"],
         capture_output=True,
         text=True,
         timeout=60,
@@ -60,12 +60,12 @@ def test_health_storage_pool_present_in_json(coi_binary):
     assert 0 <= details["used_pct"] <= 100, f"used_pct should be 0-100, got: {details['used_pct']}"
 
 
-def test_health_storage_pool_in_text_output(coi_binary):
+def test_health_storage_pool_in_text_output(clincus_binary):
     """
     Verify incus_storage_pool appears in the STORAGE section of text output.
     """
     result = subprocess.run(
-        [coi_binary, "health"],
+        [clincus_binary, "health"],
         capture_output=True,
         text=True,
         timeout=60,

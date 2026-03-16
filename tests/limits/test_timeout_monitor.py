@@ -13,9 +13,9 @@ import time
 from pathlib import Path
 
 
-def test_container_auto_stops_after_timeout(coi_binary, workspace_dir, cleanup_containers):
+def test_container_auto_stops_after_timeout(clincus_binary, workspace_dir, cleanup_containers):
     """Test that container auto-stops after max_duration is reached."""
-    container_name = f"coi-{Path(workspace_dir).name}-1"
+    container_name = f"clincus-{Path(workspace_dir).name}-1"
 
     # Create a script that runs longer than timeout
     test_script = Path(workspace_dir) / "long_script.sh"
@@ -32,7 +32,7 @@ echo "Script completed"
     start_time = time.time()
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -78,9 +78,9 @@ echo "Script completed"
             )
 
 
-def test_timeout_with_persistent_container(coi_binary, workspace_dir, cleanup_containers):
+def test_timeout_with_persistent_container(clincus_binary, workspace_dir, cleanup_containers):
     """Test that timeout works with persistent containers."""
-    container_name = f"coi-{Path(workspace_dir).name}-1"
+    container_name = f"clincus-{Path(workspace_dir).name}-1"
 
     # Create a script
     test_script = Path(workspace_dir) / "test_script.sh"
@@ -97,7 +97,7 @@ echo "Done"
     start_time = time.time()
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -142,13 +142,13 @@ echo "Done"
     )
 
 
-def test_normal_exit_before_timeout(coi_binary, workspace_dir, cleanup_containers):
+def test_normal_exit_before_timeout(clincus_binary, workspace_dir, cleanup_containers):
     """Test that normal exit before timeout works correctly."""
     # Run a quick command with a long timeout
     start_time = time.time()
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -171,10 +171,10 @@ def test_normal_exit_before_timeout(coi_binary, workspace_dir, cleanup_container
     assert "quick command" in result.stdout, "Should see command output"
 
 
-def test_timeout_applied_in_shell_mode(coi_binary, workspace_dir, cleanup_containers):
+def test_timeout_applied_in_shell_mode(clincus_binary, workspace_dir, cleanup_containers):
     """Test that timeout works in shell mode (not just run mode)."""
     # Create config with timeout
-    project_config = Path(workspace_dir) / ".coi.toml"
+    project_config = Path(workspace_dir) / ".clincus.toml"
     config_content = """
 [limits.runtime]
 max_duration = "10s"
@@ -196,7 +196,7 @@ sleep 30
     # and the timeout would be applied. For now, just verify config loads.
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -211,11 +211,11 @@ sleep 30
     assert result.returncode == 0, "Should load config successfully"
 
 
-def test_zero_duration_means_unlimited(coi_binary, workspace_dir, cleanup_containers):
+def test_zero_duration_means_unlimited(clincus_binary, workspace_dir, cleanup_containers):
     """Test that zero or empty duration means no timeout."""
     # Run a command with no timeout (should work normally)
     result = subprocess.run(
-        [coi_binary, "run", "--workspace", workspace_dir, "sleep", "2"],
+        [clincus_binary, "run", "--workspace", workspace_dir, "sleep", "2"],
         capture_output=True,
         text=True,
         timeout=60,
@@ -224,7 +224,7 @@ def test_zero_duration_means_unlimited(coi_binary, workspace_dir, cleanup_contai
     assert result.returncode == 0, "Command with no timeout should complete normally"
 
 
-def test_timeout_logging_message(coi_binary, workspace_dir, cleanup_containers):
+def test_timeout_logging_message(clincus_binary, workspace_dir, cleanup_containers):
     """Test that timeout start message appears in logs."""
     # Create a script
     test_script = Path(workspace_dir) / "test.sh"
@@ -238,7 +238,7 @@ sleep 15
     # Launch with timeout
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,

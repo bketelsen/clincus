@@ -12,15 +12,15 @@ import subprocess
 from pathlib import Path
 
 
-def test_profile_with_limits(coi_binary, workspace_dir, cleanup_containers):
+def test_profile_with_limits(clincus_binary, workspace_dir, cleanup_containers):
     """Test that profile limits are applied when using a profile."""
-    container_name = f"coi-{Path(workspace_dir).name}-1"
+    container_name = f"clincus-{Path(workspace_dir).name}-1"
 
     # Create config with profile that has limits
-    project_config = Path(workspace_dir) / ".coi.toml"
+    project_config = Path(workspace_dir) / ".clincus.toml"
     config_content = """
 [profiles.limited]
-image = "coi"
+image = "clincus"
 persistent = false
 
 [profiles.limited.limits.cpu]
@@ -42,7 +42,7 @@ max_processes = 50
     # Launch with profile
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -77,13 +77,13 @@ max_processes = 50
     assert 'limits.processes: "50"' in config_output, "Profile process limit should be applied"
 
 
-def test_multiple_profiles_different_limits(coi_binary, workspace_dir, cleanup_containers):
+def test_multiple_profiles_different_limits(clincus_binary, workspace_dir, cleanup_containers):
     """Test that different profiles can have different limits."""
     # Create config with two profiles with different limits
-    project_config = Path(workspace_dir) / ".coi.toml"
+    project_config = Path(workspace_dir) / ".clincus.toml"
     config_content = """
 [profiles.small]
-image = "coi"
+image = "clincus"
 
 [profiles.small.limits.cpu]
 count = "1"
@@ -92,7 +92,7 @@ count = "1"
 limit = "512MiB"
 
 [profiles.large]
-image = "coi"
+image = "clincus"
 
 [profiles.large.limits.cpu]
 count = "4"
@@ -103,10 +103,10 @@ limit = "8GiB"
     project_config.write_text(config_content)
 
     # Test small profile
-    container_name_1 = f"coi-{Path(workspace_dir).name}-1"
+    container_name_1 = f"clincus-{Path(workspace_dir).name}-1"
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -136,16 +136,16 @@ limit = "8GiB"
 
     # Clean up first container
     subprocess.run(
-        [coi_binary, "container", "delete", container_name_1, "--force"],
+        [clincus_binary, "container", "delete", container_name_1, "--force"],
         capture_output=True,
         timeout=30,
     )
 
     # Test large profile
-    container_name_2 = f"coi-{Path(workspace_dir).name}-2"
+    container_name_2 = f"clincus-{Path(workspace_dir).name}-2"
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -174,15 +174,15 @@ limit = "8GiB"
     assert "limits.memory: 8GiB" in config_output, "Large profile should have 8GiB memory"
 
 
-def test_profile_partial_limits(coi_binary, workspace_dir, cleanup_containers):
+def test_profile_partial_limits(clincus_binary, workspace_dir, cleanup_containers):
     """Test that profile can define only some limits (others remain unset)."""
-    container_name = f"coi-{Path(workspace_dir).name}-1"
+    container_name = f"clincus-{Path(workspace_dir).name}-1"
 
     # Create profile with only CPU limit
-    project_config = Path(workspace_dir) / ".coi.toml"
+    project_config = Path(workspace_dir) / ".clincus.toml"
     config_content = """
 [profiles.cpu_only]
-image = "coi"
+image = "clincus"
 
 [profiles.cpu_only.limits.cpu]
 count = "2"
@@ -192,7 +192,7 @@ count = "2"
     # Launch with profile
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -224,12 +224,12 @@ count = "2"
     )
 
 
-def test_profile_limits_with_global_config(coi_binary, workspace_dir, cleanup_containers):
+def test_profile_limits_with_global_config(clincus_binary, workspace_dir, cleanup_containers):
     """Test interaction between global config limits and profile limits."""
-    container_name = f"coi-{Path(workspace_dir).name}-1"
+    container_name = f"clincus-{Path(workspace_dir).name}-1"
 
     # Create config with both global and profile limits
-    project_config = Path(workspace_dir) / ".coi.toml"
+    project_config = Path(workspace_dir) / ".clincus.toml"
     config_content = """
 # Global limits
 [limits.cpu]
@@ -243,7 +243,7 @@ max_processes = 200
 
 # Profile with partial overrides
 [profiles.override]
-image = "coi"
+image = "clincus"
 
 [profiles.override.limits.cpu]
 count = "1"
@@ -255,7 +255,7 @@ count = "1"
     # Launch with profile
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -289,15 +289,15 @@ count = "1"
     )
 
 
-def test_cli_flags_override_profile_limits(coi_binary, workspace_dir, cleanup_containers):
+def test_cli_flags_override_profile_limits(clincus_binary, workspace_dir, cleanup_containers):
     """Test that CLI flags can override profile limits."""
-    container_name = f"coi-{Path(workspace_dir).name}-1"
+    container_name = f"clincus-{Path(workspace_dir).name}-1"
 
     # Create profile with limits
-    project_config = Path(workspace_dir) / ".coi.toml"
+    project_config = Path(workspace_dir) / ".clincus.toml"
     config_content = """
 [profiles.base]
-image = "coi"
+image = "clincus"
 
 [profiles.base.limits.cpu]
 count = "2"
@@ -310,7 +310,7 @@ limit = "2GiB"
     # Launch with profile but override with CLI flags
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -345,12 +345,12 @@ limit = "2GiB"
     )
 
 
-def test_profile_without_limits_uses_global(coi_binary, workspace_dir, cleanup_containers):
+def test_profile_without_limits_uses_global(clincus_binary, workspace_dir, cleanup_containers):
     """Test that profile without limits falls back to global config."""
-    container_name = f"coi-{Path(workspace_dir).name}-1"
+    container_name = f"clincus-{Path(workspace_dir).name}-1"
 
     # Create config with global limits and profile without limits
-    project_config = Path(workspace_dir) / ".coi.toml"
+    project_config = Path(workspace_dir) / ".clincus.toml"
     config_content = """
 [limits.cpu]
 count = "2"
@@ -359,7 +359,7 @@ count = "2"
 limit = "2GiB"
 
 [profiles.nolimits]
-image = "coi"
+image = "clincus"
 persistent = false
 # No limits defined in profile
 """
@@ -368,7 +368,7 @@ persistent = false
     # Launch with profile that has no limits
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,

@@ -1,5 +1,5 @@
 """
-Test for coi attach - state is preserved after detach/attach.
+Test for clincus attach - state is preserved after detach/attach.
 
 Tests that:
 1. Start a shell session
@@ -17,7 +17,7 @@ from pexpect import EOF, TIMEOUT
 from support.helpers import (
     calculate_container_name,
     get_container_list,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
     wait_for_text_in_monitor,
@@ -25,12 +25,12 @@ from support.helpers import (
 )
 
 
-def test_attach_preserves_state(coi_binary, cleanup_containers, workspace_dir):
+def test_attach_preserves_state(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that container state is preserved after detach/attach.
 
     Flow:
-    1. Start coi shell --persistent
+    1. Start clincus shell --persistent
     2. Exit claude to bash, create a file
     3. Detach with Ctrl+b d
     4. Attach again with --bash
@@ -42,8 +42,8 @@ def test_attach_preserves_state(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 1: Start persistent session ===
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell", "--persistent"],
         cwd=workspace_dir,
         env=env,
@@ -97,8 +97,8 @@ def test_attach_preserves_state(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 4: Attach with --bash and verify file ===
 
-    child2 = spawn_coi(
-        coi_binary,
+    child2 = spawn_clincus(
+        clincus_binary,
         ["attach", container_name, "--bash"],
         cwd=workspace_dir,
         env=env,
@@ -133,7 +133,7 @@ def test_attach_preserves_state(coi_binary, cleanup_containers, workspace_dir):
         child2.close(force=True)
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

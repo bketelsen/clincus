@@ -1,17 +1,17 @@
-"""Test that coi list defaults to text format"""
+"""Test that clincus list defaults to text format"""
 
 import subprocess
 
 from support.helpers import calculate_container_name
 
 
-def test_list_format_text_default(coi_binary, cleanup_containers, workspace_dir):
-    """Test that coi list without --format outputs human-readable text."""
+def test_list_format_text_default(clincus_binary, cleanup_containers, workspace_dir):
+    """Test that clincus list without --format outputs human-readable text."""
     container_name = calculate_container_name(workspace_dir, 1)
 
     # Launch container
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -20,7 +20,7 @@ def test_list_format_text_default(coi_binary, cleanup_containers, workspace_dir)
 
     # Run list without format flag
     result = subprocess.run(
-        [coi_binary, "list"],
+        [clincus_binary, "list"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -38,7 +38,7 @@ def test_list_format_text_default(coi_binary, cleanup_containers, workspace_dir)
 
     # Cleanup
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

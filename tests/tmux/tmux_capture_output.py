@@ -1,5 +1,5 @@
 """
-Test for coi tmux capture - capture output from a tmux session.
+Test for clincus tmux capture - capture output from a tmux session.
 
 Tests that:
 1. Launch a container
@@ -14,7 +14,7 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_tmux_capture_output(coi_binary, cleanup_containers, workspace_dir):
+def test_tmux_capture_output(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test capturing output from a tmux session.
 
@@ -22,7 +22,7 @@ def test_tmux_capture_output(coi_binary, cleanup_containers, workspace_dir):
     1. Launch a container
     2. Create a tmux session
     3. Execute command in tmux to generate output
-    4. Use coi tmux capture to capture output
+    4. Use clincus tmux capture to capture output
     5. Verify output is correct
     6. Cleanup
     """
@@ -31,7 +31,7 @@ def test_tmux_capture_output(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -43,11 +43,11 @@ def test_tmux_capture_output(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 2: Create tmux session ===
 
-    tmux_session = f"coi-{container_name}"
+    tmux_session = f"clincus-{container_name}"
 
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,
@@ -72,7 +72,7 @@ def test_tmux_capture_output(coi_binary, cleanup_containers, workspace_dir):
 
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,
@@ -93,10 +93,10 @@ def test_tmux_capture_output(coi_binary, cleanup_containers, workspace_dir):
 
     time.sleep(1)
 
-    # === Phase 4: Capture output via coi tmux capture ===
+    # === Phase 4: Capture output via clincus tmux capture ===
 
     result = subprocess.run(
-        [coi_binary, "tmux", "capture", container_name],
+        [clincus_binary, "tmux", "capture", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -110,7 +110,7 @@ def test_tmux_capture_output(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 5: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

@@ -1,9 +1,9 @@
 """
-Test for coi attach - attach by slot.
+Test for clincus attach - attach by slot.
 
 Tests that:
 1. Start a shell session and detach
-2. Run coi attach with --slot flag
+2. Run clincus attach with --slot flag
 3. Verify it attaches to the correct session (isolated from other running sessions)
 """
 
@@ -15,33 +15,33 @@ from pexpect import EOF, TIMEOUT
 from support.helpers import (
     calculate_container_name,
     get_container_list,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
 )
 
 
-def test_auto_attach_single_session(coi_binary, cleanup_containers, workspace_dir):
+def test_auto_attach_single_session(clincus_binary, cleanup_containers, workspace_dir):
     """
-    Test that coi attach works with --slot flag (workspace-specific).
+    Test that clincus attach works with --slot flag (workspace-specific).
 
     Flow:
-    1. Start coi shell --persistent
+    1. Start clincus shell --persistent
     2. Detach from session (exit bash, container stays running)
-    3. Run coi attach --slot 1
+    3. Run clincus attach --slot 1
     4. Verify it attaches and shows "Attaching to..."
     5. Cleanup
 
     Note: This test uses --slot to isolate from other running sessions,
-    making it safe to run tests while using coi for development.
+    making it safe to run tests while using clincus for development.
     """
     env = {"COI_USE_DUMMY": "1"}
     container_name = calculate_container_name(workspace_dir, 1)
 
     # === Phase 1: Start persistent session ===
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell", "--persistent"],
         cwd=workspace_dir,
         env=env,
@@ -86,12 +86,12 @@ def test_auto_attach_single_session(coi_binary, cleanup_containers, workspace_di
         f"Container {container_name} should still be running after detach"
     )
 
-    # === Phase 3: Test coi attach with slot (workspace-specific) ===
+    # === Phase 3: Test clincus attach with slot (workspace-specific) ===
 
-    # Run coi attach with --slot to isolate from other running sessions
-    # This ensures the test works even when other coi sessions are running
+    # Run clincus attach with --slot to isolate from other running sessions
+    # This ensures the test works even when other clincus sessions are running
     result = subprocess.run(
-        [coi_binary, "attach", "--slot", "1", "--workspace", workspace_dir],
+        [clincus_binary, "attach", "--slot", "1", "--workspace", workspace_dir],
         capture_output=True,
         text=True,
         timeout=5,
@@ -107,7 +107,7 @@ def test_auto_attach_single_session(coi_binary, cleanup_containers, workspace_di
     # === Phase 4: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

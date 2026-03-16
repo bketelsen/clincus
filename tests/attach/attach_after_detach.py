@@ -1,10 +1,10 @@
 """
-Test for coi attach - reconnect after detach.
+Test for clincus attach - reconnect after detach.
 
 Tests that:
 1. Start a shell session
 2. Detach using Ctrl+b d
-3. Run coi attach
+3. Run clincus attach
 4. Verify we reconnect to the same tmux session
 """
 
@@ -17,7 +17,7 @@ from support.helpers import (
     calculate_container_name,
     get_container_list,
     send_prompt,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
     wait_for_text_in_monitor,
@@ -25,15 +25,15 @@ from support.helpers import (
 )
 
 
-def test_attach_after_detach(coi_binary, cleanup_containers, workspace_dir):
+def test_attach_after_detach(clincus_binary, cleanup_containers, workspace_dir):
     """
-    Test that coi attach reconnects after tmux detach.
+    Test that clincus attach reconnects after tmux detach.
 
     Flow:
-    1. Start coi shell --persistent
+    1. Start clincus shell --persistent
     2. Send a message to dummy
     3. Detach with Ctrl+b d
-    4. Run coi attach
+    4. Run clincus attach
     5. Verify we're back in the same session
     6. Cleanup
     """
@@ -42,8 +42,8 @@ def test_attach_after_detach(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 1: Start persistent session ===
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell", "--persistent"],
         cwd=workspace_dir,
         env=env,
@@ -87,8 +87,8 @@ def test_attach_after_detach(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 3: Reattach ===
 
-    child2 = spawn_coi(
-        coi_binary,
+    child2 = spawn_clincus(
+        clincus_binary,
         ["attach", container_name],
         cwd=workspace_dir,
         env=env,
@@ -128,7 +128,7 @@ def test_attach_after_detach(coi_binary, cleanup_containers, workspace_dir):
         child2.close(force=True)
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

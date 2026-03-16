@@ -1,5 +1,5 @@
 """
-Test for coi run - executes as code user.
+Test for clincus run - executes as code user.
 
 Tests that:
 1. Run whoami command
@@ -9,16 +9,16 @@ Tests that:
 import subprocess
 
 
-def test_run_as_code_user(coi_binary, cleanup_containers, workspace_dir):
+def test_run_as_code_user(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that commands run as the code user.
 
     Flow:
-    1. Run coi run whoami
+    1. Run clincus run whoami
     2. Verify output is 'code'
     """
     result = subprocess.run(
-        [coi_binary, "run", "--workspace", workspace_dir, "whoami"],
+        [clincus_binary, "run", "--workspace", workspace_dir, "whoami"],
         capture_output=True,
         text=True,
         timeout=180,

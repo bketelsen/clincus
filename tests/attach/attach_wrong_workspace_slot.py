@@ -1,5 +1,5 @@
 """
-Test for coi attach --slot with wrong workspace.
+Test for clincus attach --slot with wrong workspace.
 
 Tests that:
 1. Start a container in workspace A
@@ -15,21 +15,21 @@ from pexpect import EOF, TIMEOUT
 from support.helpers import (
     calculate_container_name,
     get_container_list,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
 )
 
 
-def test_attach_wrong_workspace_slot(coi_binary, cleanup_containers, workspace_dir, tmp_path):
+def test_attach_wrong_workspace_slot(clincus_binary, cleanup_containers, workspace_dir, tmp_path):
     """
-    Test that coi attach --slot fails when workspace doesn't match.
+    Test that clincus attach --slot fails when workspace doesn't match.
 
     Flow:
-    1. Start coi shell --persistent in workspace_dir (slot 1)
+    1. Start clincus shell --persistent in workspace_dir (slot 1)
     2. Detach
     3. Create a different workspace directory
-    4. Try coi attach --slot=1 --workspace=<different>
+    4. Try clincus attach --slot=1 --workspace=<different>
     5. Verify it fails (different workspace = different container name)
     6. Cleanup
     """
@@ -42,8 +42,8 @@ def test_attach_wrong_workspace_slot(coi_binary, cleanup_containers, workspace_d
 
     # === Phase 1: Start session in original workspace ===
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell", "--persistent"],
         cwd=workspace_dir,
         env=env,
@@ -86,7 +86,7 @@ def test_attach_wrong_workspace_slot(coi_binary, cleanup_containers, workspace_d
     # === Phase 3: Try to attach with wrong workspace ===
 
     result = subprocess.run(
-        [coi_binary, "attach", "--slot=1", f"--workspace={other_workspace}"],
+        [clincus_binary, "attach", "--slot=1", f"--workspace={other_workspace}"],
         capture_output=True,
         text=True,
         timeout=10,
@@ -103,7 +103,7 @@ def test_attach_wrong_workspace_slot(coi_binary, cleanup_containers, workspace_d
     # === Phase 4: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

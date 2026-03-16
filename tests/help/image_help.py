@@ -1,8 +1,8 @@
 """
-Test for coi image --help - help text validation.
+Test for clincus image --help - help text validation.
 
 Tests that:
-1. Run coi image --help
+1. Run clincus image --help
 2. Verify help text contains expected sections
 3. Verify exit code is 0
 """
@@ -10,17 +10,17 @@ Tests that:
 import subprocess
 
 
-def test_image_help(coi_binary):
+def test_image_help(clincus_binary):
     """
     Test image command help output.
 
     Flow:
-    1. Run coi image --help
+    1. Run clincus image --help
     2. Verify exit code is 0
     3. Verify output contains subcommands
     """
     result = subprocess.run(
-        [coi_binary, "image", "--help"],
+        [clincus_binary, "image", "--help"],
         capture_output=True,
         text=True,
         timeout=10,

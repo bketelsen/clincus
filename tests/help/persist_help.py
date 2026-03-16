@@ -1,8 +1,8 @@
 """
-Test for coi persist --help - help text validation.
+Test for clincus persist --help - help text validation.
 
 Tests that:
-1. Run coi persist --help
+1. Run clincus persist --help
 2. Verify help text contains expected sections
 3. Verify exit code is 0
 """
@@ -10,17 +10,17 @@ Tests that:
 import subprocess
 
 
-def test_persist_help(coi_binary):
+def test_persist_help(clincus_binary):
     """
     Test persist command help output.
 
     Flow:
-    1. Run coi persist --help
+    1. Run clincus persist --help
     2. Verify exit code is 0
     3. Verify output contains usage and flags
     """
     result = subprocess.run(
-        [coi_binary, "persist", "--help"],
+        [clincus_binary, "persist", "--help"],
         capture_output=True,
         text=True,
         timeout=10,

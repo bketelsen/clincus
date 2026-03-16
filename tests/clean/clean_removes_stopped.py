@@ -1,10 +1,10 @@
 """
-Test for coi clean - removes stopped containers.
+Test for clincus clean - removes stopped containers.
 
 Tests that:
 1. Launch a container
 2. Stop it
-3. Run coi clean
+3. Run clincus clean
 4. Verify stopped container is removed
 """
 
@@ -17,14 +17,14 @@ from support.helpers import (
 )
 
 
-def test_clean_removes_stopped(coi_binary, cleanup_containers, workspace_dir):
+def test_clean_removes_stopped(clincus_binary, cleanup_containers, workspace_dir):
     """
-    Test that coi clean removes stopped containers.
+    Test that clincus clean removes stopped containers.
 
     Flow:
     1. Launch a container
     2. Stop it (but don't delete)
-    3. Run coi clean --force
+    3. Run clincus clean --force
     4. Verify container is removed
     """
     container_name = calculate_container_name(workspace_dir, 1)
@@ -32,7 +32,7 @@ def test_clean_removes_stopped(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -49,7 +49,7 @@ def test_clean_removes_stopped(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 2: Stop container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "stop", container_name],
+        [clincus_binary, "container", "stop", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -62,13 +62,13 @@ def test_clean_removes_stopped(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 3: Clean ===
 
     result = subprocess.run(
-        [coi_binary, "clean", "--force"],
+        [clincus_binary, "clean", "--force"],
         capture_output=True,
         text=True,
         timeout=60,
     )
 
-    assert result.returncode == 0, f"coi clean should succeed. stderr: {result.stderr}"
+    assert result.returncode == 0, f"clincus clean should succeed. stderr: {result.stderr}"
 
     time.sleep(2)
 

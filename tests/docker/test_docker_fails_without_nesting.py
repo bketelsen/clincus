@@ -16,7 +16,7 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_docker_fails_without_nesting(coi_binary, cleanup_containers, workspace_dir):
+def test_docker_fails_without_nesting(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that Docker fails without nesting flags (regression test).
 
@@ -34,7 +34,7 @@ def test_docker_fails_without_nesting(coi_binary, cleanup_containers, workspace_
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -121,7 +121,7 @@ def test_docker_fails_without_nesting(coi_binary, cleanup_containers, workspace_
 
     # Check if Docker is installed
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--", "which", "docker"],
+        [clincus_binary, "container", "exec", container_name, "--", "which", "docker"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -142,7 +142,7 @@ def test_docker_fails_without_nesting(coi_binary, cleanup_containers, workspace_
 
         result = subprocess.run(
             [
-                coi_binary,
+                clincus_binary,
                 "container",
                 "exec",
                 container_name,
@@ -163,7 +163,7 @@ def test_docker_fails_without_nesting(coi_binary, cleanup_containers, workspace_
     # Start Docker daemon
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,
@@ -183,7 +183,7 @@ def test_docker_fails_without_nesting(coi_binary, cleanup_containers, workspace_
     # Verify Docker daemon is running
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,
@@ -205,7 +205,7 @@ def test_docker_fails_without_nesting(coi_binary, cleanup_containers, workspace_
 
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,
@@ -244,7 +244,7 @@ def test_docker_fails_without_nesting(coi_binary, cleanup_containers, workspace_
     # === Phase 7: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

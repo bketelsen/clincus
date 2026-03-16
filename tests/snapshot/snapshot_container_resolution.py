@@ -1,5 +1,5 @@
 """
-Test for coi snapshot container resolution strategy.
+Test for clincus snapshot container resolution strategy.
 
 Tests that:
 1. Auto-resolves container from workspace when only one exists
@@ -16,7 +16,7 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_snapshot_auto_resolve_single_container(coi_binary, cleanup_containers, workspace_dir):
+def test_snapshot_auto_resolve_single_container(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test auto-resolving container when exactly one exists for workspace.
 
@@ -31,7 +31,7 @@ def test_snapshot_auto_resolve_single_container(coi_binary, cleanup_containers, 
 
     # === Phase 1: Launch container ===
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -42,7 +42,7 @@ def test_snapshot_auto_resolve_single_container(coi_binary, cleanup_containers, 
     # === Phase 2: Create snapshot without --container flag ===
     # Change to workspace directory so container resolution works
     result = subprocess.run(
-        [coi_binary, "snapshot", "create", snapshot_name, "-w", workspace_dir],
+        [clincus_binary, "snapshot", "create", snapshot_name, "-w", workspace_dir],
         capture_output=True,
         text=True,
         timeout=60,
@@ -57,7 +57,7 @@ def test_snapshot_auto_resolve_single_container(coi_binary, cleanup_containers, 
 
     # === Phase 3: Verify snapshot exists for correct container ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "list", "-c", container_name],
+        [clincus_binary, "snapshot", "list", "-c", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -67,13 +67,13 @@ def test_snapshot_auto_resolve_single_container(coi_binary, cleanup_containers, 
 
     # === Cleanup ===
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
 
 
-def test_snapshot_no_container_for_workspace(coi_binary, cleanup_containers, workspace_dir):
+def test_snapshot_no_container_for_workspace(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that snapshot fails when no container exists for workspace.
 
@@ -82,7 +82,7 @@ def test_snapshot_no_container_for_workspace(coi_binary, cleanup_containers, wor
     2. Verify error message about no containers
     """
     result = subprocess.run(
-        [coi_binary, "snapshot", "create", "test-snap", "-w", workspace_dir],
+        [clincus_binary, "snapshot", "create", "test-snap", "-w", workspace_dir],
         capture_output=True,
         text=True,
         timeout=30,
@@ -90,11 +90,11 @@ def test_snapshot_no_container_for_workspace(coi_binary, cleanup_containers, wor
     )
     assert result.returncode != 0, "Should fail when no containers exist for workspace"
     assert (
-        "no COI containers found" in result.stderr.lower() or "not found" in result.stderr.lower()
+        "no clincus containers found" in result.stderr.lower() or "not found" in result.stderr.lower()
     ), "Should mention no containers found"
 
 
-def test_snapshot_multiple_containers_requires_flag(coi_binary, cleanup_containers, workspace_dir):
+def test_snapshot_multiple_containers_requires_flag(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that snapshot fails when multiple containers exist for workspace.
 
@@ -112,7 +112,7 @@ def test_snapshot_multiple_containers_requires_flag(coi_binary, cleanup_containe
     # === Phase 1: Launch two containers ===
     for container in [container1, container2]:
         result = subprocess.run(
-            [coi_binary, "container", "launch", "coi", container],
+            [clincus_binary, "container", "launch", "clincus", container],
             capture_output=True,
             text=True,
             timeout=120,
@@ -124,7 +124,7 @@ def test_snapshot_multiple_containers_requires_flag(coi_binary, cleanup_containe
 
     # === Phase 2: Try to create snapshot without --container ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "create", snapshot_name, "-w", workspace_dir],
+        [clincus_binary, "snapshot", "create", snapshot_name, "-w", workspace_dir],
         capture_output=True,
         text=True,
         timeout=30,
@@ -137,7 +137,7 @@ def test_snapshot_multiple_containers_requires_flag(coi_binary, cleanup_containe
 
     # === Phase 3: Create snapshot with explicit --container ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "create", snapshot_name, "-c", container1, "-w", workspace_dir],
+        [clincus_binary, "snapshot", "create", snapshot_name, "-c", container1, "-w", workspace_dir],
         capture_output=True,
         text=True,
         timeout=60,
@@ -149,7 +149,7 @@ def test_snapshot_multiple_containers_requires_flag(coi_binary, cleanup_containe
 
     # Verify snapshot was created for correct container
     result = subprocess.run(
-        [coi_binary, "snapshot", "list", "-c", container1],
+        [clincus_binary, "snapshot", "list", "-c", container1],
         capture_output=True,
         text=True,
         timeout=30,
@@ -158,7 +158,7 @@ def test_snapshot_multiple_containers_requires_flag(coi_binary, cleanup_containe
 
     # Verify snapshot doesn't exist for other container
     result = subprocess.run(
-        [coi_binary, "snapshot", "list", "-c", container2],
+        [clincus_binary, "snapshot", "list", "-c", container2],
         capture_output=True,
         text=True,
         timeout=30,
@@ -168,13 +168,13 @@ def test_snapshot_multiple_containers_requires_flag(coi_binary, cleanup_containe
     # === Cleanup ===
     for container in [container1, container2]:
         subprocess.run(
-            [coi_binary, "container", "delete", container, "--force"],
+            [clincus_binary, "container", "delete", container, "--force"],
             capture_output=True,
             timeout=30,
         )
 
 
-def test_snapshot_explicit_container_flag(coi_binary, cleanup_containers, workspace_dir):
+def test_snapshot_explicit_container_flag(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that --container flag takes precedence.
 
@@ -189,7 +189,7 @@ def test_snapshot_explicit_container_flag(coi_binary, cleanup_containers, worksp
 
     # === Phase 1: Launch container ===
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -199,7 +199,7 @@ def test_snapshot_explicit_container_flag(coi_binary, cleanup_containers, worksp
 
     # === Phase 2: Create snapshot with explicit --container ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "create", snapshot_name, "--container", container_name],
+        [clincus_binary, "snapshot", "create", snapshot_name, "--container", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -208,7 +208,7 @@ def test_snapshot_explicit_container_flag(coi_binary, cleanup_containers, worksp
 
     # === Phase 3: Verify snapshot exists ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "list", "-c", container_name],
+        [clincus_binary, "snapshot", "list", "-c", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -218,13 +218,13 @@ def test_snapshot_explicit_container_flag(coi_binary, cleanup_containers, worksp
 
     # === Cleanup ===
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
 
 
-def test_snapshot_env_var_container(coi_binary, cleanup_containers, workspace_dir):
+def test_snapshot_env_var_container(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that COI_CONTAINER environment variable is used.
 
@@ -240,7 +240,7 @@ def test_snapshot_env_var_container(coi_binary, cleanup_containers, workspace_di
 
     # === Phase 1: Launch container ===
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -253,7 +253,7 @@ def test_snapshot_env_var_container(coi_binary, cleanup_containers, workspace_di
     env["COI_CONTAINER"] = container_name
 
     result = subprocess.run(
-        [coi_binary, "snapshot", "create", snapshot_name],
+        [clincus_binary, "snapshot", "create", snapshot_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -265,7 +265,7 @@ def test_snapshot_env_var_container(coi_binary, cleanup_containers, workspace_di
 
     # === Phase 3: Verify snapshot exists ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "list", "-c", container_name],
+        [clincus_binary, "snapshot", "list", "-c", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -275,13 +275,13 @@ def test_snapshot_env_var_container(coi_binary, cleanup_containers, workspace_di
 
     # === Cleanup ===
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
 
 
-def test_snapshot_container_flag_overrides_env(coi_binary, cleanup_containers, workspace_dir):
+def test_snapshot_container_flag_overrides_env(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that --container flag takes precedence over COI_CONTAINER env var.
 
@@ -299,7 +299,7 @@ def test_snapshot_container_flag_overrides_env(coi_binary, cleanup_containers, w
     # === Phase 1: Launch two containers ===
     for container in [container1, container2]:
         result = subprocess.run(
-            [coi_binary, "container", "launch", "coi", container],
+            [clincus_binary, "container", "launch", "clincus", container],
             capture_output=True,
             text=True,
             timeout=120,
@@ -315,7 +315,7 @@ def test_snapshot_container_flag_overrides_env(coi_binary, cleanup_containers, w
 
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "snapshot",
             "create",
             snapshot_name,
@@ -331,7 +331,7 @@ def test_snapshot_container_flag_overrides_env(coi_binary, cleanup_containers, w
 
     # === Phase 3: Verify snapshot is on container2 (from flag), not container1 (from env) ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "list", "-c", container2],
+        [clincus_binary, "snapshot", "list", "-c", container2],
         capture_output=True,
         text=True,
         timeout=30,
@@ -339,7 +339,7 @@ def test_snapshot_container_flag_overrides_env(coi_binary, cleanup_containers, w
     assert snapshot_name in result.stdout, "Snapshot should exist for container from flag"
 
     result = subprocess.run(
-        [coi_binary, "snapshot", "list", "-c", container1],
+        [clincus_binary, "snapshot", "list", "-c", container1],
         capture_output=True,
         text=True,
         timeout=30,
@@ -351,7 +351,7 @@ def test_snapshot_container_flag_overrides_env(coi_binary, cleanup_containers, w
     # === Cleanup ===
     for container in [container1, container2]:
         subprocess.run(
-            [coi_binary, "container", "delete", container, "--force"],
+            [clincus_binary, "container", "delete", container, "--force"],
             capture_output=True,
             timeout=30,
         )

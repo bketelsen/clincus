@@ -1,5 +1,5 @@
 """
-Test for coi container launch --ephemeral flag.
+Test for clincus container launch --ephemeral flag.
 
 Tests that:
 1. Launch a container with --ephemeral flag
@@ -16,7 +16,7 @@ from support.helpers import (
 )
 
 
-def test_launch_ephemeral_flag(coi_binary, cleanup_containers, workspace_dir):
+def test_launch_ephemeral_flag(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test container launch with --ephemeral flag.
 
@@ -31,7 +31,7 @@ def test_launch_ephemeral_flag(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch ephemeral container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name, "--ephemeral"],
+        [clincus_binary, "container", "launch", "clincus", container_name, "--ephemeral"],
         capture_output=True,
         text=True,
         timeout=120,
@@ -51,7 +51,7 @@ def test_launch_ephemeral_flag(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 3: Stop container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "stop", container_name],
+        [clincus_binary, "container", "stop", container_name],
         capture_output=True,
         text=True,
         timeout=60,

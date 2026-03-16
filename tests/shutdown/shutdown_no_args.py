@@ -1,5 +1,5 @@
 """
-Test for coi shutdown - no arguments provided.
+Test for clincus shutdown - no arguments provided.
 
 Tests that:
 1. Run shutdown without arguments
@@ -9,16 +9,16 @@ Tests that:
 import subprocess
 
 
-def test_shutdown_no_args(coi_binary, cleanup_containers):
+def test_shutdown_no_args(clincus_binary, cleanup_containers):
     """
     Test that shutdown without arguments shows error.
 
     Flow:
-    1. Run coi shutdown (no args, no --all)
+    1. Run clincus shutdown (no args, no --all)
     2. Verify it fails with usage message
     """
     result = subprocess.run(
-        [coi_binary, "shutdown"],
+        [clincus_binary, "shutdown"],
         capture_output=True,
         text=True,
         timeout=30,

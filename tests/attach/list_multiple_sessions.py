@@ -1,9 +1,9 @@
 """
-Test for coi attach - lists multiple sessions.
+Test for clincus attach - lists multiple sessions.
 
 Tests that:
 1. Start two shell sessions in parallel slots
-2. Run coi attach with no arguments
+2. Run clincus attach with no arguments
 3. Verify it lists both sessions instead of attaching
 """
 
@@ -15,22 +15,22 @@ from pexpect import EOF, TIMEOUT
 from support.helpers import (
     calculate_container_name,
     get_container_list,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
 )
 
 
-def test_attach_lists_multiple_sessions(coi_binary, cleanup_containers, workspace_dir):
+def test_attach_lists_multiple_sessions(clincus_binary, cleanup_containers, workspace_dir):
     """
-    Test that coi attach lists sessions when multiple are running.
+    Test that clincus attach lists sessions when multiple are running.
 
     Flow:
-    1. Start coi shell --persistent (slot 1)
+    1. Start clincus shell --persistent (slot 1)
     2. Detach
-    3. Start coi shell --persistent (slot 2)
+    3. Start clincus shell --persistent (slot 2)
     4. Detach
-    5. Run coi attach
+    5. Run clincus attach
     6. Verify it lists both sessions
     7. Cleanup
     """
@@ -40,8 +40,8 @@ def test_attach_lists_multiple_sessions(coi_binary, cleanup_containers, workspac
 
     # === Phase 1: Start first persistent session ===
 
-    child1 = spawn_coi(
-        coi_binary,
+    child1 = spawn_clincus(
+        clincus_binary,
         ["shell", "--persistent"],
         cwd=workspace_dir,
         env=env,
@@ -74,8 +74,8 @@ def test_attach_lists_multiple_sessions(coi_binary, cleanup_containers, workspac
 
     # === Phase 2: Start second persistent session ===
 
-    child2 = spawn_coi(
-        coi_binary,
+    child2 = spawn_clincus(
+        clincus_binary,
         ["shell", "--persistent"],
         cwd=workspace_dir,
         env=env,
@@ -111,17 +111,17 @@ def test_attach_lists_multiple_sessions(coi_binary, cleanup_containers, workspac
     assert container_name_1 in containers, f"Container {container_name_1} should be running"
     assert container_name_2 in containers, f"Container {container_name_2} should be running"
 
-    # === Phase 3: Test coi attach lists sessions ===
+    # === Phase 3: Test clincus attach lists sessions ===
 
     result = subprocess.run(
-        [coi_binary, "attach"],
+        [clincus_binary, "attach"],
         capture_output=True,
         text=True,
         timeout=30,
     )
 
     # Should succeed and list sessions
-    assert result.returncode == 0, f"coi attach should succeed. stderr: {result.stderr}"
+    assert result.returncode == 0, f"clincus attach should succeed. stderr: {result.stderr}"
 
     output = result.stdout
 
@@ -133,17 +133,17 @@ def test_attach_lists_multiple_sessions(coi_binary, cleanup_containers, workspac
     assert container_name_2 in output, f"Should list {container_name_2}. Got:\n{output}"
 
     # Should show usage hint
-    assert "coi attach" in output, f"Should show usage hint. Got:\n{output}"
+    assert "clincus attach" in output, f"Should show usage hint. Got:\n{output}"
 
     # === Phase 4: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name_1, "--force"],
+        [clincus_binary, "container", "delete", container_name_1, "--force"],
         capture_output=True,
         timeout=30,
     )
     subprocess.run(
-        [coi_binary, "container", "delete", container_name_2, "--force"],
+        [clincus_binary, "container", "delete", container_name_2, "--force"],
         capture_output=True,
         timeout=30,
     )

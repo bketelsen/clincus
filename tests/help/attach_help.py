@@ -1,8 +1,8 @@
 """
-Test for coi attach --help - help text validation.
+Test for clincus attach --help - help text validation.
 
 Tests that:
-1. Run coi attach --help
+1. Run clincus attach --help
 2. Verify help text contains expected sections
 3. Verify exit code is 0
 """
@@ -10,17 +10,17 @@ Tests that:
 import subprocess
 
 
-def test_attach_help(coi_binary):
+def test_attach_help(clincus_binary):
     """
     Test attach command help output.
 
     Flow:
-    1. Run coi attach --help
+    1. Run clincus attach --help
     2. Verify exit code is 0
     3. Verify output contains usage and description
     """
     result = subprocess.run(
-        [coi_binary, "attach", "--help"],
+        [clincus_binary, "attach", "--help"],
         capture_output=True,
         text=True,
         timeout=10,

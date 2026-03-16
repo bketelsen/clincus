@@ -1,5 +1,5 @@
 """
-Test for coi container launch - fails with duplicate container name.
+Test for clincus container launch - fails with duplicate container name.
 
 Tests that:
 1. Launch a container
@@ -16,7 +16,7 @@ from support.helpers import (
 )
 
 
-def test_launch_duplicate_name(coi_binary, cleanup_containers, workspace_dir):
+def test_launch_duplicate_name(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that launching container with duplicate name fails.
 
@@ -31,7 +31,7 @@ def test_launch_duplicate_name(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch first container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -48,7 +48,7 @@ def test_launch_duplicate_name(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 2: Try to launch duplicate ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -71,7 +71,7 @@ def test_launch_duplicate_name(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 4: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

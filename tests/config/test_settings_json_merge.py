@@ -7,7 +7,7 @@ was being overwritten instead of merged, causing user configurations
 
 Tests that:
 1. Create a host ~/.claude/settings.json with user config
-2. Start coi shell (which should merge sandbox settings)
+2. Start clincus shell (which should merge sandbox settings)
 3. Verify container's settings.json contains BOTH user config AND sandbox settings
 """
 
@@ -19,21 +19,21 @@ from pexpect import EOF, TIMEOUT
 
 from support.helpers import (
     calculate_container_name,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
 )
 
 
 def test_settings_json_merge_preserves_user_config(
-    coi_binary, cleanup_containers, workspace_dir, tmp_path
+    clincus_binary, cleanup_containers, workspace_dir, tmp_path
 ):
     """
     Test that settings.json is merged, not overwritten.
 
     Flow:
     1. Create ~/.claude/settings.json with user config (simulating Bedrock setup)
-    2. Start coi shell
+    2. Start clincus shell
     3. Exit claude to bash
     4. Read container's ~/.claude/settings.json
     5. Verify it contains BOTH user config AND sandbox settings
@@ -68,8 +68,8 @@ def test_settings_json_merge_preserves_user_config(
 
     # === Phase 1: Start session ===
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell"],
         cwd=workspace_dir,
         env=env,
@@ -143,7 +143,7 @@ def test_settings_json_merge_preserves_user_config(
     time.sleep(5)
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

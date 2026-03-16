@@ -8,7 +8,7 @@ import subprocess
 from pathlib import Path
 
 
-def test_git_hooks_readonly_by_default(coi_binary, workspace_dir, cleanup_containers):
+def test_git_hooks_readonly_by_default(clincus_binary, workspace_dir, cleanup_containers):
     """Test that .git/hooks is mounted read-only by default in git repositories."""
     # Initialize a git repository in the workspace
     subprocess.run(["git", "init"], cwd=workspace_dir, check=True, capture_output=True)
@@ -20,7 +20,7 @@ def test_git_hooks_readonly_by_default(coi_binary, workspace_dir, cleanup_contai
     # Run a command in the container that tries to write to .git/hooks
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -45,7 +45,7 @@ def test_git_hooks_readonly_by_default(coi_binary, workspace_dir, cleanup_contai
     ), f"Expected read-only error, got: {combined}"
 
 
-def test_git_hooks_readonly_touch_fails(coi_binary, workspace_dir, cleanup_containers):
+def test_git_hooks_readonly_touch_fails(clincus_binary, workspace_dir, cleanup_containers):
     """Test that creating files in .git/hooks fails when protected."""
     # Initialize git repo
     subprocess.run(["git", "init"], cwd=workspace_dir, check=True, capture_output=True)
@@ -57,7 +57,7 @@ def test_git_hooks_readonly_touch_fails(coi_binary, workspace_dir, cleanup_conta
     # Try to touch a new file in hooks directory
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -81,7 +81,7 @@ def test_git_hooks_readonly_touch_fails(coi_binary, workspace_dir, cleanup_conta
     ), f"Expected read-only error, got: {combined}"
 
 
-def test_git_hooks_readonly_mkdir_fails(coi_binary, workspace_dir, cleanup_containers):
+def test_git_hooks_readonly_mkdir_fails(clincus_binary, workspace_dir, cleanup_containers):
     """Test that creating directories in .git/hooks fails when protected."""
     # Initialize git repo
     subprocess.run(["git", "init"], cwd=workspace_dir, check=True, capture_output=True)
@@ -93,7 +93,7 @@ def test_git_hooks_readonly_mkdir_fails(coi_binary, workspace_dir, cleanup_conta
     # Try to create a subdirectory in hooks
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -117,7 +117,7 @@ def test_git_hooks_readonly_mkdir_fails(coi_binary, workspace_dir, cleanup_conta
     ), f"Expected read-only error, got: {combined}"
 
 
-def test_git_hooks_readonly_rm_fails(coi_binary, workspace_dir, cleanup_containers):
+def test_git_hooks_readonly_rm_fails(clincus_binary, workspace_dir, cleanup_containers):
     """Test that removing files in .git/hooks fails when protected."""
     # Initialize git repo
     subprocess.run(["git", "init"], cwd=workspace_dir, check=True, capture_output=True)
@@ -131,7 +131,7 @@ def test_git_hooks_readonly_rm_fails(coi_binary, workspace_dir, cleanup_containe
     # Try to remove the sample hook from container
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -155,7 +155,7 @@ def test_git_hooks_readonly_rm_fails(coi_binary, workspace_dir, cleanup_containe
     ), f"Expected read-only error, got: {combined}"
 
 
-def test_git_hooks_writable_with_flag(coi_binary, workspace_dir, cleanup_containers):
+def test_git_hooks_writable_with_flag(clincus_binary, workspace_dir, cleanup_containers):
     """Test that --writable-git-hooks allows writing to .git/hooks."""
     # Initialize git repo
     subprocess.run(["git", "init"], cwd=workspace_dir, check=True, capture_output=True)
@@ -167,7 +167,7 @@ def test_git_hooks_writable_with_flag(coi_binary, workspace_dir, cleanup_contain
     # Run with --writable-git-hooks flag
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -191,7 +191,7 @@ def test_git_hooks_writable_with_flag(coi_binary, workspace_dir, cleanup_contain
     assert "#!/bin/sh" in hook_file.read_text()
 
 
-def test_git_hooks_writable_via_config(coi_binary, workspace_dir, cleanup_containers):
+def test_git_hooks_writable_via_config(clincus_binary, workspace_dir, cleanup_containers):
     """Test that writable_hooks=true in config allows writing to .git/hooks."""
     # Initialize git repo
     subprocess.run(["git", "init"], cwd=workspace_dir, check=True, capture_output=True)
@@ -201,7 +201,7 @@ def test_git_hooks_writable_via_config(coi_binary, workspace_dir, cleanup_contai
 [git]
 writable_hooks = true
 """
-    config_file = Path(workspace_dir) / ".coi.toml"
+    config_file = Path(workspace_dir) / ".clincus.toml"
     config_file.write_text(config_content)
 
     # Ensure hooks dir exists
@@ -211,7 +211,7 @@ writable_hooks = true
     # Run command - protection should be disabled via config
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--",
             "sh",
@@ -221,7 +221,7 @@ writable_hooks = true
         capture_output=True,
         text=True,
         timeout=120,
-        cwd=workspace_dir,  # Run from workspace to pick up .coi.toml
+        cwd=workspace_dir,  # Run from workspace to pick up .clincus.toml
     )
 
     # Should succeed
@@ -232,14 +232,14 @@ writable_hooks = true
     assert hook_file.exists(), "Hook file should have been created"
 
 
-def test_non_git_workspace_no_error(coi_binary, workspace_dir, cleanup_containers):
+def test_non_git_workspace_no_error(clincus_binary, workspace_dir, cleanup_containers):
     """Test that non-git workspaces work without any hooks-related errors."""
     # workspace_dir is not a git repository (no .git directory)
 
     # Run a simple command
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -261,7 +261,7 @@ def test_non_git_workspace_no_error(coi_binary, workspace_dir, cleanup_container
     assert "git-hooks" not in combined.lower() or "protected" in combined.lower()
 
 
-def test_git_hooks_existing_hook_readable(coi_binary, workspace_dir, cleanup_containers):
+def test_git_hooks_existing_hook_readable(clincus_binary, workspace_dir, cleanup_containers):
     """Test that existing hooks can be read from the container."""
     # Initialize git repo
     subprocess.run(["git", "init"], cwd=workspace_dir, check=True, capture_output=True)
@@ -277,7 +277,7 @@ def test_git_hooks_existing_hook_readable(coi_binary, workspace_dir, cleanup_con
     # Read the hook from container
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -295,7 +295,7 @@ def test_git_hooks_existing_hook_readable(coi_binary, workspace_dir, cleanup_con
     assert "Hello from pre-commit" in result.stdout
 
 
-def test_git_hooks_existing_hook_executable(coi_binary, workspace_dir, cleanup_containers):
+def test_git_hooks_existing_hook_executable(clincus_binary, workspace_dir, cleanup_containers):
     """Test that existing hooks can be executed from the container."""
     # Initialize git repo
     subprocess.run(["git", "init"], cwd=workspace_dir, check=True, capture_output=True)
@@ -311,7 +311,7 @@ def test_git_hooks_existing_hook_executable(coi_binary, workspace_dir, cleanup_c
     # Execute the hook from container
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -328,7 +328,7 @@ def test_git_hooks_existing_hook_executable(coi_binary, workspace_dir, cleanup_c
     assert "Hook executed successfully" in result.stdout
 
 
-def test_git_hooks_rest_of_git_dir_writable(coi_binary, workspace_dir, cleanup_containers):
+def test_git_hooks_rest_of_git_dir_writable(clincus_binary, workspace_dir, cleanup_containers):
     """Test that other parts of .git directory are still writable."""
     # Initialize git repo
     subprocess.run(["git", "init"], cwd=workspace_dir, check=True, capture_output=True)
@@ -340,7 +340,7 @@ def test_git_hooks_rest_of_git_dir_writable(coi_binary, workspace_dir, cleanup_c
     # Create a file in .git (not in hooks)
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -363,7 +363,7 @@ def test_git_hooks_rest_of_git_dir_writable(coi_binary, workspace_dir, cleanup_c
     assert test_file.read_text().strip() == "test"
 
 
-def test_git_hooks_protection_log_message(coi_binary, workspace_dir, cleanup_containers):
+def test_git_hooks_protection_log_message(clincus_binary, workspace_dir, cleanup_containers):
     """Test that protection status is logged during setup."""
     # Initialize git repo
     subprocess.run(["git", "init"], cwd=workspace_dir, check=True, capture_output=True)
@@ -375,7 +375,7 @@ def test_git_hooks_protection_log_message(coi_binary, workspace_dir, cleanup_con
     # Run command and check stderr for protection message
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -397,7 +397,7 @@ def test_git_hooks_protection_log_message(coi_binary, workspace_dir, cleanup_con
     ), f"Expected hooks protection message, got: {combined}"
 
 
-def test_git_hooks_empty_hooks_dir_created(coi_binary, workspace_dir, cleanup_containers):
+def test_git_hooks_empty_hooks_dir_created(clincus_binary, workspace_dir, cleanup_containers):
     """Test that .git/hooks is created if missing before protection is applied."""
     # Initialize git repo
     subprocess.run(["git", "init"], cwd=workspace_dir, check=True, capture_output=True)
@@ -415,7 +415,7 @@ def test_git_hooks_empty_hooks_dir_created(coi_binary, workspace_dir, cleanup_co
     # Run command - should create hooks dir and protect it
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -432,12 +432,12 @@ def test_git_hooks_empty_hooks_dir_created(coi_binary, workspace_dir, cleanup_co
     # Should succeed
     assert result.returncode == 0
 
-    # Hooks directory should now exist on host (created by coi for protection)
+    # Hooks directory should now exist on host (created by clincus for protection)
     assert hooks_dir.exists(), "Hooks directory should have been created"
 
 
 def test_git_hooks_protection_preserves_existing_hooks(
-    coi_binary, workspace_dir, cleanup_containers
+    clincus_binary, workspace_dir, cleanup_containers
 ):
     """Test that protection preserves existing hooks content."""
     # Initialize git repo
@@ -461,7 +461,7 @@ def test_git_hooks_protection_preserves_existing_hooks(
     # List hooks from container
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -480,7 +480,7 @@ def test_git_hooks_protection_preserves_existing_hooks(
         assert hook_name in result.stdout, f"Hook {hook_name} should be visible"
 
 
-def test_git_hooks_modify_existing_hook_fails(coi_binary, workspace_dir, cleanup_containers):
+def test_git_hooks_modify_existing_hook_fails(clincus_binary, workspace_dir, cleanup_containers):
     """Test that modifying an existing hook fails when protected."""
     # Initialize git repo
     subprocess.run(["git", "init"], cwd=workspace_dir, check=True, capture_output=True)
@@ -495,7 +495,7 @@ def test_git_hooks_modify_existing_hook_fails(coi_binary, workspace_dir, cleanup
     # Try to modify the hook from container
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -517,7 +517,7 @@ def test_git_hooks_modify_existing_hook_fails(coi_binary, workspace_dir, cleanup
     assert "malicious" not in pre_commit.read_text()
 
 
-def test_git_hooks_chmod_fails(coi_binary, workspace_dir, cleanup_containers):
+def test_git_hooks_chmod_fails(clincus_binary, workspace_dir, cleanup_containers):
     """Test that chmod on hooks directory fails when protected."""
     # Initialize git repo
     subprocess.run(["git", "init"], cwd=workspace_dir, check=True, capture_output=True)
@@ -529,7 +529,7 @@ def test_git_hooks_chmod_fails(coi_binary, workspace_dir, cleanup_containers):
     # Try to chmod the hooks directory from container
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -554,7 +554,7 @@ def test_git_hooks_chmod_fails(coi_binary, workspace_dir, cleanup_containers):
     ), f"Expected permission error, got: {combined}"
 
 
-def test_git_hooks_symlink_attack_fails(coi_binary, workspace_dir, cleanup_containers):
+def test_git_hooks_symlink_attack_fails(clincus_binary, workspace_dir, cleanup_containers):
     """Test that symlink attacks on hooks directory fail."""
     # Initialize git repo
     subprocess.run(["git", "init"], cwd=workspace_dir, check=True, capture_output=True)
@@ -566,7 +566,7 @@ def test_git_hooks_symlink_attack_fails(coi_binary, workspace_dir, cleanup_conta
     # Try to create a symlink in hooks pointing elsewhere
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -585,7 +585,7 @@ def test_git_hooks_symlink_attack_fails(coi_binary, workspace_dir, cleanup_conta
     assert result.returncode != 0
 
 
-def test_git_hooks_hardlink_attack_fails(coi_binary, workspace_dir, cleanup_containers):
+def test_git_hooks_hardlink_attack_fails(clincus_binary, workspace_dir, cleanup_containers):
     """Test that hardlink creation in hooks directory fails."""
     # Initialize git repo
     subprocess.run(["git", "init"], cwd=workspace_dir, check=True, capture_output=True)
@@ -601,7 +601,7 @@ def test_git_hooks_hardlink_attack_fails(coi_binary, workspace_dir, cleanup_cont
     # Try to create a hardlink in hooks
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -619,7 +619,7 @@ def test_git_hooks_hardlink_attack_fails(coi_binary, workspace_dir, cleanup_cont
     assert result.returncode != 0
 
 
-def test_git_hooks_mv_into_fails(coi_binary, workspace_dir, cleanup_containers):
+def test_git_hooks_mv_into_fails(clincus_binary, workspace_dir, cleanup_containers):
     """Test that moving files into hooks directory fails."""
     # Initialize git repo
     subprocess.run(["git", "init"], cwd=workspace_dir, check=True, capture_output=True)
@@ -635,7 +635,7 @@ def test_git_hooks_mv_into_fails(coi_binary, workspace_dir, cleanup_containers):
     # Try to move it into hooks
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -656,7 +656,7 @@ def test_git_hooks_mv_into_fails(coi_binary, workspace_dir, cleanup_containers):
     assert test_file.exists()
 
 
-def test_git_hooks_cp_into_fails(coi_binary, workspace_dir, cleanup_containers):
+def test_git_hooks_cp_into_fails(clincus_binary, workspace_dir, cleanup_containers):
     """Test that copying files into hooks directory fails."""
     # Initialize git repo
     subprocess.run(["git", "init"], cwd=workspace_dir, check=True, capture_output=True)
@@ -672,7 +672,7 @@ def test_git_hooks_cp_into_fails(coi_binary, workspace_dir, cleanup_containers):
     # Try to copy it into hooks
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,

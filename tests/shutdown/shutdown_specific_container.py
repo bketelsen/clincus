@@ -1,5 +1,5 @@
 """
-Test for coi shutdown - shutdown a specific container.
+Test for clincus shutdown - shutdown a specific container.
 
 Tests that:
 1. Launch a container
@@ -13,13 +13,13 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_shutdown_specific_container(coi_binary, cleanup_containers, workspace_dir):
+def test_shutdown_specific_container(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test shutting down a specific container by name.
 
     Flow:
     1. Launch a container
-    2. Run coi shutdown <container-name>
+    2. Run clincus shutdown <container-name>
     3. Verify container is deleted
     """
     slot = 1
@@ -27,7 +27,7 @@ def test_shutdown_specific_container(coi_binary, cleanup_containers, workspace_d
 
     # Launch a container
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -38,7 +38,7 @@ def test_shutdown_specific_container(coi_binary, cleanup_containers, workspace_d
 
     # Shutdown the container
     result = subprocess.run(
-        [coi_binary, "shutdown", container_name],
+        [clincus_binary, "shutdown", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -54,7 +54,7 @@ def test_shutdown_specific_container(coi_binary, cleanup_containers, workspace_d
     # Verify container no longer exists
     time.sleep(2)
     result = subprocess.run(
-        [coi_binary, "container", "exists", container_name],
+        [clincus_binary, "container", "exists", container_name],
         capture_output=True,
         text=True,
         timeout=30,

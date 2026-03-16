@@ -1,9 +1,9 @@
 """
-Test for coi attach - suggests --bash when no tmux session.
+Test for clincus attach - suggests --bash when no tmux session.
 
 Tests that:
 1. Start a container directly (without tmux session)
-2. Run coi attach
+2. Run clincus attach
 3. Verify it suggests using --bash
 """
 
@@ -16,13 +16,13 @@ from support.helpers import (
 )
 
 
-def test_attach_no_tmux_suggests_bash(coi_binary, cleanup_containers, workspace_dir):
+def test_attach_no_tmux_suggests_bash(clincus_binary, cleanup_containers, workspace_dir):
     """
-    Test that coi attach suggests --bash when tmux session is gone.
+    Test that clincus attach suggests --bash when tmux session is gone.
 
     Flow:
     1. Launch a container directly (no tmux)
-    2. Run coi attach
+    2. Run clincus attach
     3. Verify it suggests using --bash
     4. Cleanup
     """
@@ -32,7 +32,7 @@ def test_attach_no_tmux_suggests_bash(coi_binary, cleanup_containers, workspace_
 
     # Launch container using low-level command
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -49,7 +49,7 @@ def test_attach_no_tmux_suggests_bash(coi_binary, cleanup_containers, workspace_
     # === Phase 2: Try to attach (no tmux session exists) ===
 
     result = subprocess.run(
-        [coi_binary, "attach", container_name],
+        [clincus_binary, "attach", container_name],
         capture_output=True,
         text=True,
         timeout=10,
@@ -64,7 +64,7 @@ def test_attach_no_tmux_suggests_bash(coi_binary, cleanup_containers, workspace_
     # === Phase 3: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

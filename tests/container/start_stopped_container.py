@@ -1,5 +1,5 @@
 """
-Test for coi container start - starts a stopped container.
+Test for clincus container start - starts a stopped container.
 
 Tests that:
 1. Launch a container
@@ -16,7 +16,7 @@ from support.helpers import (
 )
 
 
-def test_start_stopped_container(coi_binary, cleanup_containers, workspace_dir):
+def test_start_stopped_container(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test starting a stopped container.
 
@@ -32,7 +32,7 @@ def test_start_stopped_container(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -45,7 +45,7 @@ def test_start_stopped_container(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 2: Stop container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "stop", container_name],
+        [clincus_binary, "container", "stop", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -57,7 +57,7 @@ def test_start_stopped_container(coi_binary, cleanup_containers, workspace_dir):
 
     # Verify not running
     result = subprocess.run(
-        [coi_binary, "container", "running", container_name],
+        [clincus_binary, "container", "running", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -68,7 +68,7 @@ def test_start_stopped_container(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 3: Start container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "start", container_name],
+        [clincus_binary, "container", "start", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -81,7 +81,7 @@ def test_start_stopped_container(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 4: Verify running ===
 
     result = subprocess.run(
-        [coi_binary, "container", "running", container_name],
+        [clincus_binary, "container", "running", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -92,7 +92,7 @@ def test_start_stopped_container(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 5: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

@@ -14,7 +14,7 @@ from pexpect import EOF, TIMEOUT
 
 from support.helpers import (
     calculate_container_name,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
     wait_for_text_in_monitor,
@@ -22,7 +22,7 @@ from support.helpers import (
 )
 
 
-def test_power_management_no_sudo(coi_binary, cleanup_containers, workspace_dir, dummy_image):
+def test_power_management_no_sudo(clincus_binary, cleanup_containers, workspace_dir, dummy_image):
     """
     Test that shutdown/poweroff/reboot work without sudo via wrapper scripts.
 
@@ -41,8 +41,8 @@ def test_power_management_no_sudo(coi_binary, cleanup_containers, workspace_dir,
 
     # === Phase 1: Start ephemeral session ===
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell", "--image", dummy_image],
         cwd=workspace_dir,
         env=env,
@@ -145,7 +145,7 @@ def test_power_management_no_sudo(coi_binary, cleanup_containers, workspace_dir,
     time.sleep(5)
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

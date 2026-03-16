@@ -1,24 +1,24 @@
 """
-Test for coi run - no command provided.
+Test for clincus run - no command provided.
 
 Tests that:
-1. Run coi run without a command
+1. Run clincus run without a command
 2. Verify it fails with usage error
 """
 
 import subprocess
 
 
-def test_run_no_command(coi_binary, cleanup_containers):
+def test_run_no_command(clincus_binary, cleanup_containers):
     """
-    Test that coi run without command shows error.
+    Test that clincus run without command shows error.
 
     Flow:
-    1. Run coi run (no command)
+    1. Run clincus run (no command)
     2. Verify it fails with usage message
     """
     result = subprocess.run(
-        [coi_binary, "run"],
+        [clincus_binary, "run"],
         capture_output=True,
         text=True,
         timeout=30,

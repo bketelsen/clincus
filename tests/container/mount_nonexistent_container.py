@@ -1,5 +1,5 @@
 """
-Test for coi container mount - fails for nonexistent container.
+Test for clincus container mount - fails for nonexistent container.
 
 Tests that:
 1. Try to mount into nonexistent container
@@ -10,7 +10,7 @@ import subprocess
 import tempfile
 
 
-def test_mount_nonexistent_container(coi_binary, cleanup_containers):
+def test_mount_nonexistent_container(clincus_binary, cleanup_containers):
     """
     Test that mounting into nonexistent container fails.
 
@@ -25,10 +25,10 @@ def test_mount_nonexistent_container(coi_binary, cleanup_containers):
 
     with tempfile.TemporaryDirectory() as tmpdir:
         # === Phase 2: Try to mount into nonexistent container ===
-        # Syntax: coi container mount <name> <device-name> <source> <path>
+        # Syntax: clincus container mount <name> <device-name> <source> <path>
 
         result = subprocess.run(
-            [coi_binary, "container", "mount", nonexistent_name, "test-mount", tmpdir, "/mnt/test"],
+            [clincus_binary, "container", "mount", nonexistent_name, "test-mount", tmpdir, "/mnt/test"],
             capture_output=True,
             text=True,
             timeout=30,

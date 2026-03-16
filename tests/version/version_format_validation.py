@@ -1,8 +1,8 @@
 """
-Test for coi version - format validation.
+Test for clincus version - format validation.
 
 Tests that:
-1. Run coi version
+1. Run clincus version
 2. Verify version string matches expected format (semver)
 3. Verify repository URL format
 """
@@ -11,17 +11,17 @@ import re
 import subprocess
 
 
-def test_version_format_validation(coi_binary):
+def test_version_format_validation(clincus_binary):
     """
     Test version output format with regex validation.
 
     Flow:
-    1. Run coi version
-    2. Verify first line matches version format: claude-on-incus (coi) vX.Y.Z
+    1. Run clincus version
+    2. Verify first line matches version format: claude-on-incus (clincus) vX.Y.Z
     3. Verify second line is GitHub repository URL
     """
     result = subprocess.run(
-        [coi_binary, "version"],
+        [clincus_binary, "version"],
         capture_output=True,
         text=True,
         timeout=10,
@@ -33,13 +33,13 @@ def test_version_format_validation(coi_binary):
 
     assert len(lines) == 2, f"Should have exactly 2 lines. Got:\n{result.stdout}"
 
-    # Verify first line format: code-on-incus (coi) vX.Y.Z
+    # Verify first line format: code-on-incus (clincus) vX.Y.Z
     # Allow various version formats:
     # - vX.Y.Z (tagged release)
     # - vX.Y.Z-N-gHASH (commits after tag)
     # - vX.Y.Z-dirty (uncommitted changes)
     # - vdev (development build without tags)
-    version_pattern = r"^code-on-incus \(coi\) v(\d+\.\d+\.\d+(-\d+-g[0-9a-f]+)?(-dirty)?|dev)$"
+    version_pattern = r"^code-on-incus \(clincus\) v(\d+\.\d+\.\d+(-\d+-g[0-9a-f]+)?(-dirty)?|dev)$"
     assert re.match(version_pattern, lines[0]), (
         f"First line should match pattern '{version_pattern}'. Got: {lines[0]}"
     )

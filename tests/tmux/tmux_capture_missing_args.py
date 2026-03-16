@@ -1,5 +1,5 @@
 """
-Test for coi tmux capture - error when missing required arguments.
+Test for clincus tmux capture - error when missing required arguments.
 
 Tests that:
 1. Try to use tmux capture with no arguments
@@ -9,19 +9,19 @@ Tests that:
 import subprocess
 
 
-def test_tmux_capture_missing_args(coi_binary, cleanup_containers):
+def test_tmux_capture_missing_args(clincus_binary, cleanup_containers):
     """
     Test tmux capture fails when session name is missing.
 
     Flow:
-    1. Try coi tmux capture with no args
+    1. Try clincus tmux capture with no args
     2. Verify usage/error shown
     """
 
     # === Phase 1: No arguments ===
 
     result = subprocess.run(
-        [coi_binary, "tmux", "capture"],
+        [clincus_binary, "tmux", "capture"],
         capture_output=True,
         text=True,
         timeout=30,

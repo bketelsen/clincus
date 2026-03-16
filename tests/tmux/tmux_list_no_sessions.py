@@ -1,5 +1,5 @@
 """
-Test for coi tmux list - when no tmux sessions exist.
+Test for clincus tmux list - when no tmux sessions exist.
 
 Tests that:
 1. Ensure no containers exist
@@ -10,19 +10,19 @@ Tests that:
 import subprocess
 
 
-def test_tmux_list_no_sessions(coi_binary, cleanup_containers):
+def test_tmux_list_no_sessions(clincus_binary, cleanup_containers):
     """
     Test listing tmux sessions when none exist.
 
     Flow:
-    1. Run coi tmux list with no containers
+    1. Run clincus tmux list with no containers
     2. Verify appropriate message shown
     """
 
     # === Phase 1: List tmux sessions (should be none) ===
 
     result = subprocess.run(
-        [coi_binary, "tmux", "list"],
+        [clincus_binary, "tmux", "list"],
         capture_output=True,
         text=True,
         timeout=30,

@@ -1,5 +1,5 @@
 """
-Test for coi run - with single environment variable.
+Test for clincus run - with single environment variable.
 
 Tests that:
 1. Run command with -e flag to set env var
@@ -9,17 +9,17 @@ Tests that:
 import subprocess
 
 
-def test_run_with_env(coi_binary, cleanup_containers, workspace_dir):
+def test_run_with_env(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test running command with environment variables.
 
     Flow:
-    1. Run coi run -e MY_VAR=test123 env
+    1. Run clincus run -e MY_VAR=test123 env
     2. Verify MY_VAR appears in output
     """
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,

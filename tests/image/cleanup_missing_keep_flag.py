@@ -1,24 +1,24 @@
 """
-Test for coi image cleanup - missing --keep flag.
+Test for clincus image cleanup - missing --keep flag.
 
 Tests that:
-1. Run coi image cleanup without --keep
+1. Run clincus image cleanup without --keep
 2. Verify it fails with error about required flag
 """
 
 import subprocess
 
 
-def test_cleanup_missing_keep_flag(coi_binary, cleanup_containers):
+def test_cleanup_missing_keep_flag(clincus_binary, cleanup_containers):
     """
     Test that cleanup without --keep flag fails.
 
     Flow:
-    1. Run coi image cleanup prefix (no --keep)
+    1. Run clincus image cleanup prefix (no --keep)
     2. Verify it fails with appropriate error
     """
     result = subprocess.run(
-        [coi_binary, "image", "cleanup", "test-prefix-"],
+        [clincus_binary, "image", "cleanup", "test-prefix-"],
         capture_output=True,
         text=True,
         timeout=30,

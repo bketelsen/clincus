@@ -1,9 +1,9 @@
 """
-Test for coi clean --sessions - cleans saved session data.
+Test for clincus clean --sessions - cleans saved session data.
 
 Tests that:
 1. Create a session directory with data
-2. Run coi clean --sessions
+2. Run clincus clean --sessions
 3. Verify session data is removed
 """
 
@@ -15,7 +15,7 @@ from pexpect import EOF, TIMEOUT
 from support.helpers import (
     calculate_container_name,
     send_prompt,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
     wait_for_text_in_monitor,
@@ -23,14 +23,14 @@ from support.helpers import (
 )
 
 
-def test_clean_sessions_flag(coi_binary, cleanup_containers, workspace_dir):
+def test_clean_sessions_flag(clincus_binary, cleanup_containers, workspace_dir):
     """
-    Test that coi clean --sessions cleans saved session data.
+    Test that clincus clean --sessions cleans saved session data.
 
     Flow:
     1. Start a session and poweroff (saves session)
     2. Verify session is saved
-    3. Run coi clean --sessions --force
+    3. Run clincus clean --sessions --force
     4. Verify session data is removed
     """
     env = {"COI_USE_DUMMY": "1"}
@@ -38,8 +38,8 @@ def test_clean_sessions_flag(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 1: Create a session ===
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell"],
         cwd=workspace_dir,
         env=env,
@@ -79,7 +79,7 @@ def test_clean_sessions_flag(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 2: Verify session exists ===
 
     result = subprocess.run(
-        [coi_binary, "list", "--all"],
+        [clincus_binary, "list", "--all"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -90,20 +90,20 @@ def test_clean_sessions_flag(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 3: Clean sessions ===
 
     result = subprocess.run(
-        [coi_binary, "clean", "--sessions", "--force"],
+        [clincus_binary, "clean", "--sessions", "--force"],
         capture_output=True,
         text=True,
         timeout=60,
     )
 
-    assert result.returncode == 0, f"coi clean --sessions should succeed. stderr: {result.stderr}"
+    assert result.returncode == 0, f"clincus clean --sessions should succeed. stderr: {result.stderr}"
 
     time.sleep(2)
 
     # === Phase 4: Verify sessions are cleaned ===
 
     result = subprocess.run(
-        [coi_binary, "list", "--all"],
+        [clincus_binary, "list", "--all"],
         capture_output=True,
         text=True,
         timeout=30,

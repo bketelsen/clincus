@@ -1,5 +1,5 @@
 """
-Test for coi kill --force - skip confirmation for single container.
+Test for clincus kill --force - skip confirmation for single container.
 
 Tests that:
 1. Launch a container
@@ -13,7 +13,7 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_kill_with_force_flag(coi_binary, cleanup_containers, workspace_dir):
+def test_kill_with_force_flag(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that --force skips confirmation.
 
@@ -27,7 +27,7 @@ def test_kill_with_force_flag(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -39,7 +39,7 @@ def test_kill_with_force_flag(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 2: Kill with --force ===
 
     result = subprocess.run(
-        [coi_binary, "kill", "--force", container_name],
+        [clincus_binary, "kill", "--force", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -54,7 +54,7 @@ def test_kill_with_force_flag(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 3: Verify deleted ===
 
     result = subprocess.run(
-        [coi_binary, "container", "exists", container_name],
+        [clincus_binary, "container", "exists", container_name],
         capture_output=True,
         text=True,
         timeout=30,

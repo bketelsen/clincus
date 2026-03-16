@@ -1,9 +1,9 @@
 """
-Test for coi list - shows running container info.
+Test for clincus list - shows running container info.
 
 Tests that:
 1. Launch a container
-2. Run coi list
+2. Run clincus list
 3. Verify it shows container with status, created time, image
 """
 
@@ -13,13 +13,13 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_list_running_container(coi_binary, cleanup_containers, workspace_dir):
+def test_list_running_container(clincus_binary, cleanup_containers, workspace_dir):
     """
-    Test that coi list shows running container details.
+    Test that clincus list shows running container details.
 
     Flow:
     1. Launch a container
-    2. Run coi list
+    2. Run clincus list
     3. Verify container appears with status "Running"
     4. Verify shows created time and image info
     5. Cleanup
@@ -29,7 +29,7 @@ def test_list_running_container(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -41,7 +41,7 @@ def test_list_running_container(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 2: Run list ===
 
     result = subprocess.run(
-        [coi_binary, "list"],
+        [clincus_binary, "list"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -68,7 +68,7 @@ def test_list_running_container(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 4: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

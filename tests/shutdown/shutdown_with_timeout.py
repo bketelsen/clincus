@@ -1,5 +1,5 @@
 """
-Test for coi shutdown --timeout flag.
+Test for clincus shutdown --timeout flag.
 
 Tests that:
 1. Launch a container
@@ -13,13 +13,13 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_shutdown_with_timeout(coi_binary, cleanup_containers, workspace_dir):
+def test_shutdown_with_timeout(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test shutting down with custom timeout.
 
     Flow:
     1. Launch a container
-    2. Run coi shutdown --timeout=5 <container>
+    2. Run clincus shutdown --timeout=5 <container>
     3. Verify timeout is shown in output
     """
     slot = 1
@@ -27,7 +27,7 @@ def test_shutdown_with_timeout(coi_binary, cleanup_containers, workspace_dir):
 
     # Launch a container
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -38,7 +38,7 @@ def test_shutdown_with_timeout(coi_binary, cleanup_containers, workspace_dir):
 
     # Shutdown with custom timeout
     result = subprocess.run(
-        [coi_binary, "shutdown", "--timeout=5", container_name],
+        [clincus_binary, "shutdown", "--timeout=5", container_name],
         capture_output=True,
         text=True,
         timeout=120,

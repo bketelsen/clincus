@@ -1,5 +1,5 @@
 """
-Test for coi image cleanup - full lifecycle with versioned images.
+Test for clincus image cleanup - full lifecycle with versioned images.
 
 Tests that:
 1. Create multiple versioned images
@@ -13,7 +13,7 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_cleanup_keeps_recent_versions(coi_binary, cleanup_containers, workspace_dir):
+def test_cleanup_keeps_recent_versions(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test cleanup keeps only the most recent N versions.
 
@@ -31,7 +31,7 @@ def test_cleanup_keeps_recent_versions(coi_binary, cleanup_containers, workspace
     # === Phase 1: Launch and stop container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -41,7 +41,7 @@ def test_cleanup_keeps_recent_versions(coi_binary, cleanup_containers, workspace
     time.sleep(3)
 
     result = subprocess.run(
-        [coi_binary, "container", "stop", container_name],
+        [clincus_binary, "container", "stop", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -59,7 +59,7 @@ def test_cleanup_keeps_recent_versions(coi_binary, cleanup_containers, workspace
         image_name = f"{image_prefix}{timestamp}"
 
         result = subprocess.run(
-            [coi_binary, "image", "publish", container_name, image_name],
+            [clincus_binary, "image", "publish", container_name, image_name],
             capture_output=True,
             text=True,
             timeout=120,
@@ -76,12 +76,12 @@ def test_cleanup_keeps_recent_versions(coi_binary, cleanup_containers, workspace
         # Cleanup whatever we created
         for img in created_images:
             subprocess.run(
-                [coi_binary, "image", "delete", img],
+                [clincus_binary, "image", "delete", img],
                 capture_output=True,
                 timeout=60,
             )
         subprocess.run(
-            [coi_binary, "container", "delete", container_name, "--force"],
+            [clincus_binary, "container", "delete", container_name, "--force"],
             capture_output=True,
             timeout=30,
         )
@@ -90,7 +90,7 @@ def test_cleanup_keeps_recent_versions(coi_binary, cleanup_containers, workspace
     # === Phase 3: Run cleanup keeping only 1 ===
 
     result = subprocess.run(
-        [coi_binary, "image", "cleanup", image_prefix, "--keep", "1"],
+        [clincus_binary, "image", "cleanup", image_prefix, "--keep", "1"],
         capture_output=True,
         text=True,
         timeout=60,
@@ -107,7 +107,7 @@ def test_cleanup_keeps_recent_versions(coi_binary, cleanup_containers, workspace
     remaining_count = 0
     for img in created_images:
         result = subprocess.run(
-            [coi_binary, "image", "exists", img],
+            [clincus_binary, "image", "exists", img],
             capture_output=True,
             timeout=30,
         )
@@ -115,7 +115,7 @@ def test_cleanup_keeps_recent_versions(coi_binary, cleanup_containers, workspace
             remaining_count += 1
             # Delete the remaining image for cleanup
             subprocess.run(
-                [coi_binary, "image", "delete", img],
+                [clincus_binary, "image", "delete", img],
                 capture_output=True,
                 timeout=60,
             )
@@ -127,7 +127,7 @@ def test_cleanup_keeps_recent_versions(coi_binary, cleanup_containers, workspace
     # === Phase 5: Cleanup container ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

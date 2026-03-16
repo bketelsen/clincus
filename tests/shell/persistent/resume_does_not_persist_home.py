@@ -1,5 +1,5 @@
 """
-Test for coi shell --persistent - resume does NOT persist home directory files.
+Test for clincus shell --persistent - resume does NOT persist home directory files.
 
 Verifies that:
 1. Start dummy in persistent mode, exit to bash
@@ -10,7 +10,7 @@ Verifies that:
 6. The file ~/test.txt should NOT exist (only .claude is restored, not home dir)
 
 This tests that --resume restores session data, not container state.
-For container state preservation, use coi attach on a kept container.
+For container state preservation, use clincus attach on a kept container.
 """
 
 import subprocess
@@ -22,7 +22,7 @@ from support.helpers import (
     calculate_container_name,
     get_container_list,
     send_prompt,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
     wait_for_text_in_monitor,
@@ -32,13 +32,13 @@ from support.helpers import (
 
 
 def test_persistent_resume_does_not_persist_home_files(
-    coi_binary, cleanup_containers, workspace_dir
+    clincus_binary, cleanup_containers, workspace_dir
 ):
     """
     Test that persistent resume only restores .claude, not other home files.
 
     Flow:
-    1. Start coi shell --persistent
+    1. Start clincus shell --persistent
     2. Exit claude to bash
     3. Create ~/test.txt file
     4. Poweroff (container kept)
@@ -51,8 +51,8 @@ def test_persistent_resume_does_not_persist_home_files(
 
     # === Phase 1: Create file in persistent container ===
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell", "--persistent"],
         cwd=workspace_dir,
         env=env,
@@ -117,7 +117,7 @@ def test_persistent_resume_does_not_persist_home_files(
 
     # In persistent mode, container is kept - delete it to test pure resume
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
@@ -125,8 +125,8 @@ def test_persistent_resume_does_not_persist_home_files(
 
     # === Phase 2: Resume and verify file is gone ===
 
-    child2 = spawn_coi(
-        coi_binary,
+    child2 = spawn_clincus(
+        clincus_binary,
         ["shell", "--persistent", "--resume"],
         cwd=workspace_dir,
         env=env,
@@ -186,7 +186,7 @@ def test_persistent_resume_does_not_persist_home_files(
     # Force delete container
     container_name2 = calculate_container_name(workspace_dir, 1)
     subprocess.run(
-        [coi_binary, "container", "delete", container_name2, "--force"],
+        [clincus_binary, "container", "delete", container_name2, "--force"],
         capture_output=True,
         timeout=30,
     )

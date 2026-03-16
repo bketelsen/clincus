@@ -1,5 +1,5 @@
 """
-Test for coi kill - killing same container twice.
+Test for clincus kill - killing same container twice.
 
 Tests that:
 1. Launch a container
@@ -14,7 +14,7 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_kill_idempotent(coi_binary, cleanup_containers, workspace_dir):
+def test_kill_idempotent(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that killing a container twice is handled gracefully.
 
@@ -29,7 +29,7 @@ def test_kill_idempotent(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -41,7 +41,7 @@ def test_kill_idempotent(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 2: First kill ===
 
     result = subprocess.run(
-        [coi_binary, "kill", container_name],
+        [clincus_binary, "kill", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -51,7 +51,7 @@ def test_kill_idempotent(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 3: Second kill (container no longer exists) ===
 
     result = subprocess.run(
-        [coi_binary, "kill", container_name],
+        [clincus_binary, "kill", container_name],
         capture_output=True,
         text=True,
         timeout=60,

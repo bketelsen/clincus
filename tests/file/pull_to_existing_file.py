@@ -1,5 +1,5 @@
 """
-Test for coi file pull - pull to existing local file (overwrite).
+Test for clincus file pull - pull to existing local file (overwrite).
 
 Tests that:
 1. Launch a container
@@ -16,7 +16,7 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_pull_to_existing_file(coi_binary, cleanup_containers, workspace_dir):
+def test_pull_to_existing_file(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that pulling overwrites existing local file.
 
@@ -33,7 +33,7 @@ def test_pull_to_existing_file(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -47,7 +47,7 @@ def test_pull_to_existing_file(coi_binary, cleanup_containers, workspace_dir):
     new_content = "new-content-from-container-99999"
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,
@@ -72,7 +72,7 @@ def test_pull_to_existing_file(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 4: Pull file (overwrite) ===
 
     result = subprocess.run(
-        [coi_binary, "file", "pull", f"{container_name}:/tmp/overwrite-test.txt", local_file],
+        [clincus_binary, "file", "pull", f"{container_name}:/tmp/overwrite-test.txt", local_file],
         capture_output=True,
         text=True,
         timeout=30,
@@ -91,7 +91,7 @@ def test_pull_to_existing_file(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 6: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

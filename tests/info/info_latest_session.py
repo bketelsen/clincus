@@ -1,9 +1,9 @@
 """
-Test for coi info - show info for latest session (no args).
+Test for clincus info - show info for latest session (no args).
 
 Tests that:
 1. Create a session
-2. Run coi info without arguments
+2. Run clincus info without arguments
 3. Verify it shows the latest session
 """
 
@@ -15,19 +15,19 @@ from pexpect import EOF, TIMEOUT
 
 from support.helpers import (
     calculate_container_name,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
 )
 
 
-def test_info_latest_session(coi_binary, cleanup_containers, workspace_dir):
+def test_info_latest_session(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test showing info for the latest session (no session ID provided).
 
     Flow:
     1. Start a shell session and exit
-    2. Run coi info (no args)
+    2. Run clincus info (no args)
     3. Verify it shows session information
     4. Cleanup
     """
@@ -36,8 +36,8 @@ def test_info_latest_session(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 1: Start and stop a session ===
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell"],
         cwd=workspace_dir,
         env=env,
@@ -69,10 +69,10 @@ def test_info_latest_session(coi_binary, cleanup_containers, workspace_dir):
 
     time.sleep(5)
 
-    # === Phase 2: Run coi info without arguments ===
+    # === Phase 2: Run clincus info without arguments ===
 
     result = subprocess.run(
-        [coi_binary, "info"],
+        [clincus_binary, "info"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -101,7 +101,7 @@ def test_info_latest_session(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 4: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

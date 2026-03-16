@@ -1,5 +1,5 @@
 """
-Test for coi file push - push binary file.
+Test for clincus file push - push binary file.
 
 Tests that:
 1. Launch a container
@@ -16,7 +16,7 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_push_binary_file(coi_binary, cleanup_containers, workspace_dir):
+def test_push_binary_file(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test pushing a binary file to a container.
 
@@ -32,7 +32,7 @@ def test_push_binary_file(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -55,7 +55,7 @@ def test_push_binary_file(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 3: Push file to container ===
 
     result = subprocess.run(
-        [coi_binary, "file", "push", local_file, f"{container_name}:/tmp/binary-test.bin"],
+        [clincus_binary, "file", "push", local_file, f"{container_name}:/tmp/binary-test.bin"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -66,7 +66,7 @@ def test_push_binary_file(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 4: Verify file content via md5sum ===
 
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--", "md5sum", "/tmp/binary-test.bin"],
+        [clincus_binary, "container", "exec", container_name, "--", "md5sum", "/tmp/binary-test.bin"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -82,7 +82,7 @@ def test_push_binary_file(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 5: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

@@ -1,5 +1,5 @@
 """
-Test for coi snapshot restore - restoring container from snapshot.
+Test for clincus snapshot restore - restoring container from snapshot.
 
 Tests that:
 1. Restore requires stopped container
@@ -16,7 +16,7 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_snapshot_restore_requires_stopped_container(coi_binary, cleanup_containers, workspace_dir):
+def test_snapshot_restore_requires_stopped_container(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that restore fails when container is running.
 
@@ -32,7 +32,7 @@ def test_snapshot_restore_requires_stopped_container(coi_binary, cleanup_contain
 
     # === Phase 1: Launch container ===
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -42,7 +42,7 @@ def test_snapshot_restore_requires_stopped_container(coi_binary, cleanup_contain
 
     # === Phase 2: Create snapshot ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "create", snapshot_name, "-c", container_name],
+        [clincus_binary, "snapshot", "create", snapshot_name, "-c", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -51,7 +51,7 @@ def test_snapshot_restore_requires_stopped_container(coi_binary, cleanup_contain
 
     # === Phase 3: Try to restore while running ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "restore", snapshot_name, "-c", container_name, "-f"],
+        [clincus_binary, "snapshot", "restore", snapshot_name, "-c", container_name, "-f"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -61,13 +61,13 @@ def test_snapshot_restore_requires_stopped_container(coi_binary, cleanup_contain
 
     # === Cleanup ===
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
 
 
-def test_snapshot_restore_with_force(coi_binary, cleanup_containers, workspace_dir):
+def test_snapshot_restore_with_force(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test successful restore with --force flag (skip confirmation).
 
@@ -85,7 +85,7 @@ def test_snapshot_restore_with_force(coi_binary, cleanup_containers, workspace_d
 
     # === Phase 1: Launch container ===
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -95,7 +95,7 @@ def test_snapshot_restore_with_force(coi_binary, cleanup_containers, workspace_d
 
     # === Phase 2: Create snapshot ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "create", snapshot_name, "-c", container_name],
+        [clincus_binary, "snapshot", "create", snapshot_name, "-c", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -104,7 +104,7 @@ def test_snapshot_restore_with_force(coi_binary, cleanup_containers, workspace_d
 
     # === Phase 3: Create a file after snapshot ===
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--", "touch", "/tmp/after-snapshot.txt"],
+        [clincus_binary, "container", "exec", container_name, "--", "touch", "/tmp/after-snapshot.txt"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -113,7 +113,7 @@ def test_snapshot_restore_with_force(coi_binary, cleanup_containers, workspace_d
 
     # Verify file exists
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--", "ls", "/tmp/after-snapshot.txt"],
+        [clincus_binary, "container", "exec", container_name, "--", "ls", "/tmp/after-snapshot.txt"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -122,7 +122,7 @@ def test_snapshot_restore_with_force(coi_binary, cleanup_containers, workspace_d
 
     # === Phase 4: Stop container ===
     result = subprocess.run(
-        [coi_binary, "container", "stop", container_name],
+        [clincus_binary, "container", "stop", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -131,7 +131,7 @@ def test_snapshot_restore_with_force(coi_binary, cleanup_containers, workspace_d
 
     # === Phase 5: Restore from snapshot with --force ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "restore", snapshot_name, "-c", container_name, "-f"],
+        [clincus_binary, "snapshot", "restore", snapshot_name, "-c", container_name, "-f"],
         capture_output=True,
         text=True,
         timeout=60,
@@ -141,7 +141,7 @@ def test_snapshot_restore_with_force(coi_binary, cleanup_containers, workspace_d
 
     # === Phase 6: Start container and verify file is gone ===
     result = subprocess.run(
-        [coi_binary, "container", "start", container_name],
+        [clincus_binary, "container", "start", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -151,7 +151,7 @@ def test_snapshot_restore_with_force(coi_binary, cleanup_containers, workspace_d
 
     # File should not exist after restore (was created after snapshot)
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--", "ls", "/tmp/after-snapshot.txt"],
+        [clincus_binary, "container", "exec", container_name, "--", "ls", "/tmp/after-snapshot.txt"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -160,13 +160,13 @@ def test_snapshot_restore_with_force(coi_binary, cleanup_containers, workspace_d
 
     # === Cleanup ===
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
 
 
-def test_snapshot_restore_nonexistent_snapshot(coi_binary, cleanup_containers, workspace_dir):
+def test_snapshot_restore_nonexistent_snapshot(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that restoring nonexistent snapshot fails.
 
@@ -181,7 +181,7 @@ def test_snapshot_restore_nonexistent_snapshot(coi_binary, cleanup_containers, w
 
     # === Phase 1: Launch container ===
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -191,7 +191,7 @@ def test_snapshot_restore_nonexistent_snapshot(coi_binary, cleanup_containers, w
 
     # === Phase 2: Stop container ===
     result = subprocess.run(
-        [coi_binary, "container", "stop", container_name],
+        [clincus_binary, "container", "stop", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -200,7 +200,7 @@ def test_snapshot_restore_nonexistent_snapshot(coi_binary, cleanup_containers, w
 
     # === Phase 3: Try to restore nonexistent snapshot ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "restore", "nonexistent-snapshot", "-c", container_name, "-f"],
+        [clincus_binary, "snapshot", "restore", "nonexistent-snapshot", "-c", container_name, "-f"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -210,18 +210,18 @@ def test_snapshot_restore_nonexistent_snapshot(coi_binary, cleanup_containers, w
 
     # === Cleanup ===
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
 
 
-def test_snapshot_restore_nonexistent_container(coi_binary):
+def test_snapshot_restore_nonexistent_container(clincus_binary):
     """
     Test that restore fails for nonexistent container.
     """
     result = subprocess.run(
-        [coi_binary, "snapshot", "restore", "test-snap", "-c", "nonexistent-container-xyz", "-f"],
+        [clincus_binary, "snapshot", "restore", "test-snap", "-c", "nonexistent-container-xyz", "-f"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -230,7 +230,7 @@ def test_snapshot_restore_nonexistent_container(coi_binary):
     assert "not found" in result.stderr, "Should mention container not found"
 
 
-def test_snapshot_restore_recovers_deleted_file(coi_binary, cleanup_containers, workspace_dir):
+def test_snapshot_restore_recovers_deleted_file(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that restoring snapshot recovers files that were deleted after snapshot.
 
@@ -252,7 +252,7 @@ def test_snapshot_restore_recovers_deleted_file(coi_binary, cleanup_containers, 
 
     # === Phase 1: Launch container ===
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -263,7 +263,7 @@ def test_snapshot_restore_recovers_deleted_file(coi_binary, cleanup_containers, 
     # === Phase 2: Create test file BEFORE snapshot ===
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,
@@ -280,7 +280,7 @@ def test_snapshot_restore_recovers_deleted_file(coi_binary, cleanup_containers, 
 
     # Verify file exists and has correct content
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--capture", "--", "cat", test_file],
+        [clincus_binary, "container", "exec", container_name, "--capture", "--", "cat", test_file],
         capture_output=True,
         text=True,
         timeout=30,
@@ -293,7 +293,7 @@ def test_snapshot_restore_recovers_deleted_file(coi_binary, cleanup_containers, 
 
     # === Phase 3: Create snapshot (with file) ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "create", snapshot_name, "-c", container_name],
+        [clincus_binary, "snapshot", "create", snapshot_name, "-c", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -302,7 +302,7 @@ def test_snapshot_restore_recovers_deleted_file(coi_binary, cleanup_containers, 
 
     # === Phase 4: Delete the test file ===
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--", "rm", test_file],
+        [clincus_binary, "container", "exec", container_name, "--", "rm", test_file],
         capture_output=True,
         text=True,
         timeout=30,
@@ -311,7 +311,7 @@ def test_snapshot_restore_recovers_deleted_file(coi_binary, cleanup_containers, 
 
     # Verify file is gone
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--", "ls", test_file],
+        [clincus_binary, "container", "exec", container_name, "--", "ls", test_file],
         capture_output=True,
         text=True,
         timeout=30,
@@ -320,7 +320,7 @@ def test_snapshot_restore_recovers_deleted_file(coi_binary, cleanup_containers, 
 
     # === Phase 5: Stop container ===
     result = subprocess.run(
-        [coi_binary, "container", "stop", container_name],
+        [clincus_binary, "container", "stop", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -329,7 +329,7 @@ def test_snapshot_restore_recovers_deleted_file(coi_binary, cleanup_containers, 
 
     # === Phase 6: Restore from snapshot ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "restore", snapshot_name, "-c", container_name, "-f"],
+        [clincus_binary, "snapshot", "restore", snapshot_name, "-c", container_name, "-f"],
         capture_output=True,
         text=True,
         timeout=60,
@@ -339,7 +339,7 @@ def test_snapshot_restore_recovers_deleted_file(coi_binary, cleanup_containers, 
 
     # === Phase 7: Start container ===
     result = subprocess.run(
-        [coi_binary, "container", "start", container_name],
+        [clincus_binary, "container", "start", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -349,7 +349,7 @@ def test_snapshot_restore_recovers_deleted_file(coi_binary, cleanup_containers, 
 
     # === Phase 8: Verify file is restored with original content ===
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--capture", "--", "cat", test_file],
+        [clincus_binary, "container", "exec", container_name, "--capture", "--", "cat", test_file],
         capture_output=True,
         text=True,
         timeout=30,
@@ -362,13 +362,13 @@ def test_snapshot_restore_recovers_deleted_file(coi_binary, cleanup_containers, 
 
     # === Cleanup ===
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
 
 
-def test_snapshot_restore_missing_name(coi_binary, cleanup_containers, workspace_dir):
+def test_snapshot_restore_missing_name(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that restore requires snapshot name argument.
     """
@@ -376,7 +376,7 @@ def test_snapshot_restore_missing_name(coi_binary, cleanup_containers, workspace
 
     # === Phase 1: Launch container ===
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -386,7 +386,7 @@ def test_snapshot_restore_missing_name(coi_binary, cleanup_containers, workspace
 
     # === Phase 2: Try to restore without name ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "restore", "-c", container_name],
+        [clincus_binary, "snapshot", "restore", "-c", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -399,7 +399,7 @@ def test_snapshot_restore_missing_name(coi_binary, cleanup_containers, workspace
 
     # === Cleanup ===
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

@@ -4,7 +4,7 @@ import subprocess
 from pathlib import Path
 
 
-def test_config_default_mounts(coi_binary, cleanup_containers, workspace_dir, tmp_path):
+def test_config_default_mounts(clincus_binary, cleanup_containers, workspace_dir, tmp_path):
     """Test that config file default mounts are applied."""
     # Create mount directories
     mount1 = tmp_path / "mount1"
@@ -14,7 +14,7 @@ def test_config_default_mounts(coi_binary, cleanup_containers, workspace_dir, tm
     (mount1 / "file1.txt").write_text("content1")
     (mount2 / "file2.txt").write_text("content2")
 
-    # Create config file in current working directory (.coi.toml)
+    # Create config file in current working directory (.clincus.toml)
     # Config is loaded from cwd, not from workspace directory
     config_content = f"""
 [mounts]
@@ -27,13 +27,13 @@ host = "{mount2}"
 container = "/mnt/data2"
 """
 
-    config_file = Path(workspace_dir) / ".coi.toml"
+    config_file = Path(workspace_dir) / ".clincus.toml"
     config_file.write_text(config_content)
 
     # Run from workspace directory so config is loaded
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--",
             "sh",
@@ -43,7 +43,7 @@ container = "/mnt/data2"
         capture_output=True,
         text=True,
         timeout=120,
-        cwd=workspace_dir,  # Run from workspace directory to load .coi.toml
+        cwd=workspace_dir,  # Run from workspace directory to load .clincus.toml
     )
 
     assert result.returncode == 0, f"stdout: {result.stdout}\nstderr: {result.stderr}"
@@ -51,7 +51,7 @@ container = "/mnt/data2"
     assert "content2" in result.stdout
 
 
-def test_cli_overrides_config_mount(coi_binary, cleanup_containers, workspace_dir, tmp_path):
+def test_cli_overrides_config_mount(clincus_binary, cleanup_containers, workspace_dir, tmp_path):
     """Test that CLI --mount overrides config mount for same container path."""
     config_mount = tmp_path / "config-data"
     cli_mount = tmp_path / "cli-data"
@@ -66,16 +66,16 @@ def test_cli_overrides_config_mount(coi_binary, cleanup_containers, workspace_di
 host = "{config_mount}"
 container = "/data"
 """
-    config_file = Path(workspace_dir) / ".coi.toml"
+    config_file = Path(workspace_dir) / ".clincus.toml"
     config_file.write_text(config_content)
 
     # CLI also mounts to /data (should override)
     result = subprocess.run(
-        [coi_binary, "run", "--mount", f"{cli_mount}:/data", "--", "cat", "/data/file.txt"],
+        [clincus_binary, "run", "--mount", f"{cli_mount}:/data", "--", "cat", "/data/file.txt"],
         capture_output=True,
         text=True,
         timeout=120,
-        cwd=workspace_dir,  # Run from workspace directory to load .coi.toml
+        cwd=workspace_dir,  # Run from workspace directory to load .clincus.toml
     )
 
     assert result.returncode == 0, f"stdout: {result.stdout}\nstderr: {result.stderr}"

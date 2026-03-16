@@ -1,5 +1,5 @@
 """
-Test for coi run - shell command with pipes.
+Test for clincus run - shell command with pipes.
 
 Tests that:
 1. Run command with pipes
@@ -9,17 +9,17 @@ Tests that:
 import subprocess
 
 
-def test_run_pipe_command(coi_binary, cleanup_containers, workspace_dir):
+def test_run_pipe_command(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test running command with pipes.
 
     Flow:
-    1. Run coi run with a pipe command
+    1. Run clincus run with a pipe command
     2. Verify output is correct
     """
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,

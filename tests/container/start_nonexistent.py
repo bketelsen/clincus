@@ -1,5 +1,5 @@
 """
-Test for coi container start - fails for nonexistent container.
+Test for clincus container start - fails for nonexistent container.
 
 Tests that:
 1. Try to start a container that doesn't exist
@@ -9,7 +9,7 @@ Tests that:
 import subprocess
 
 
-def test_start_nonexistent(coi_binary, cleanup_containers):
+def test_start_nonexistent(clincus_binary, cleanup_containers):
     """
     Test that starting nonexistent container fails.
 
@@ -23,7 +23,7 @@ def test_start_nonexistent(coi_binary, cleanup_containers):
     # === Phase 1: Try to start nonexistent container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "start", nonexistent_name],
+        [clincus_binary, "container", "start", nonexistent_name],
         capture_output=True,
         text=True,
         timeout=30,

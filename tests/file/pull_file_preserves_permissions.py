@@ -1,5 +1,5 @@
 """
-Test for coi file pull - pulled file has reasonable permissions.
+Test for clincus file pull - pulled file has reasonable permissions.
 
 Tests that:
 1. Launch a container
@@ -16,7 +16,7 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_pull_file_permissions(coi_binary, cleanup_containers, workspace_dir):
+def test_pull_file_permissions(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that pulled files have reasonable permissions.
 
@@ -32,7 +32,7 @@ def test_pull_file_permissions(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -46,7 +46,7 @@ def test_pull_file_permissions(coi_binary, cleanup_containers, workspace_dir):
     test_content = "permission-test-content"
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,
@@ -65,7 +65,7 @@ def test_pull_file_permissions(coi_binary, cleanup_containers, workspace_dir):
 
     local_file = os.path.join(workspace_dir, "perm-test.txt")
     result = subprocess.run(
-        [coi_binary, "file", "pull", f"{container_name}:/tmp/perm-test.txt", local_file],
+        [clincus_binary, "file", "pull", f"{container_name}:/tmp/perm-test.txt", local_file],
         capture_output=True,
         text=True,
         timeout=30,
@@ -92,7 +92,7 @@ def test_pull_file_permissions(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 5: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

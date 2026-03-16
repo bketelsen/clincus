@@ -1,9 +1,9 @@
 """
-Test for coi info - verify output contains expected fields.
+Test for clincus info - verify output contains expected fields.
 
 Tests that:
 1. Create a session
-2. Run coi info
+2. Run clincus info
 3. Verify output contains: Session ID, Container, Session Path, Resume command
 """
 
@@ -14,19 +14,19 @@ from pexpect import EOF, TIMEOUT
 
 from support.helpers import (
     calculate_container_name,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
 )
 
 
-def test_info_output_fields(coi_binary, cleanup_containers, workspace_dir):
+def test_info_output_fields(clincus_binary, cleanup_containers, workspace_dir):
     """
-    Test that coi info output contains all expected fields.
+    Test that clincus info output contains all expected fields.
 
     Flow:
     1. Start a shell session and exit
-    2. Run coi info
+    2. Run clincus info
     3. Verify output contains expected fields
     4. Cleanup
     """
@@ -35,8 +35,8 @@ def test_info_output_fields(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 1: Start and stop a session ===
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell"],
         cwd=workspace_dir,
         env=env,
@@ -68,10 +68,10 @@ def test_info_output_fields(coi_binary, cleanup_containers, workspace_dir):
 
     time.sleep(5)
 
-    # === Phase 2: Run coi info ===
+    # === Phase 2: Run clincus info ===
 
     result = subprocess.run(
-        [coi_binary, "info"],
+        [clincus_binary, "info"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -99,7 +99,7 @@ def test_info_output_fields(coi_binary, cleanup_containers, workspace_dir):
     )
 
     # Resume command
-    assert "coi shell --resume" in output or "resume" in output.lower(), (
+    assert "clincus shell --resume" in output or "resume" in output.lower(), (
         f"Should show resume command. Got:\n{output}"
     )
 
@@ -111,7 +111,7 @@ def test_info_output_fields(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 4: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

@@ -1,5 +1,5 @@
 """
-Test for coi health exit codes.
+Test for clincus health exit codes.
 
 Tests that:
 1. Exit code 0 for healthy
@@ -14,17 +14,17 @@ import json
 import subprocess
 
 
-def test_health_exit_code_matches_status(coi_binary):
+def test_health_exit_code_matches_status(clincus_binary):
     """
     Test that exit code matches reported status.
 
     Flow:
-    1. Run coi health --format json
+    1. Run clincus health --format json
     2. Parse the status field
     3. Verify exit code matches status
     """
     result = subprocess.run(
-        [coi_binary, "health", "--format", "json"],
+        [clincus_binary, "health", "--format", "json"],
         capture_output=True,
         text=True,
         timeout=120,
@@ -48,17 +48,17 @@ def test_health_exit_code_matches_status(coi_binary):
     )
 
 
-def test_health_summary_matches_checks(coi_binary):
+def test_health_summary_matches_checks(clincus_binary):
     """
     Test that summary counts match actual check results.
 
     Flow:
-    1. Run coi health --format json
+    1. Run clincus health --format json
     2. Count checks by status
     3. Verify summary matches counts
     """
     result = subprocess.run(
-        [coi_binary, "health", "--format", "json"],
+        [clincus_binary, "health", "--format", "json"],
         capture_output=True,
         text=True,
         timeout=120,

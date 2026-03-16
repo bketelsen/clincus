@@ -1,8 +1,8 @@
 """
-Test for coi shell --help - help text validation.
+Test for clincus shell --help - help text validation.
 
 Tests that:
-1. Run coi shell --help
+1. Run clincus shell --help
 2. Verify help text contains expected sections
 3. Verify exit code is 0
 """
@@ -10,17 +10,17 @@ Tests that:
 import subprocess
 
 
-def test_shell_help(coi_binary):
+def test_shell_help(clincus_binary):
     """
     Test shell command help output.
 
     Flow:
-    1. Run coi shell --help
+    1. Run clincus shell --help
     2. Verify exit code is 0
     3. Verify output contains usage, description, and flags
     """
     result = subprocess.run(
-        [coi_binary, "shell", "--help"],
+        [clincus_binary, "shell", "--help"],
         capture_output=True,
         text=True,
         timeout=10,

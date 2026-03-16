@@ -1,5 +1,5 @@
 """
-Test for coi shutdown - verifies container is deleted.
+Test for clincus shutdown - verifies container is deleted.
 
 Tests that:
 1. Launch a container
@@ -13,22 +13,22 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_shutdown_verifies_deletion(coi_binary, cleanup_containers, workspace_dir):
+def test_shutdown_verifies_deletion(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that shutdown properly deletes the container.
 
     Flow:
     1. Launch a container
-    2. Run coi shutdown <container>
+    2. Run clincus shutdown <container>
     3. Verify with 'container exists' that it's gone
-    4. Verify it doesn't appear in 'coi list'
+    4. Verify it doesn't appear in 'clincus list'
     """
     slot = 1
     container_name = calculate_container_name(workspace_dir, slot)
 
     # Launch a container
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -39,7 +39,7 @@ def test_shutdown_verifies_deletion(coi_binary, cleanup_containers, workspace_di
 
     # Verify container exists before shutdown
     result = subprocess.run(
-        [coi_binary, "container", "exists", container_name],
+        [clincus_binary, "container", "exists", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -48,7 +48,7 @@ def test_shutdown_verifies_deletion(coi_binary, cleanup_containers, workspace_di
 
     # Shutdown the container
     result = subprocess.run(
-        [coi_binary, "shutdown", container_name],
+        [clincus_binary, "shutdown", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -60,7 +60,7 @@ def test_shutdown_verifies_deletion(coi_binary, cleanup_containers, workspace_di
 
     # Verify container doesn't exist
     result = subprocess.run(
-        [coi_binary, "container", "exists", container_name],
+        [clincus_binary, "container", "exists", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -69,7 +69,7 @@ def test_shutdown_verifies_deletion(coi_binary, cleanup_containers, workspace_di
 
     # Also verify it doesn't appear in list
     result = subprocess.run(
-        [coi_binary, "list"],
+        [clincus_binary, "list"],
         capture_output=True,
         text=True,
         timeout=30,

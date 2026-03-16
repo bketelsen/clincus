@@ -1,5 +1,5 @@
 """
-Test for coi container delete - fails for nonexistent container.
+Test for clincus container delete - fails for nonexistent container.
 
 Tests that:
 1. Try to delete a container that doesn't exist
@@ -9,7 +9,7 @@ Tests that:
 import subprocess
 
 
-def test_delete_nonexistent(coi_binary, cleanup_containers):
+def test_delete_nonexistent(clincus_binary, cleanup_containers):
     """
     Test that deleting nonexistent container fails.
 
@@ -23,7 +23,7 @@ def test_delete_nonexistent(coi_binary, cleanup_containers):
     # === Phase 1: Try to delete nonexistent container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "delete", nonexistent_name],
+        [clincus_binary, "container", "delete", nonexistent_name],
         capture_output=True,
         text=True,
         timeout=30,

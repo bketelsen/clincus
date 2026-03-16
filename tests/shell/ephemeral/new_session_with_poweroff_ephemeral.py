@@ -1,12 +1,12 @@
 """
-Test for coi shell - ephemeral session with shutdown.
+Test for clincus shell - ephemeral session with shutdown.
 
 Tests the complete lifecycle:
 1. Start dummy in ephemeral mode
 2. Send a message and verify response
 3. Exit to bash shell
 4. Issue sudo shutdown 0
-5. Verify proper cleanup messages from coi
+5. Verify proper cleanup messages from clincus
 6. Verify container is removed
 """
 
@@ -18,7 +18,7 @@ from support.helpers import (
     calculate_container_name,
     get_container_list,
     send_prompt,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
     wait_for_specific_container_deletion,
@@ -27,12 +27,12 @@ from support.helpers import (
 )
 
 
-def test_ephemeral_session_with_shutdown(coi_binary, cleanup_containers, workspace_dir):
+def test_ephemeral_session_with_shutdown(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test ephemeral session lifecycle with sudo shutdown 0.
 
     Flow:
-    1. Start coi shell (ephemeral mode)
+    1. Start clincus shell (ephemeral mode)
     2. Interact with dummy
     3. Exit claude to get to bash
     4. Run sudo shutdown 0 to stop container
@@ -42,8 +42,8 @@ def test_ephemeral_session_with_shutdown(coi_binary, cleanup_containers, workspa
     env = {"COI_USE_DUMMY": "1"}
 
     # Launch ephemeral container
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell"],
         cwd=workspace_dir,
         env=env,

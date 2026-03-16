@@ -1,5 +1,5 @@
 """
-Test for coi run - container cleanup after command.
+Test for clincus run - container cleanup after command.
 
 Tests that:
 1. Run a command
@@ -12,12 +12,12 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_run_cleanup_after(coi_binary, cleanup_containers, workspace_dir):
+def test_run_cleanup_after(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that container is cleaned up after run completes.
 
     Flow:
-    1. Run coi run with specific slot
+    1. Run clincus run with specific slot
     2. After completion, verify container doesn't exist
     """
     # Use a specific slot so we know the container name
@@ -25,7 +25,7 @@ def test_run_cleanup_after(coi_binary, cleanup_containers, workspace_dir):
 
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -49,7 +49,7 @@ def test_run_cleanup_after(coi_binary, cleanup_containers, workspace_dir):
 
     # Verify container doesn't exist (was cleaned up)
     result = subprocess.run(
-        [coi_binary, "container", "exists", container_name],
+        [clincus_binary, "container", "exists", container_name],
         capture_output=True,
         text=True,
         timeout=30,

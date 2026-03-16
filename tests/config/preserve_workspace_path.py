@@ -12,7 +12,7 @@ import time
 from pexpect import EOF, TIMEOUT
 
 from support.helpers import (
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
     wait_for_text_in_monitor,
@@ -20,19 +20,19 @@ from support.helpers import (
 )
 
 
-def test_preserve_workspace_path_enabled(coi_binary, cleanup_containers, workspace_dir):
+def test_preserve_workspace_path_enabled(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that when preserve_workspace_path is enabled, workspace is mounted at host path.
 
     Flow:
     1. Create config with preserve_workspace_path = true
-    2. Start coi shell
+    2. Start clincus shell
     3. Check that workspace is mounted at host path
     """
     env = {"COI_USE_DUMMY": "1"}
 
-    # Create .coi.toml with preserve_workspace_path enabled
-    config_path = os.path.join(workspace_dir, ".coi.toml")
+    # Create .clincus.toml with preserve_workspace_path enabled
+    config_path = os.path.join(workspace_dir, ".clincus.toml")
     with open(config_path, "w") as f:
         f.write(
             """
@@ -42,8 +42,8 @@ preserve_workspace_path = true
         )
 
     # Start shell
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell"],
         cwd=workspace_dir,
         env=env,
@@ -88,19 +88,19 @@ preserve_workspace_path = true
         child.close(force=True)
 
 
-def test_preserve_workspace_path_disabled_default(coi_binary, cleanup_containers, workspace_dir):
+def test_preserve_workspace_path_disabled_default(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that by default (preserve_workspace_path not set), workspace is mounted at /workspace.
 
     Flow:
-    1. Start coi shell without preserve_workspace_path config
+    1. Start clincus shell without preserve_workspace_path config
     2. Check that workspace is mounted at /workspace
     """
     env = {"COI_USE_DUMMY": "1"}
 
     # Start shell (no special config)
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell"],
         cwd=workspace_dir,
         env=env,

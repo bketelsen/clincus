@@ -1,8 +1,8 @@
 """
-Test for coi shutdown --all when no containers exist.
+Test for clincus shutdown --all when no containers exist.
 
 Tests that:
-1. Ensure no coi containers exist
+1. Ensure no clincus containers exist
 2. Run shutdown --all
 3. Verify appropriate message
 """
@@ -10,18 +10,18 @@ Tests that:
 import subprocess
 
 
-def test_shutdown_all_no_containers(coi_binary, cleanup_containers):
+def test_shutdown_all_no_containers(clincus_binary, cleanup_containers):
     """
     Test shutdown --all when no containers exist.
 
     Flow:
     1. First clean up any existing containers
-    2. Run coi shutdown --all --force again
+    2. Run clincus shutdown --all --force again
     3. Verify it shows "No containers to shutdown"
     """
     # First, clean up any containers that may exist from other tests
     subprocess.run(
-        [coi_binary, "shutdown", "--all", "--force"],
+        [clincus_binary, "shutdown", "--all", "--force"],
         capture_output=True,
         text=True,
         timeout=120,
@@ -29,7 +29,7 @@ def test_shutdown_all_no_containers(coi_binary, cleanup_containers):
 
     # Now run again - should show "No containers to shutdown"
     result = subprocess.run(
-        [coi_binary, "shutdown", "--all", "--force"],
+        [clincus_binary, "shutdown", "--all", "--force"],
         capture_output=True,
         text=True,
         timeout=30,

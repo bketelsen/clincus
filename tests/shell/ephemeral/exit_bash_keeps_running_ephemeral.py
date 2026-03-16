@@ -1,17 +1,17 @@
 """
-Test for coi shell - exit bash keeps container running.
+Test for clincus shell - exit bash keeps container running.
 
 Tests the behavior:
 1. Start dummy in ephemeral mode
 2. Exit claude to bash
 3. Exit bash (not poweroff)
 4. Verify container is still running
-5. Verify can attach with coi attach --bash
+5. Verify can attach with clincus attach --bash
 6. Cleanup: kill the container
 
 Expected:
 - Exiting bash (not poweroff) keeps container running
-- coi attach --bash works to reconnect
+- clincus attach --bash works to reconnect
 - Container can be killed for cleanup
 """
 
@@ -24,7 +24,7 @@ from support.helpers import (
     calculate_container_name,
     get_container_list,
     send_prompt,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
     wait_for_text_in_monitor,
@@ -32,17 +32,17 @@ from support.helpers import (
 )
 
 
-def test_exit_bash_keeps_container_running(coi_binary, cleanup_containers, workspace_dir):
+def test_exit_bash_keeps_container_running(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that exiting bash (not poweroff) keeps container running.
 
     Flow:
-    1. Start coi shell (ephemeral mode)
+    1. Start clincus shell (ephemeral mode)
     2. Interact with dummy
     3. Exit claude to get to bash
     4. Exit bash (should keep container running)
     5. Verify container is still running
-    6. Attach with coi attach --bash
+    6. Attach with clincus attach --bash
     7. Verify we can interact
     8. Kill container for cleanup
     """
@@ -50,8 +50,8 @@ def test_exit_bash_keeps_container_running(coi_binary, cleanup_containers, works
 
     # === Phase 1: Start session and exit normally ===
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell"],
         cwd=workspace_dir,
         env=env,
@@ -94,7 +94,7 @@ def test_exit_bash_keeps_container_running(coi_binary, cleanup_containers, works
     time.sleep(0.3)
     child.send("\x0d")
 
-    # Wait for coi shell to exit
+    # Wait for clincus shell to exit
     try:
         child.expect(EOF, timeout=30)
     except TIMEOUT:
@@ -122,14 +122,14 @@ def test_exit_bash_keeps_container_running(coi_binary, cleanup_containers, works
     )
 
     # Verify output mentions container kept running
-    assert "Container kept running" in output1 or "coi attach" in output1.lower(), (
+    assert "Container kept running" in output1 or "clincus attach" in output1.lower(), (
         f"Should mention container kept running. Got:\n{output1}"
     )
 
     # === Phase 3: Attach with --bash ===
 
-    child2 = spawn_coi(
-        coi_binary,
+    child2 = spawn_clincus(
+        clincus_binary,
         ["attach", container_name, "--bash"],
         cwd=workspace_dir,
         env=env,
@@ -165,9 +165,9 @@ def test_exit_bash_keeps_container_running(coi_binary, cleanup_containers, works
 
     # === Phase 4: Cleanup - kill the container ===
 
-    # Use coi container delete to clean up
+    # Use clincus container delete to clean up
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

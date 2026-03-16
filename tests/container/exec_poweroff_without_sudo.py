@@ -1,5 +1,5 @@
 """
-Test for coi container exec - poweroff without password.
+Test for clincus container exec - poweroff without password.
 
 Tests that:
 1. Launch a container
@@ -16,7 +16,7 @@ from support.helpers import (
 )
 
 
-def test_exec_poweroff_without_sudo(coi_binary, cleanup_containers, workspace_dir):
+def test_exec_poweroff_without_sudo(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that the code user can run sudo poweroff without a password.
 
@@ -32,7 +32,7 @@ def test_exec_poweroff_without_sudo(coi_binary, cleanup_containers, workspace_di
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -47,7 +47,7 @@ def test_exec_poweroff_without_sudo(coi_binary, cleanup_containers, workspace_di
     # Execute sudo poweroff as the code user (uid 1000) - no password required
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,
@@ -76,7 +76,7 @@ def test_exec_poweroff_without_sudo(coi_binary, cleanup_containers, workspace_di
 
     # Check if container is still running
     result = subprocess.run(
-        [coi_binary, "container", "running", container_name],
+        [clincus_binary, "container", "running", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -92,7 +92,7 @@ def test_exec_poweroff_without_sudo(coi_binary, cleanup_containers, workspace_di
 
     # Clean up the stopped container
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

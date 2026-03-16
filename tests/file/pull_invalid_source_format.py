@@ -1,5 +1,5 @@
 """
-Test for coi file pull - invalid source format.
+Test for clincus file pull - invalid source format.
 
 Tests that:
 1. Try to pull with source missing colon separator
@@ -10,7 +10,7 @@ import os
 import subprocess
 
 
-def test_pull_invalid_source_format(coi_binary, cleanup_containers, workspace_dir):
+def test_pull_invalid_source_format(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that pull with invalid source format fails gracefully.
 
@@ -23,7 +23,7 @@ def test_pull_invalid_source_format(coi_binary, cleanup_containers, workspace_di
     # === Phase 1: Try to pull with invalid format ===
 
     result = subprocess.run(
-        [coi_binary, "file", "pull", "container-no-path", local_file],
+        [clincus_binary, "file", "pull", "container-no-path", local_file],
         capture_output=True,
         text=True,
         timeout=30,

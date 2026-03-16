@@ -1,5 +1,5 @@
 """
-Test for coi file push - push directory without -r flag.
+Test for clincus file push - push directory without -r flag.
 
 Tests that:
 1. Launch a container
@@ -15,7 +15,7 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_push_directory_without_recursive(coi_binary, cleanup_containers, workspace_dir):
+def test_push_directory_without_recursive(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that pushing a directory without -r flag fails with helpful message.
 
@@ -31,7 +31,7 @@ def test_push_directory_without_recursive(coi_binary, cleanup_containers, worksp
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -50,7 +50,7 @@ def test_push_directory_without_recursive(coi_binary, cleanup_containers, worksp
     # === Phase 3: Try to push directory without -r ===
 
     result = subprocess.run(
-        [coi_binary, "file", "push", test_dir, f"{container_name}:/tmp/test-dir"],
+        [clincus_binary, "file", "push", test_dir, f"{container_name}:/tmp/test-dir"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -68,7 +68,7 @@ def test_push_directory_without_recursive(coi_binary, cleanup_containers, worksp
     # === Phase 5: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

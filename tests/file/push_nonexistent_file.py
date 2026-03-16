@@ -1,5 +1,5 @@
 """
-Test for coi file push - push nonexistent local file.
+Test for clincus file push - push nonexistent local file.
 
 Tests that:
 1. Launch a container
@@ -13,7 +13,7 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_push_nonexistent_file(coi_binary, cleanup_containers, workspace_dir):
+def test_push_nonexistent_file(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that pushing a nonexistent local file fails gracefully.
 
@@ -28,7 +28,7 @@ def test_push_nonexistent_file(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -41,7 +41,7 @@ def test_push_nonexistent_file(coi_binary, cleanup_containers, workspace_dir):
 
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "file",
             "push",
             "/nonexistent/path/file.txt",
@@ -66,7 +66,7 @@ def test_push_nonexistent_file(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 4: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

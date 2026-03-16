@@ -1,5 +1,5 @@
 """
-Test for coi shutdown - no spurious errors when container stops during timeout.
+Test for clincus shutdown - no spurious errors when container stops during timeout.
 
 Tests that:
 1. Launch a container
@@ -18,7 +18,7 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_shutdown_no_spurious_errors(coi_binary, cleanup_containers, workspace_dir):
+def test_shutdown_no_spurious_errors(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that shutdown doesn't show spurious errors when container stops itself.
 
@@ -35,7 +35,7 @@ def test_shutdown_no_spurious_errors(coi_binary, cleanup_containers, workspace_d
 
     # Launch a container
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -46,7 +46,7 @@ def test_shutdown_no_spurious_errors(coi_binary, cleanup_containers, workspace_d
 
     # Stop the container (simulating it stopping during graceful shutdown)
     result = subprocess.run(
-        [coi_binary, "container", "stop", container_name],
+        [clincus_binary, "container", "stop", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -59,7 +59,7 @@ def test_shutdown_no_spurious_errors(coi_binary, cleanup_containers, workspace_d
     # This simulates the race condition where graceful shutdown completes
     # during the timeout window, and the force-kill check runs on stopped container
     result = subprocess.run(
-        [coi_binary, "shutdown", "--timeout=5", container_name],
+        [clincus_binary, "shutdown", "--timeout=5", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -93,7 +93,7 @@ def test_shutdown_no_spurious_errors(coi_binary, cleanup_containers, workspace_d
     # Verify container no longer exists
     time.sleep(2)
     result = subprocess.run(
-        [coi_binary, "container", "exists", container_name],
+        [clincus_binary, "container", "exists", container_name],
         capture_output=True,
         text=True,
         timeout=30,

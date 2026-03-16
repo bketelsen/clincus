@@ -1,5 +1,5 @@
 """
-Test for coi container launch - fails with nonexistent image.
+Test for clincus container launch - fails with nonexistent image.
 
 Tests that:
 1. Try to launch with a nonexistent image
@@ -9,7 +9,7 @@ Tests that:
 import subprocess
 
 
-def test_launch_nonexistent_image(coi_binary, cleanup_containers):
+def test_launch_nonexistent_image(clincus_binary, cleanup_containers):
     """
     Test that launching with nonexistent image fails.
 
@@ -21,7 +21,7 @@ def test_launch_nonexistent_image(coi_binary, cleanup_containers):
     # === Phase 1: Try to launch with nonexistent image ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "nonexistent-image-12345", "test-container"],
+        [clincus_binary, "container", "launch", "nonexistent-image-12345", "test-container"],
         capture_output=True,
         text=True,
         timeout=30,

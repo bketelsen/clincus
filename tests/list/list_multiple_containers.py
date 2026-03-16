@@ -1,9 +1,9 @@
 """
-Test for coi list - shows multiple containers.
+Test for clincus list - shows multiple containers.
 
 Tests that:
 1. Launch multiple containers
-2. Run coi list
+2. Run clincus list
 3. Verify all containers appear
 """
 
@@ -13,13 +13,13 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_list_multiple_containers(coi_binary, cleanup_containers, workspace_dir):
+def test_list_multiple_containers(clincus_binary, cleanup_containers, workspace_dir):
     """
-    Test that coi list shows multiple containers.
+    Test that clincus list shows multiple containers.
 
     Flow:
     1. Launch 2 containers
-    2. Run coi list
+    2. Run clincus list
     3. Verify both containers appear
     4. Cleanup
     """
@@ -30,7 +30,7 @@ def test_list_multiple_containers(coi_binary, cleanup_containers, workspace_dir)
 
     for container_name in [container1, container2]:
         result = subprocess.run(
-            [coi_binary, "container", "launch", "coi", container_name],
+            [clincus_binary, "container", "launch", "clincus", container_name],
             capture_output=True,
             text=True,
             timeout=120,
@@ -42,7 +42,7 @@ def test_list_multiple_containers(coi_binary, cleanup_containers, workspace_dir)
     # === Phase 2: Run list ===
 
     result = subprocess.run(
-        [coi_binary, "list"],
+        [clincus_binary, "list"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -61,7 +61,7 @@ def test_list_multiple_containers(coi_binary, cleanup_containers, workspace_dir)
 
     for container_name in [container1, container2]:
         subprocess.run(
-            [coi_binary, "container", "delete", container_name, "--force"],
+            [clincus_binary, "container", "delete", container_name, "--force"],
             capture_output=True,
             timeout=30,
         )

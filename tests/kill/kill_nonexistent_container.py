@@ -1,5 +1,5 @@
 """
-Test for coi kill - kill nonexistent container.
+Test for clincus kill - kill nonexistent container.
 
 Tests that:
 1. Try to kill a container that doesn't exist
@@ -9,7 +9,7 @@ Tests that:
 import subprocess
 
 
-def test_kill_nonexistent_container(coi_binary, cleanup_containers):
+def test_kill_nonexistent_container(clincus_binary, cleanup_containers):
     """
     Test killing a nonexistent container.
 
@@ -17,10 +17,10 @@ def test_kill_nonexistent_container(coi_binary, cleanup_containers):
     1. Try to kill nonexistent container
     2. Verify it fails or shows warning
     """
-    fake_container = "coi-nonexistent-kill-test-99999"
+    fake_container = "clincus-nonexistent-kill-test-99999"
 
     result = subprocess.run(
-        [coi_binary, "kill", fake_container],
+        [clincus_binary, "kill", fake_container],
         capture_output=True,
         text=True,
         timeout=30,

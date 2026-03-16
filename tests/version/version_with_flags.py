@@ -1,25 +1,25 @@
 """
-Test for coi version - with help flag.
+Test for clincus version - with help flag.
 
 Tests that:
-1. Run coi version --help
+1. Run clincus version --help
 2. Verify it shows help text or version info
 """
 
 import subprocess
 
 
-def test_version_with_help_flag(coi_binary):
+def test_version_with_help_flag(clincus_binary):
     """
     Test version command with --help flag.
 
     Flow:
-    1. Run coi version --help
+    1. Run clincus version --help
     2. Verify exit code is 0
     3. Verify output contains help or version information
     """
     result = subprocess.run(
-        [coi_binary, "version", "--help"],
+        [clincus_binary, "version", "--help"],
         capture_output=True,
         text=True,
         timeout=10,

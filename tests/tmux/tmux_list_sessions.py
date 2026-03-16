@@ -1,5 +1,5 @@
 """
-Test for coi tmux list - list active tmux sessions.
+Test for clincus tmux list - list active tmux sessions.
 
 Tests that:
 1. Launch two containers
@@ -14,14 +14,14 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_tmux_list_sessions(coi_binary, cleanup_containers, workspace_dir):
+def test_tmux_list_sessions(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test listing active tmux sessions.
 
     Flow:
     1. Launch two containers
     2. Create tmux session in each
-    3. Use coi tmux list
+    3. Use clincus tmux list
     4. Verify both sessions are listed
     5. Cleanup
     """
@@ -31,7 +31,7 @@ def test_tmux_list_sessions(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch first container and create tmux session ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container1],
+        [clincus_binary, "container", "launch", "clincus", container1],
         capture_output=True,
         text=True,
         timeout=120,
@@ -41,11 +41,11 @@ def test_tmux_list_sessions(coi_binary, cleanup_containers, workspace_dir):
 
     time.sleep(3)
 
-    tmux_session1 = f"coi-{container1}"
+    tmux_session1 = f"clincus-{container1}"
 
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container1,
@@ -69,7 +69,7 @@ def test_tmux_list_sessions(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 2: Launch second container and create tmux session ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container2],
+        [clincus_binary, "container", "launch", "clincus", container2],
         capture_output=True,
         text=True,
         timeout=120,
@@ -79,11 +79,11 @@ def test_tmux_list_sessions(coi_binary, cleanup_containers, workspace_dir):
 
     time.sleep(3)
 
-    tmux_session2 = f"coi-{container2}"
+    tmux_session2 = f"clincus-{container2}"
 
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container2,
@@ -109,7 +109,7 @@ def test_tmux_list_sessions(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 3: List tmux sessions ===
 
     result = subprocess.run(
-        [coi_binary, "tmux", "list"],
+        [clincus_binary, "tmux", "list"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -131,13 +131,13 @@ def test_tmux_list_sessions(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 4: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container1, "--force"],
+        [clincus_binary, "container", "delete", container1, "--force"],
         capture_output=True,
         timeout=30,
     )
 
     subprocess.run(
-        [coi_binary, "container", "delete", container2, "--force"],
+        [clincus_binary, "container", "delete", container2, "--force"],
         capture_output=True,
         timeout=30,
     )

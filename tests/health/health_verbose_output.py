@@ -1,5 +1,5 @@
 """
-Test for coi health --verbose - verbose output with additional checks.
+Test for clincus health --verbose - verbose output with additional checks.
 
 Tests that:
 1. Verbose flag adds additional checks
@@ -10,17 +10,17 @@ Tests that:
 import subprocess
 
 
-def test_health_verbose_output(coi_binary):
+def test_health_verbose_output(clincus_binary):
     """
     Test health command with verbose flag.
 
     Flow:
-    1. Run coi health --verbose
+    1. Run clincus health --verbose
     2. Verify additional checks appear (DNS, sudo)
     3. Verify OPTIONAL section exists
     """
     result = subprocess.run(
-        [coi_binary, "health", "--verbose"],
+        [clincus_binary, "health", "--verbose"],
         capture_output=True,
         text=True,
         timeout=120,

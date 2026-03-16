@@ -1,5 +1,5 @@
 """
-Test for coi snapshot error cases and edge scenarios.
+Test for clincus snapshot error cases and edge scenarios.
 
 Tests that:
 1. Commands handle missing arguments gracefully
@@ -10,12 +10,12 @@ Tests that:
 import subprocess
 
 
-def test_snapshot_no_subcommand(coi_binary):
+def test_snapshot_no_subcommand(clincus_binary):
     """
     Test that snapshot command without subcommand shows help.
     """
     result = subprocess.run(
-        [coi_binary, "snapshot"],
+        [clincus_binary, "snapshot"],
         capture_output=True,
         text=True,
         timeout=10,
@@ -27,12 +27,12 @@ def test_snapshot_no_subcommand(coi_binary):
     assert "list" in result.stdout, "Should list list subcommand"
 
 
-def test_snapshot_invalid_subcommand(coi_binary):
+def test_snapshot_invalid_subcommand(clincus_binary):
     """
     Test that invalid subcommand shows help (Cobra default behavior).
     """
     result = subprocess.run(
-        [coi_binary, "snapshot", "invalid-command"],
+        [clincus_binary, "snapshot", "invalid-command"],
         capture_output=True,
         text=True,
         timeout=10,
@@ -42,12 +42,12 @@ def test_snapshot_invalid_subcommand(coi_binary):
     assert "Available Commands:" in result.stdout, "Should show available commands in help"
 
 
-def test_snapshot_create_too_many_args(coi_binary):
+def test_snapshot_create_too_many_args(clincus_binary):
     """
     Test that create with too many arguments fails.
     """
     result = subprocess.run(
-        [coi_binary, "snapshot", "create", "name1", "name2", "-c", "test-container"],
+        [clincus_binary, "snapshot", "create", "name1", "name2", "-c", "test-container"],
         capture_output=True,
         text=True,
         timeout=10,
@@ -56,12 +56,12 @@ def test_snapshot_create_too_many_args(coi_binary):
     # Cobra will show usage error
 
 
-def test_snapshot_restore_requires_name(coi_binary):
+def test_snapshot_restore_requires_name(clincus_binary):
     """
     Test that restore requires snapshot name.
     """
     result = subprocess.run(
-        [coi_binary, "snapshot", "restore"],
+        [clincus_binary, "snapshot", "restore"],
         capture_output=True,
         text=True,
         timeout=10,
@@ -72,12 +72,12 @@ def test_snapshot_restore_requires_name(coi_binary):
     )
 
 
-def test_snapshot_info_requires_name(coi_binary):
+def test_snapshot_info_requires_name(clincus_binary):
     """
     Test that info requires snapshot name.
     """
     result = subprocess.run(
-        [coi_binary, "snapshot", "info"],
+        [clincus_binary, "snapshot", "info"],
         capture_output=True,
         text=True,
         timeout=10,
@@ -88,12 +88,12 @@ def test_snapshot_info_requires_name(coi_binary):
     )
 
 
-def test_snapshot_delete_requires_name_or_all(coi_binary):
+def test_snapshot_delete_requires_name_or_all(clincus_binary):
     """
     Test that delete requires either name or --all flag.
     """
     result = subprocess.run(
-        [coi_binary, "snapshot", "delete"],
+        [clincus_binary, "snapshot", "delete"],
         capture_output=True,
         text=True,
         timeout=10,
@@ -103,12 +103,12 @@ def test_snapshot_delete_requires_name_or_all(coi_binary):
     assert result.returncode != 0, "Delete without name or --all should fail"
 
 
-def test_snapshot_list_all_no_containers(coi_binary):
+def test_snapshot_list_all_no_containers(clincus_binary):
     """
-    Test listing all snapshots when no COI containers exist.
+    Test listing all snapshots when no clincus containers exist.
     """
     result = subprocess.run(
-        [coi_binary, "snapshot", "list", "--all"],
+        [clincus_binary, "snapshot", "list", "--all"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -118,13 +118,13 @@ def test_snapshot_list_all_no_containers(coi_binary):
     # Output should indicate no containers (either empty or explicit message)
 
 
-def test_snapshot_create_empty_name(coi_binary):
+def test_snapshot_create_empty_name(clincus_binary):
     """
     Test that create with empty string name uses auto-generated name.
     """
     # Empty string as name - should be treated as no argument and use auto-generated
     result = subprocess.run(
-        [coi_binary, "snapshot", "create", "", "-c", "nonexistent"],
+        [clincus_binary, "snapshot", "create", "", "-c", "nonexistent"],
         capture_output=True,
         text=True,
         timeout=10,
@@ -135,12 +135,12 @@ def test_snapshot_create_empty_name(coi_binary):
     assert "not found" in result.stderr, "Should fail with container not found error, not crash"
 
 
-def test_snapshot_restore_too_many_args(coi_binary):
+def test_snapshot_restore_too_many_args(clincus_binary):
     """
     Test that restore with too many arguments fails.
     """
     result = subprocess.run(
-        [coi_binary, "snapshot", "restore", "name1", "name2", "-c", "test-container"],
+        [clincus_binary, "snapshot", "restore", "name1", "name2", "-c", "test-container"],
         capture_output=True,
         text=True,
         timeout=10,
@@ -148,12 +148,12 @@ def test_snapshot_restore_too_many_args(coi_binary):
     assert result.returncode != 0, "Restore with too many args should fail"
 
 
-def test_snapshot_info_too_many_args(coi_binary):
+def test_snapshot_info_too_many_args(clincus_binary):
     """
     Test that info with too many arguments fails.
     """
     result = subprocess.run(
-        [coi_binary, "snapshot", "info", "name1", "name2", "-c", "test-container"],
+        [clincus_binary, "snapshot", "info", "name1", "name2", "-c", "test-container"],
         capture_output=True,
         text=True,
         timeout=10,
@@ -161,14 +161,14 @@ def test_snapshot_info_too_many_args(coi_binary):
     assert result.returncode != 0, "Info with too many args should fail"
 
 
-def test_snapshot_delete_both_name_and_all(coi_binary):
+def test_snapshot_delete_both_name_and_all(clincus_binary):
     """
     Test that delete with both name and --all is valid (--all takes precedence).
 
     This is actually allowed - when --all is specified, any positional name is ignored.
     """
     result = subprocess.run(
-        [coi_binary, "snapshot", "delete", "some-name", "--all", "-c", "nonexistent"],
+        [clincus_binary, "snapshot", "delete", "some-name", "--all", "-c", "nonexistent"],
         capture_output=True,
         text=True,
         timeout=10,
@@ -178,13 +178,13 @@ def test_snapshot_delete_both_name_and_all(coi_binary):
     assert "not found" in result.stderr, "Should fail with container not found error"
 
 
-def test_snapshot_conflicting_flags(coi_binary):
+def test_snapshot_conflicting_flags(clincus_binary):
     """
     Test handling of potentially conflicting flags.
     """
     # Try to create stateful snapshot with invalid container
     result = subprocess.run(
-        [coi_binary, "snapshot", "create", "test", "--stateful", "-c", "nonexistent"],
+        [clincus_binary, "snapshot", "create", "test", "--stateful", "-c", "nonexistent"],
         capture_output=True,
         text=True,
         timeout=10,
@@ -193,7 +193,7 @@ def test_snapshot_conflicting_flags(coi_binary):
     assert "not found" in result.stderr, "Should fail with container not found error"
 
 
-def test_snapshot_help_flag_all_subcommands(coi_binary):
+def test_snapshot_help_flag_all_subcommands(clincus_binary):
     """
     Test that -h and --help work for all subcommands.
     """
@@ -202,7 +202,7 @@ def test_snapshot_help_flag_all_subcommands(coi_binary):
     for subcmd in subcommands:
         for help_flag in ["-h", "--help"]:
             result = subprocess.run(
-                [coi_binary, "snapshot", subcmd, help_flag],
+                [clincus_binary, "snapshot", subcmd, help_flag],
                 capture_output=True,
                 text=True,
                 timeout=10,

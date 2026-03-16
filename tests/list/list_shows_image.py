@@ -1,9 +1,9 @@
 """
-Test for coi list - shows image description.
+Test for clincus list - shows image description.
 
 Tests that:
-1. Launch a container from coi image
-2. Run coi list
+1. Launch a container from clincus image
+2. Run clincus list
 3. Verify it shows the image description
 """
 
@@ -13,13 +13,13 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_list_shows_image(coi_binary, cleanup_containers, workspace_dir):
+def test_list_shows_image(clincus_binary, cleanup_containers, workspace_dir):
     """
-    Test that coi list shows image description.
+    Test that clincus list shows image description.
 
     Flow:
-    1. Launch a container from coi image
-    2. Run coi list
+    1. Launch a container from clincus image
+    2. Run clincus list
     3. Verify Image field appears
     4. Cleanup
     """
@@ -28,7 +28,7 @@ def test_list_shows_image(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -40,7 +40,7 @@ def test_list_shows_image(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 2: Run list ===
 
     result = subprocess.run(
-        [coi_binary, "list"],
+        [clincus_binary, "list"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -53,13 +53,13 @@ def test_list_shows_image(coi_binary, cleanup_containers, workspace_dir):
 
     assert container_name in output, f"Container should appear. Got:\n{output}"
 
-    # Should show Image field (coi image has a description)
+    # Should show Image field (clincus image has a description)
     assert "Image:" in output, f"Should show Image field. Got:\n{output}"
 
     # === Phase 4: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

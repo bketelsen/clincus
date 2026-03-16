@@ -138,7 +138,7 @@ class TerminalEmulator:
             sys.stdout.flush()
 
 
-def spawn_coi(
+def spawn_clincus(
     binary_path,
     args,
     timeout=30,
@@ -149,17 +149,17 @@ def spawn_coi(
     show_screen_updates=None,
 ):
     """
-    Spawn a coi command with the given arguments.
+    Spawn a clincus command with the given arguments.
 
     Args:
-        binary_path: Path to coi binary
+        binary_path: Path to clincus binary
         args: List of arguments (e.g., ["shell", "--persistent"])
         timeout: Default timeout for expect operations
         env: Optional environment variables dict
         cwd: Optional working directory
-        verbose: If True, print all output in real-time. If None, check COI_TEST_VERBOSE env var.
+        verbose: If True, print all output in real-time. If None, check CLINCUS_TEST_VERBOSE env var.
         use_terminal_emulator: If True, use pyte terminal emulator for proper ANSI handling
-        show_screen_updates: If True, show rendered screen updates. If None, check COI_TEST_SHOW_SCREEN env var or defaults to verbose.
+        show_screen_updates: If True, show rendered screen updates. If None, check CLINCUS_TEST_SHOW_SCREEN env var or defaults to verbose.
 
     Returns:
         pexpect.spawn object
@@ -172,12 +172,12 @@ def spawn_coi(
 
     # Check verbose mode - default to False now that we have LiveScreenMonitor
     if verbose is None:
-        verbose = os.environ.get("COI_TEST_VERBOSE", "0") == "1"
+        verbose = os.environ.get("CLINCUS_TEST_VERBOSE", "0") == "1"
 
     # Check show_screen_updates mode
-    # Enable via COI_TEST_SHOW_SCREEN env var
+    # Enable via CLINCUS_TEST_SHOW_SCREEN env var
     if show_screen_updates is None:
-        show_screen_updates = os.environ.get("COI_TEST_SHOW_SCREEN", "0") == "1"
+        show_screen_updates = os.environ.get("CLINCUS_TEST_SHOW_SCREEN", "0") == "1"
 
     # Spawn process
     child = spawn(
@@ -424,7 +424,7 @@ def exit_claude(child, timeout=60, use_ctrl_c=False):
         child.expect(EOF, timeout=timeout)
 
         # Give monitor/output time to capture cleanup messages
-        # The coi process prints cleanup messages before exiting,
+        # The clincus process prints cleanup messages before exiting,
         # but we need to give the monitor thread time to read and display them
         time.sleep(2)
 
@@ -470,19 +470,19 @@ def wait_for_specific_container_deletion(container_name, timeout=30, poll_interv
     return False
 
 
-def wait_for_container_deletion(prefix="coi-test-", timeout=30, poll_interval=0.5):
+def wait_for_container_deletion(prefix="clincus-test-", timeout=30, poll_interval=0.5):
     """
     Wait for all containers matching prefix to be deleted.
 
     This is useful after exit_claude() to ensure the container cleanup
-    completes before the monitor stops. The coi process exits quickly,
+    completes before the monitor stops. The clincus process exits quickly,
     but Incus container deletion happens asynchronously.
 
     Uses the same clear-screen technique as LiveScreenMonitor to provide
     a seamless visual experience.
 
     Args:
-        prefix: Container name prefix to wait for (default: "coi-test-")
+        prefix: Container name prefix to wait for (default: "clincus-test-")
         timeout: Maximum time to wait in seconds (default: 30)
         poll_interval: How often to check in seconds (default: 0.5)
 
@@ -590,10 +590,10 @@ def get_container_list():
         return []
 
 
-def cleanup_all_test_containers(pattern="coi-test-"):
+def cleanup_all_test_containers(pattern="clincus-test-"):
     """
     Clean up all containers matching pattern.
-    Default cleans coi-test-* containers ONLY (not user's active sessions).
+    Default cleans clincus-test-* containers ONLY (not user's active sessions).
 
     IMPORTANT: This should NEVER clean up containers with 'claude-' prefix
     to avoid interfering with user's active sessions.
@@ -621,7 +621,7 @@ def cleanup_all_test_containers(pattern="coi-test-"):
 
 def get_session_id_from_output(output):
     """
-    Extract session ID from coi output.
+    Extract session ID from clincus output.
     Looks for "Session ID: <uuid>" pattern.
     """
     import re
@@ -1049,7 +1049,7 @@ def with_live_screen(child, update_interval=0.5):
     Helper function to create a LiveScreenMonitor context manager.
 
     Usage in tests:
-        child = spawn_coi(...)
+        child = spawn_clincus(...)
 
         with with_live_screen(child):
             # Send commands and interact
@@ -1173,12 +1173,12 @@ def calculate_container_name(workspace_dir, slot):
         slot: Slot number
 
     Returns:
-        Expected container name (e.g., "coi-test-85918044-1")
+        Expected container name (e.g., "clincus-test-85918044-1")
     """
     import hashlib
 
-    # Get container prefix from environment (defaults to "coi-" but tests use "coi-test-")
-    prefix = os.environ.get("COI_CONTAINER_PREFIX", "coi-")
+    # Get container prefix from environment (defaults to "clincus-" but tests use "clincus-test-")
+    prefix = os.environ.get("COI_CONTAINER_PREFIX", "clincus-")
 
     # Hash the workspace path (SHA256)
     # Use os.path.abspath (not Path.resolve) to match Go's filepath.Abs behavior

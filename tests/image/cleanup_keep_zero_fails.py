@@ -1,24 +1,24 @@
 """
-Test for coi image cleanup - keep=0 should fail.
+Test for clincus image cleanup - keep=0 should fail.
 
 Tests that:
-1. Run coi image cleanup with --keep 0
+1. Run clincus image cleanup with --keep 0
 2. Verify it fails with error message
 """
 
 import subprocess
 
 
-def test_cleanup_keep_zero_fails(coi_binary, cleanup_containers):
+def test_cleanup_keep_zero_fails(clincus_binary, cleanup_containers):
     """
     Test that cleanup with --keep 0 fails.
 
     Flow:
-    1. Run coi image cleanup prefix --keep 0
+    1. Run clincus image cleanup prefix --keep 0
     2. Verify it fails with appropriate error
     """
     result = subprocess.run(
-        [coi_binary, "image", "cleanup", "test-prefix-", "--keep", "0"],
+        [clincus_binary, "image", "cleanup", "test-prefix-", "--keep", "0"],
         capture_output=True,
         text=True,
         timeout=30,

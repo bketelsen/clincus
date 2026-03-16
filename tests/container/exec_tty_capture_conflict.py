@@ -1,5 +1,5 @@
 """
-Test for coi container exec - verify --tty and --capture are mutually exclusive.
+Test for clincus container exec - verify --tty and --capture are mutually exclusive.
 
 Tests that:
 1. Attempting to use both --tty and --capture flags together should fail
@@ -13,7 +13,7 @@ from support.helpers import (
 )
 
 
-def test_exec_tty_capture_conflict(coi_binary, workspace_dir):
+def test_exec_tty_capture_conflict(clincus_binary, workspace_dir):
     """
     Test that --tty and --capture flags cannot be used together.
 
@@ -28,7 +28,7 @@ def test_exec_tty_capture_conflict(coi_binary, workspace_dir):
 
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,

@@ -1,5 +1,5 @@
 """
-Test for coi container exists - returns true for existing container.
+Test for clincus container exists - returns true for existing container.
 
 Tests that:
 1. Launch a container
@@ -15,7 +15,7 @@ from support.helpers import (
 )
 
 
-def test_exists_running_container(coi_binary, cleanup_containers, workspace_dir):
+def test_exists_running_container(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that exists returns success for existing container.
 
@@ -31,7 +31,7 @@ def test_exists_running_container(coi_binary, cleanup_containers, workspace_dir)
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -44,7 +44,7 @@ def test_exists_running_container(coi_binary, cleanup_containers, workspace_dir)
     # === Phase 2: Check exists (running) ===
 
     result = subprocess.run(
-        [coi_binary, "container", "exists", container_name],
+        [clincus_binary, "container", "exists", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -55,7 +55,7 @@ def test_exists_running_container(coi_binary, cleanup_containers, workspace_dir)
     # === Phase 3: Stop container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "stop", container_name],
+        [clincus_binary, "container", "stop", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -68,7 +68,7 @@ def test_exists_running_container(coi_binary, cleanup_containers, workspace_dir)
     # === Phase 4: Check exists (stopped) ===
 
     result = subprocess.run(
-        [coi_binary, "container", "exists", container_name],
+        [clincus_binary, "container", "exists", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -79,7 +79,7 @@ def test_exists_running_container(coi_binary, cleanup_containers, workspace_dir)
     # === Phase 5: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

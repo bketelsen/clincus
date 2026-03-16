@@ -1,5 +1,5 @@
 """
-Test for coi image publish - nonexistent container.
+Test for clincus image publish - nonexistent container.
 
 Tests that:
 1. Try to publish a container that doesn't exist
@@ -9,18 +9,18 @@ Tests that:
 import subprocess
 
 
-def test_publish_nonexistent_container(coi_binary, cleanup_containers):
+def test_publish_nonexistent_container(clincus_binary, cleanup_containers):
     """
     Test publishing a nonexistent container fails gracefully.
 
     Flow:
-    1. Run coi image publish nonexistent-container test-image
+    1. Run clincus image publish nonexistent-container test-image
     2. Verify it fails with error message
     """
     # === Phase 1: Try to publish nonexistent container ===
 
     result = subprocess.run(
-        [coi_binary, "image", "publish", "nonexistent-container-xyz-123", "test-image-xyz"],
+        [clincus_binary, "image", "publish", "nonexistent-container-xyz-123", "test-image-xyz"],
         capture_output=True,
         text=True,
         timeout=30,

@@ -1,26 +1,26 @@
 """
-Test for coi image delete - missing argument.
+Test for clincus image delete - missing argument.
 
 Tests that:
-1. Run coi image delete without image name
+1. Run clincus image delete without image name
 2. Verify it shows usage error
 """
 
 import subprocess
 
 
-def test_delete_missing_arg(coi_binary, cleanup_containers):
+def test_delete_missing_arg(clincus_binary, cleanup_containers):
     """
-    Test that coi image delete without argument shows error.
+    Test that clincus image delete without argument shows error.
 
     Flow:
-    1. Run coi image delete (no alias)
+    1. Run clincus image delete (no alias)
     2. Verify it fails with usage message
     """
     # === Phase 1: Run without argument ===
 
     result = subprocess.run(
-        [coi_binary, "image", "delete"],
+        [clincus_binary, "image", "delete"],
         capture_output=True,
         text=True,
         timeout=30,

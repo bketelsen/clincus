@@ -16,7 +16,7 @@ from support.helpers import (
 )
 
 
-def test_docker_flags_enabled(coi_binary, cleanup_containers, workspace_dir):
+def test_docker_flags_enabled(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that Docker support flags are automatically enabled on container launch.
 
@@ -30,7 +30,7 @@ def test_docker_flags_enabled(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -102,7 +102,7 @@ def test_docker_flags_enabled(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 3: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

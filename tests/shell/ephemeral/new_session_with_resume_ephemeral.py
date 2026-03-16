@@ -1,5 +1,5 @@
 """
-Test for coi shell - ephemeral session with resume.
+Test for clincus shell - ephemeral session with resume.
 
 Tests the resume lifecycle:
 1. Start dummy in ephemeral mode
@@ -7,7 +7,7 @@ Tests the resume lifecycle:
 3. Exit to bash shell
 4. Issue sudo poweroff
 5. Verify container is removed
-6. Run coi shell --resume
+6. Run clincus shell --resume
 7. Verify session was resumed (dummy shows "Resuming session")
 8. Cleanup
 """
@@ -21,7 +21,7 @@ from support.helpers import (
     calculate_container_name,
     get_container_list,
     send_prompt,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
     wait_for_specific_container_deletion,
@@ -31,16 +31,16 @@ from support.helpers import (
 )
 
 
-def test_ephemeral_session_with_resume(coi_binary, cleanup_containers, workspace_dir):
+def test_ephemeral_session_with_resume(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test ephemeral session resume after shutdown.
 
     Flow:
-    1. Start coi shell (ephemeral mode)
+    1. Start clincus shell (ephemeral mode)
     2. Interact with dummy
     3. Exit claude to bash, then poweroff
     4. Verify container deleted
-    5. Run coi shell --resume
+    5. Run clincus shell --resume
     6. Verify resume worked
     7. Cleanup
     """
@@ -48,8 +48,8 @@ def test_ephemeral_session_with_resume(coi_binary, cleanup_containers, workspace
 
     # === Phase 1: Initial session ===
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell"],
         cwd=workspace_dir,
         env=env,
@@ -126,8 +126,8 @@ def test_ephemeral_session_with_resume(coi_binary, cleanup_containers, workspace
 
     # === Phase 2: Resume session ===
 
-    child2 = spawn_coi(
-        coi_binary,
+    child2 = spawn_clincus(
+        clincus_binary,
         ["shell", "--resume"],
         cwd=workspace_dir,
         env=env,
@@ -180,7 +180,7 @@ def test_ephemeral_session_with_resume(coi_binary, cleanup_containers, workspace
     # Force cleanup if container still exists
     if not deleted:
         subprocess.run(
-            [coi_binary, "container", "delete", container_name2, "--force"],
+            [clincus_binary, "container", "delete", container_name2, "--force"],
             capture_output=True,
             timeout=30,
         )

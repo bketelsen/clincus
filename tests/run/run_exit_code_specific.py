@@ -1,5 +1,5 @@
 """
-Test for coi run - specific exit code propagation.
+Test for clincus run - specific exit code propagation.
 
 Tests that:
 1. Run a command with specific exit code
@@ -9,16 +9,16 @@ Tests that:
 import subprocess
 
 
-def test_run_exit_code_specific(coi_binary, cleanup_containers, workspace_dir):
+def test_run_exit_code_specific(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that specific exit codes are propagated.
 
     Flow:
-    1. Run coi run "exit 42"
+    1. Run clincus run "exit 42"
     2. Verify exit code is 42
     """
     result = subprocess.run(
-        [coi_binary, "run", "--workspace", workspace_dir, "--", "sh", "-c", "exit 42"],
+        [clincus_binary, "run", "--workspace", workspace_dir, "--", "sh", "-c", "exit 42"],
         capture_output=True,
         text=True,
         timeout=180,

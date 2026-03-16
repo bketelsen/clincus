@@ -1,32 +1,32 @@
 """
-Test for coi clean --force - skips confirmation prompt.
+Test for clincus clean --force - skips confirmation prompt.
 
 Tests that:
-1. Run coi clean --force
+1. Run clincus clean --force
 2. Verify it completes without requiring input
 """
 
 import subprocess
 
 
-def test_clean_force_skips_confirmation(coi_binary, cleanup_containers):
+def test_clean_force_skips_confirmation(clincus_binary, cleanup_containers):
     """
-    Test that coi clean --force skips confirmation prompt.
+    Test that clincus clean --force skips confirmation prompt.
 
     Flow:
-    1. Run coi clean --force (no input provided)
+    1. Run clincus clean --force (no input provided)
     2. Verify it completes successfully without hanging
     """
     # Run with short timeout - if it hangs waiting for input, it will timeout
     result = subprocess.run(
-        [coi_binary, "clean", "--force"],
+        [clincus_binary, "clean", "--force"],
         capture_output=True,
         text=True,
         timeout=30,  # Should complete quickly with --force
     )
 
     # Should succeed without hanging
-    assert result.returncode == 0, f"coi clean --force should succeed. stderr: {result.stderr}"
+    assert result.returncode == 0, f"clincus clean --force should succeed. stderr: {result.stderr}"
 
     # Should not contain prompts for confirmation
     combined_output = result.stdout + result.stderr

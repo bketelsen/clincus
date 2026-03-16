@@ -1,5 +1,5 @@
 """
-Test for coi container exec --cwd - executes in specified directory.
+Test for clincus container exec --cwd - executes in specified directory.
 
 Tests that:
 1. Launch a container
@@ -15,7 +15,7 @@ from support.helpers import (
 )
 
 
-def test_exec_with_cwd(coi_binary, cleanup_containers, workspace_dir):
+def test_exec_with_cwd(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test executing command in a specific directory.
 
@@ -30,7 +30,7 @@ def test_exec_with_cwd(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -43,7 +43,7 @@ def test_exec_with_cwd(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 2: Execute with --cwd ===
 
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--cwd", "/tmp", "--", "pwd"],
+        [clincus_binary, "container", "exec", container_name, "--cwd", "/tmp", "--", "pwd"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -59,7 +59,7 @@ def test_exec_with_cwd(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 4: Test another directory ===
 
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--cwd", "/home", "--", "pwd"],
+        [clincus_binary, "container", "exec", container_name, "--cwd", "/home", "--", "pwd"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -73,7 +73,7 @@ def test_exec_with_cwd(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 5: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

@@ -1,9 +1,9 @@
 """
-Test for coi info - show info for a session.
+Test for clincus info - show info for a session.
 
 Tests that:
 1. Create a session (by running shell briefly)
-2. Run coi info with the session ID
+2. Run clincus info with the session ID
 3. Verify output contains expected fields
 """
 
@@ -15,20 +15,20 @@ from pexpect import EOF, TIMEOUT
 
 from support.helpers import (
     calculate_container_name,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
 )
 
 
-def test_info_with_session(coi_binary, cleanup_containers, workspace_dir):
+def test_info_with_session(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test showing info for a specific session.
 
     Flow:
     1. Start a shell session and exit
-    2. Get the session ID from coi list
-    3. Run coi info <session-id>
+    2. Get the session ID from clincus list
+    3. Run clincus info <session-id>
     4. Verify output contains expected fields
     5. Cleanup
     """
@@ -37,8 +37,8 @@ def test_info_with_session(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 1: Start and stop a session ===
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell"],
         cwd=workspace_dir,
         env=env,
@@ -70,10 +70,10 @@ def test_info_with_session(coi_binary, cleanup_containers, workspace_dir):
 
     time.sleep(5)
 
-    # === Phase 2: Get session ID from coi list ===
+    # === Phase 2: Get session ID from clincus list ===
 
     result = subprocess.run(
-        [coi_binary, "list", "--all"],
+        [clincus_binary, "list", "--all"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -101,7 +101,7 @@ def test_info_with_session(coi_binary, cleanup_containers, workspace_dir):
     if session_id is None:
         # Try to get latest session
         result = subprocess.run(
-            [coi_binary, "info"],
+            [clincus_binary, "info"],
             capture_output=True,
             text=True,
             timeout=30,
@@ -113,10 +113,10 @@ def test_info_with_session(coi_binary, cleanup_containers, workspace_dir):
 
     assert session_id is not None, f"Should find a session ID. List output:\n{result.stdout}"
 
-    # === Phase 3: Run coi info with session ID ===
+    # === Phase 3: Run clincus info with session ID ===
 
     result = subprocess.run(
-        [coi_binary, "info", session_id],
+        [clincus_binary, "info", session_id],
         capture_output=True,
         text=True,
         timeout=30,
@@ -140,7 +140,7 @@ def test_info_with_session(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 5: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

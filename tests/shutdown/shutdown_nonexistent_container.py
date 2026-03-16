@@ -1,5 +1,5 @@
 """
-Test for coi shutdown - nonexistent container.
+Test for clincus shutdown - nonexistent container.
 
 Tests that:
 1. Run shutdown on a container that doesn't exist
@@ -9,16 +9,16 @@ Tests that:
 import subprocess
 
 
-def test_shutdown_nonexistent_container(coi_binary, cleanup_containers):
+def test_shutdown_nonexistent_container(clincus_binary, cleanup_containers):
     """
     Test shutting down a container that doesn't exist.
 
     Flow:
-    1. Run coi shutdown nonexistent-container-xyz
+    1. Run clincus shutdown nonexistent-container-xyz
     2. Verify it fails or shows warning
     """
     result = subprocess.run(
-        [coi_binary, "shutdown", "nonexistent-container-xyz-123"],
+        [clincus_binary, "shutdown", "nonexistent-container-xyz-123"],
         capture_output=True,
         text=True,
         timeout=30,

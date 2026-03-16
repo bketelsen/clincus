@@ -1,9 +1,9 @@
 """
-Test for coi clean - keeps running containers.
+Test for clincus clean - keeps running containers.
 
 Tests that:
 1. Launch a container (keep it running)
-2. Run coi clean
+2. Run clincus clean
 3. Verify running container is NOT removed
 """
 
@@ -16,13 +16,13 @@ from support.helpers import (
 )
 
 
-def test_clean_keeps_running(coi_binary, cleanup_containers, workspace_dir):
+def test_clean_keeps_running(clincus_binary, cleanup_containers, workspace_dir):
     """
-    Test that coi clean does NOT remove running containers.
+    Test that clincus clean does NOT remove running containers.
 
     Flow:
     1. Launch a container and keep it running
-    2. Run coi clean --force
+    2. Run clincus clean --force
     3. Verify container is still running
     4. Cleanup
     """
@@ -31,7 +31,7 @@ def test_clean_keeps_running(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -48,13 +48,13 @@ def test_clean_keeps_running(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 2: Clean (should NOT remove running container) ===
 
     result = subprocess.run(
-        [coi_binary, "clean", "--force"],
+        [clincus_binary, "clean", "--force"],
         capture_output=True,
         text=True,
         timeout=60,
     )
 
-    assert result.returncode == 0, f"coi clean should succeed. stderr: {result.stderr}"
+    assert result.returncode == 0, f"clincus clean should succeed. stderr: {result.stderr}"
 
     time.sleep(2)
 
@@ -68,7 +68,7 @@ def test_clean_keeps_running(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 4: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

@@ -13,13 +13,13 @@ import subprocess
 from pathlib import Path
 
 
-def test_cpu_limit_applied(coi_binary, workspace_dir, cleanup_containers):
+def test_cpu_limit_applied(clincus_binary, workspace_dir, cleanup_containers):
     """Test that CPU limits are applied to the container."""
-    container_name = f"coi-{Path(workspace_dir).name}-1"
+    container_name = f"clincus-{Path(workspace_dir).name}-1"
 
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -48,13 +48,13 @@ def test_cpu_limit_applied(coi_binary, workspace_dir, cleanup_containers):
     )
 
 
-def test_cpu_allowance_applied(coi_binary, workspace_dir, cleanup_containers):
+def test_cpu_allowance_applied(clincus_binary, workspace_dir, cleanup_containers):
     """Test that CPU allowance is applied to the container."""
-    container_name = f"coi-{Path(workspace_dir).name}-1"
+    container_name = f"clincus-{Path(workspace_dir).name}-1"
 
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -83,13 +83,13 @@ def test_cpu_allowance_applied(coi_binary, workspace_dir, cleanup_containers):
     )
 
 
-def test_memory_limit_applied(coi_binary, workspace_dir, cleanup_containers):
+def test_memory_limit_applied(clincus_binary, workspace_dir, cleanup_containers):
     """Test that memory limits are applied to the container."""
-    container_name = f"coi-{Path(workspace_dir).name}-1"
+    container_name = f"clincus-{Path(workspace_dir).name}-1"
 
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -118,13 +118,13 @@ def test_memory_limit_applied(coi_binary, workspace_dir, cleanup_containers):
     )
 
 
-def test_memory_swap_applied(coi_binary, workspace_dir, cleanup_containers):
+def test_memory_swap_applied(clincus_binary, workspace_dir, cleanup_containers):
     """Test that memory swap configuration is applied."""
-    container_name = f"coi-{Path(workspace_dir).name}-1"
+    container_name = f"clincus-{Path(workspace_dir).name}-1"
 
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -154,13 +154,13 @@ def test_memory_swap_applied(coi_binary, workspace_dir, cleanup_containers):
     )
 
 
-def test_disk_io_limits_applied(coi_binary, workspace_dir, cleanup_containers):
+def test_disk_io_limits_applied(clincus_binary, workspace_dir, cleanup_containers):
     """Test that disk I/O limits are applied to the container."""
-    container_name = f"coi-{Path(workspace_dir).name}-1"
+    container_name = f"clincus-{Path(workspace_dir).name}-1"
 
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -193,13 +193,13 @@ def test_disk_io_limits_applied(coi_binary, workspace_dir, cleanup_containers):
     )
 
 
-def test_process_limit_applied(coi_binary, workspace_dir, cleanup_containers):
+def test_process_limit_applied(clincus_binary, workspace_dir, cleanup_containers):
     """Test that process limits are applied to the container."""
-    container_name = f"coi-{Path(workspace_dir).name}-1"
+    container_name = f"clincus-{Path(workspace_dir).name}-1"
 
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -228,13 +228,13 @@ def test_process_limit_applied(coi_binary, workspace_dir, cleanup_containers):
     )
 
 
-def test_multiple_limits_combined(coi_binary, workspace_dir, cleanup_containers):
+def test_multiple_limits_combined(clincus_binary, workspace_dir, cleanup_containers):
     """Test that multiple limits can be applied together."""
-    container_name = f"coi-{Path(workspace_dir).name}-1"
+    container_name = f"clincus-{Path(workspace_dir).name}-1"
 
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -269,13 +269,13 @@ def test_multiple_limits_combined(coi_binary, workspace_dir, cleanup_containers)
     assert 'limits.processes: "100"' in config, "Process limit should be set"
 
 
-def test_cpu_priority_applied(coi_binary, workspace_dir, cleanup_containers):
+def test_cpu_priority_applied(clincus_binary, workspace_dir, cleanup_containers):
     """Test that CPU priority is applied."""
-    container_name = f"coi-{Path(workspace_dir).name}-1"
+    container_name = f"clincus-{Path(workspace_dir).name}-1"
 
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -305,14 +305,14 @@ def test_cpu_priority_applied(coi_binary, workspace_dir, cleanup_containers):
     )
 
 
-def test_limits_work_with_persistent_containers(coi_binary, workspace_dir, cleanup_containers):
+def test_limits_work_with_persistent_containers(clincus_binary, workspace_dir, cleanup_containers):
     """Test that limits work with persistent containers."""
-    container_name = f"coi-{Path(workspace_dir).name}-1"
+    container_name = f"clincus-{Path(workspace_dir).name}-1"
 
     # Launch persistent container with limits
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -346,7 +346,7 @@ def test_limits_work_with_persistent_containers(coi_binary, workspace_dir, clean
     # Run again with persistent container (should reuse)
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,

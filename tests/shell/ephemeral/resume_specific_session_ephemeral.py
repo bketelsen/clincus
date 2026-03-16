@@ -1,5 +1,5 @@
 """
-Test for coi shell --resume=<session-id> - resume a specific session by ID.
+Test for clincus shell --resume=<session-id> - resume a specific session by ID.
 
 Tests that:
 1. Start a session and create some state
@@ -18,7 +18,7 @@ from pexpect import EOF, TIMEOUT
 from support.helpers import (
     calculate_container_name,
     send_prompt,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
     wait_for_text_in_monitor,
@@ -27,7 +27,7 @@ from support.helpers import (
 )
 
 
-def test_resume_specific_session(coi_binary, cleanup_containers, workspace_dir):
+def test_resume_specific_session(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that --resume=<session-id> resumes the specified session.
 
@@ -44,8 +44,8 @@ def test_resume_specific_session(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 1: Create first session ===
 
-    child1 = spawn_coi(
-        coi_binary,
+    child1 = spawn_clincus(
+        clincus_binary,
         ["shell"],
         cwd=workspace_dir,
         env=env,
@@ -87,7 +87,7 @@ def test_resume_specific_session(coi_binary, cleanup_containers, workspace_dir):
 
     # List sessions to find the first one
     result = subprocess.run(
-        [coi_binary, "list", "--all"],
+        [clincus_binary, "list", "--all"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -125,8 +125,8 @@ def test_resume_specific_session(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 3: Create second session ===
 
-    child2 = spawn_coi(
-        coi_binary,
+    child2 = spawn_clincus(
+        clincus_binary,
         ["shell"],
         cwd=workspace_dir,
         env=env,
@@ -165,8 +165,8 @@ def test_resume_specific_session(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 4: Resume first session by specific ID ===
 
-    child3 = spawn_coi(
-        coi_binary,
+    child3 = spawn_clincus(
+        clincus_binary,
         ["shell", f"--resume={first_session_id}"],
         cwd=workspace_dir,
         env=env,
@@ -205,7 +205,7 @@ def test_resume_specific_session(coi_binary, cleanup_containers, workspace_dir):
     time.sleep(3)
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

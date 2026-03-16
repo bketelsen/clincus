@@ -1,9 +1,9 @@
 """
-Test that coi shell with [tool] name = "claude" starts the real claude binary.
+Test that clincus shell with [tool] name = "claude" starts the real claude binary.
 
 Verifies that:
-1. Writing [tool] name = "claude" to .coi.toml is accepted
-2. coi shell starts the container and launches the real claude binary
+1. Writing [tool] name = "claude" to .clincus.toml is accepted
+2. clincus shell starts the container and launches the real claude binary
 3. Claude's startup UI appears on screen (login or welcome screen)
 
 No API key is required - Claude displays a login/welcome screen without one.
@@ -17,31 +17,31 @@ from pexpect import EOF, TIMEOUT
 
 from support.helpers import (
     calculate_container_name,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_text_on_screen,
 )
 
 
-def test_claude_tool_starts_session(coi_binary, cleanup_containers, workspace_dir):
+def test_claude_tool_starts_session(clincus_binary, cleanup_containers, workspace_dir):
     """
-    Smoke test: coi shell with tool = "claude" launches the real claude binary.
+    Smoke test: clincus shell with tool = "claude" launches the real claude binary.
 
     Flow:
-    1. Write .coi.toml with [tool] name = "claude" to the workspace
-    2. Start coi shell (no COI_USE_DUMMY - use the real binary)
+    1. Write .clincus.toml with [tool] name = "claude" to the workspace
+    2. Start clincus shell (no COI_USE_DUMMY - use the real binary)
     3. Wait for container setup to complete
     4. Wait for Claude's startup UI to appear on screen
     5. Ctrl+C to exit the TUI, then poweroff
     """
-    config_path = os.path.join(workspace_dir, ".coi.toml")
+    config_path = os.path.join(workspace_dir, ".clincus.toml")
     with open(config_path, "w") as f:
         f.write('[tool]\nname = "claude"\n')
 
     container_name = calculate_container_name(workspace_dir, 1)
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell"],
         cwd=workspace_dir,
         timeout=120,
@@ -81,12 +81,12 @@ def test_claude_tool_starts_session(coi_binary, cleanup_containers, workspace_di
     time.sleep(5)
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
 
     assert claude_started, (
-        "coi shell with [tool] name = 'claude' should launch the claude binary "
+        "clincus shell with [tool] name = 'claude' should launch the claude binary "
         "and display its startup UI"
     )

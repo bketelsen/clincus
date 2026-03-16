@@ -1,5 +1,5 @@
 """
-Test for coi shutdown - multiple specific containers with --force.
+Test for clincus shutdown - multiple specific containers with --force.
 
 Tests that:
 1. Launch multiple containers
@@ -13,13 +13,13 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_shutdown_multiple_with_force(coi_binary, cleanup_containers, workspace_dir):
+def test_shutdown_multiple_with_force(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test shutting down multiple specific containers with --force.
 
     Flow:
     1. Launch two containers
-    2. Run coi shutdown --force <container1> <container2>
+    2. Run clincus shutdown --force <container1> <container2>
     3. Verify both containers are deleted
     """
     container1 = calculate_container_name(workspace_dir, 1)
@@ -27,7 +27,7 @@ def test_shutdown_multiple_with_force(coi_binary, cleanup_containers, workspace_
 
     # Launch first container
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container1],
+        [clincus_binary, "container", "launch", "clincus", container1],
         capture_output=True,
         text=True,
         timeout=120,
@@ -36,7 +36,7 @@ def test_shutdown_multiple_with_force(coi_binary, cleanup_containers, workspace_
 
     # Launch second container
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container2],
+        [clincus_binary, "container", "launch", "clincus", container2],
         capture_output=True,
         text=True,
         timeout=120,
@@ -47,7 +47,7 @@ def test_shutdown_multiple_with_force(coi_binary, cleanup_containers, workspace_
 
     # Shutdown both containers with --force
     result = subprocess.run(
-        [coi_binary, "shutdown", "--force", container1, container2],
+        [clincus_binary, "shutdown", "--force", container1, container2],
         capture_output=True,
         text=True,
         timeout=180,
@@ -64,7 +64,7 @@ def test_shutdown_multiple_with_force(coi_binary, cleanup_containers, workspace_
     time.sleep(2)
 
     result = subprocess.run(
-        [coi_binary, "container", "exists", container1],
+        [clincus_binary, "container", "exists", container1],
         capture_output=True,
         text=True,
         timeout=30,
@@ -72,7 +72,7 @@ def test_shutdown_multiple_with_force(coi_binary, cleanup_containers, workspace_
     assert result.returncode != 0, "Container 1 should not exist after shutdown"
 
     result = subprocess.run(
-        [coi_binary, "container", "exists", container2],
+        [clincus_binary, "container", "exists", container2],
         capture_output=True,
         text=True,
         timeout=30,

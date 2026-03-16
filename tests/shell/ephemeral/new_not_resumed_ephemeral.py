@@ -1,10 +1,10 @@
 """
-Test for coi shell - new session is NOT resumed without --resume flag.
+Test for clincus shell - new session is NOT resumed without --resume flag.
 
 Verifies that:
 1. Start dummy, interact with it
 2. Poweroff container
-3. Start coi shell again WITHOUT --resume
+3. Start clincus shell again WITHOUT --resume
 4. Verify it's a NEW session (not resuming the old one)
 """
 
@@ -17,7 +17,7 @@ from support.helpers import (
     calculate_container_name,
     get_container_list,
     send_prompt,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
     wait_for_specific_container_deletion,
@@ -26,14 +26,14 @@ from support.helpers import (
 )
 
 
-def test_new_session_not_resumed(coi_binary, cleanup_containers, workspace_dir):
+def test_new_session_not_resumed(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that without --resume, a new session is started.
 
     Flow:
-    1. Start coi shell, interact with dummy
+    1. Start clincus shell, interact with dummy
     2. Poweroff container
-    3. Start coi shell again (no --resume)
+    3. Start clincus shell again (no --resume)
     4. Verify dummy shows "Session:" (new session), not "Resuming session:"
     5. Cleanup
     """
@@ -41,8 +41,8 @@ def test_new_session_not_resumed(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 1: Initial session ===
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell"],
         cwd=workspace_dir,
         env=env,
@@ -88,8 +88,8 @@ def test_new_session_not_resumed(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 2: Start NEW session (no --resume) ===
 
-    child2 = spawn_coi(
-        coi_binary,
+    child2 = spawn_clincus(
+        clincus_binary,
         ["shell"],  # No --resume flag
         cwd=workspace_dir,
         env=env,
@@ -136,7 +136,7 @@ def test_new_session_not_resumed(coi_binary, cleanup_containers, workspace_dir):
     # Force cleanup any remaining
     containers = get_container_list()
     for c in containers:
-        if c.startswith("coi-test-"):
+        if c.startswith("clincus-test-"):
             subprocess.run(
                 ["sg", "incus-admin", "-c", f"incus delete --force {c}"],
                 capture_output=True,

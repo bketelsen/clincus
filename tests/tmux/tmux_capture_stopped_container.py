@@ -1,5 +1,5 @@
 """
-Test for coi tmux capture - error when container is stopped.
+Test for clincus tmux capture - error when container is stopped.
 
 Tests that:
 1. Launch a container
@@ -14,14 +14,14 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_tmux_capture_stopped_container(coi_binary, cleanup_containers, workspace_dir):
+def test_tmux_capture_stopped_container(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test tmux capture fails gracefully when container is stopped.
 
     Flow:
     1. Launch a container
     2. Stop the container
-    3. Try to use coi tmux capture
+    3. Try to use clincus tmux capture
     4. Verify error message about container not running
     5. Cleanup
     """
@@ -30,7 +30,7 @@ def test_tmux_capture_stopped_container(coi_binary, cleanup_containers, workspac
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -43,7 +43,7 @@ def test_tmux_capture_stopped_container(coi_binary, cleanup_containers, workspac
     # === Phase 2: Stop the container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "stop", container_name, "--force"],
+        [clincus_binary, "container", "stop", container_name, "--force"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -54,7 +54,7 @@ def test_tmux_capture_stopped_container(coi_binary, cleanup_containers, workspac
     # === Phase 3: Try to capture from stopped container ===
 
     result = subprocess.run(
-        [coi_binary, "tmux", "capture", container_name],
+        [clincus_binary, "tmux", "capture", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -73,7 +73,7 @@ def test_tmux_capture_stopped_container(coi_binary, cleanup_containers, workspac
     # === Phase 4: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

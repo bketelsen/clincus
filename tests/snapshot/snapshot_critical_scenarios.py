@@ -15,7 +15,7 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_workspace_files_not_in_snapshot(coi_binary, cleanup_containers, workspace_dir):
+def test_workspace_files_not_in_snapshot(clincus_binary, cleanup_containers, workspace_dir):
     """
     CRITICAL: Verify that workspace files are NOT included in snapshots.
 
@@ -35,7 +35,7 @@ def test_workspace_files_not_in_snapshot(coi_binary, cleanup_containers, workspa
 
     # === Phase 1: Launch container ===
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -46,7 +46,7 @@ def test_workspace_files_not_in_snapshot(coi_binary, cleanup_containers, workspa
     # === Phase 2: Mount workspace into container ===
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "mount",
             container_name,
@@ -67,7 +67,7 @@ def test_workspace_files_not_in_snapshot(coi_binary, cleanup_containers, workspa
 
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,
@@ -86,7 +86,7 @@ def test_workspace_files_not_in_snapshot(coi_binary, cleanup_containers, workspa
 
     # Verify file exists in workspace
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--capture", "--", "cat", workspace_file],
+        [clincus_binary, "container", "exec", container_name, "--capture", "--", "cat", workspace_file],
         capture_output=True,
         text=True,
         timeout=30,
@@ -97,7 +97,7 @@ def test_workspace_files_not_in_snapshot(coi_binary, cleanup_containers, workspa
 
     # === Phase 4: Create snapshot ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "create", snapshot_name, "-c", container_name],
+        [clincus_binary, "snapshot", "create", snapshot_name, "-c", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -106,7 +106,7 @@ def test_workspace_files_not_in_snapshot(coi_binary, cleanup_containers, workspa
 
     # === Phase 5: Delete file from /workspace ===
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--", "rm", workspace_file],
+        [clincus_binary, "container", "exec", container_name, "--", "rm", workspace_file],
         capture_output=True,
         text=True,
         timeout=30,
@@ -117,7 +117,7 @@ def test_workspace_files_not_in_snapshot(coi_binary, cleanup_containers, workspa
 
     # Verify file is gone
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--", "ls", workspace_file],
+        [clincus_binary, "container", "exec", container_name, "--", "ls", workspace_file],
         capture_output=True,
         text=True,
         timeout=30,
@@ -126,7 +126,7 @@ def test_workspace_files_not_in_snapshot(coi_binary, cleanup_containers, workspa
 
     # === Phase 6: Stop and restore snapshot ===
     result = subprocess.run(
-        [coi_binary, "container", "stop", container_name],
+        [clincus_binary, "container", "stop", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -134,7 +134,7 @@ def test_workspace_files_not_in_snapshot(coi_binary, cleanup_containers, workspa
     assert result.returncode == 0, f"Container stop should succeed. stderr: {result.stderr}"
 
     result = subprocess.run(
-        [coi_binary, "snapshot", "restore", snapshot_name, "-c", container_name, "-f"],
+        [clincus_binary, "snapshot", "restore", snapshot_name, "-c", container_name, "-f"],
         capture_output=True,
         text=True,
         timeout=60,
@@ -142,7 +142,7 @@ def test_workspace_files_not_in_snapshot(coi_binary, cleanup_containers, workspa
     assert result.returncode == 0, f"Snapshot restore should succeed. stderr: {result.stderr}"
 
     result = subprocess.run(
-        [coi_binary, "container", "start", container_name],
+        [clincus_binary, "container", "start", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -153,7 +153,7 @@ def test_workspace_files_not_in_snapshot(coi_binary, cleanup_containers, workspa
     # === Phase 7: Verify workspace file is STILL GONE ===
     # This proves workspace is NOT part of snapshot
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--", "ls", workspace_file],
+        [clincus_binary, "container", "exec", container_name, "--", "ls", workspace_file],
         capture_output=True,
         text=True,
         timeout=30,
@@ -164,13 +164,13 @@ def test_workspace_files_not_in_snapshot(coi_binary, cleanup_containers, workspa
 
     # === Cleanup ===
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
 
 
-def test_session_data_restoration(coi_binary, cleanup_containers, workspace_dir):
+def test_session_data_restoration(clincus_binary, cleanup_containers, workspace_dir):
     """
     CRITICAL: Verify that session data (.claude/) is properly restored.
 
@@ -191,7 +191,7 @@ def test_session_data_restoration(coi_binary, cleanup_containers, workspace_dir)
 
     # === Phase 1: Launch container ===
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -202,7 +202,7 @@ def test_session_data_restoration(coi_binary, cleanup_containers, workspace_dir)
     # === Phase 2: Create session data ===
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,
@@ -219,7 +219,7 @@ def test_session_data_restoration(coi_binary, cleanup_containers, workspace_dir)
 
     # Verify session file exists with correct data
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--capture", "--", "cat", session_file],
+        [clincus_binary, "container", "exec", container_name, "--capture", "--", "cat", session_file],
         capture_output=True,
         text=True,
         timeout=30,
@@ -230,7 +230,7 @@ def test_session_data_restoration(coi_binary, cleanup_containers, workspace_dir)
 
     # === Phase 3: Create snapshot (with session data) ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "create", snapshot_name, "-c", container_name],
+        [clincus_binary, "snapshot", "create", snapshot_name, "-c", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -239,7 +239,7 @@ def test_session_data_restoration(coi_binary, cleanup_containers, workspace_dir)
 
     # === Phase 4: Delete entire .claude directory ===
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--", "rm", "-rf", "/root/.claude"],
+        [clincus_binary, "container", "exec", container_name, "--", "rm", "-rf", "/root/.claude"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -248,7 +248,7 @@ def test_session_data_restoration(coi_binary, cleanup_containers, workspace_dir)
 
     # Verify directory is gone
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--", "ls", "/root/.claude"],
+        [clincus_binary, "container", "exec", container_name, "--", "ls", "/root/.claude"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -257,7 +257,7 @@ def test_session_data_restoration(coi_binary, cleanup_containers, workspace_dir)
 
     # === Phase 5: Stop and restore snapshot ===
     result = subprocess.run(
-        [coi_binary, "container", "stop", container_name],
+        [clincus_binary, "container", "stop", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -265,7 +265,7 @@ def test_session_data_restoration(coi_binary, cleanup_containers, workspace_dir)
     assert result.returncode == 0, f"Container stop should succeed. stderr: {result.stderr}"
 
     result = subprocess.run(
-        [coi_binary, "snapshot", "restore", snapshot_name, "-c", container_name, "-f"],
+        [clincus_binary, "snapshot", "restore", snapshot_name, "-c", container_name, "-f"],
         capture_output=True,
         text=True,
         timeout=60,
@@ -273,7 +273,7 @@ def test_session_data_restoration(coi_binary, cleanup_containers, workspace_dir)
     assert result.returncode == 0, f"Snapshot restore should succeed. stderr: {result.stderr}"
 
     result = subprocess.run(
-        [coi_binary, "container", "start", container_name],
+        [clincus_binary, "container", "start", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -283,7 +283,7 @@ def test_session_data_restoration(coi_binary, cleanup_containers, workspace_dir)
 
     # === Phase 6: Verify session data is fully restored ===
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--capture", "--", "cat", session_file],
+        [clincus_binary, "container", "exec", container_name, "--capture", "--", "cat", session_file],
         capture_output=True,
         text=True,
         timeout=30,
@@ -295,13 +295,13 @@ def test_session_data_restoration(coi_binary, cleanup_containers, workspace_dir)
 
     # === Cleanup ===
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
 
 
-def test_multiple_snapshot_branching(coi_binary, cleanup_containers, workspace_dir):
+def test_multiple_snapshot_branching(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test creating multiple snapshots and restoring to an earlier state.
 
@@ -323,7 +323,7 @@ def test_multiple_snapshot_branching(coi_binary, cleanup_containers, workspace_d
 
     # === Phase 1: Launch container ===
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -334,7 +334,7 @@ def test_multiple_snapshot_branching(coi_binary, cleanup_containers, workspace_d
     # === Phase 2: Create file A and snapshot state1 ===
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,
@@ -350,7 +350,7 @@ def test_multiple_snapshot_branching(coi_binary, cleanup_containers, workspace_d
     assert result.returncode == 0, "Creating file A should succeed"
 
     result = subprocess.run(
-        [coi_binary, "snapshot", "create", "state1", "-c", container_name],
+        [clincus_binary, "snapshot", "create", "state1", "-c", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -360,7 +360,7 @@ def test_multiple_snapshot_branching(coi_binary, cleanup_containers, workspace_d
     # === Phase 3: Create file B and snapshot state2 ===
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,
@@ -376,7 +376,7 @@ def test_multiple_snapshot_branching(coi_binary, cleanup_containers, workspace_d
     assert result.returncode == 0, "Creating file B should succeed"
 
     result = subprocess.run(
-        [coi_binary, "snapshot", "create", "state2", "-c", container_name],
+        [clincus_binary, "snapshot", "create", "state2", "-c", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -386,7 +386,7 @@ def test_multiple_snapshot_branching(coi_binary, cleanup_containers, workspace_d
     # === Phase 4: Create file C and snapshot state3 ===
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,
@@ -402,7 +402,7 @@ def test_multiple_snapshot_branching(coi_binary, cleanup_containers, workspace_d
     assert result.returncode == 0, "Creating file C should succeed"
 
     result = subprocess.run(
-        [coi_binary, "snapshot", "create", "state3", "-c", container_name],
+        [clincus_binary, "snapshot", "create", "state3", "-c", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -412,7 +412,7 @@ def test_multiple_snapshot_branching(coi_binary, cleanup_containers, workspace_d
     # Verify all three files exist
     for file in ["fileA.txt", "fileB.txt", "fileC.txt"]:
         result = subprocess.run(
-            [coi_binary, "container", "exec", container_name, "--", "ls", f"/root/{file}"],
+            [clincus_binary, "container", "exec", container_name, "--", "ls", f"/root/{file}"],
             capture_output=True,
             text=True,
             timeout=30,
@@ -424,7 +424,7 @@ def test_multiple_snapshot_branching(coi_binary, cleanup_containers, workspace_d
     # Delete state2 and state3 before restoring to state1
     for snap in ["state3", "state2"]:
         result = subprocess.run(
-            [coi_binary, "snapshot", "delete", snap, "-c", container_name],
+            [clincus_binary, "snapshot", "delete", snap, "-c", container_name],
             capture_output=True,
             text=True,
             timeout=60,
@@ -433,7 +433,7 @@ def test_multiple_snapshot_branching(coi_binary, cleanup_containers, workspace_d
 
     # === Phase 6: Restore to state1 (only file A should exist) ===
     result = subprocess.run(
-        [coi_binary, "container", "stop", container_name],
+        [clincus_binary, "container", "stop", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -441,7 +441,7 @@ def test_multiple_snapshot_branching(coi_binary, cleanup_containers, workspace_d
     assert result.returncode == 0, "Container stop should succeed"
 
     result = subprocess.run(
-        [coi_binary, "snapshot", "restore", "state1", "-c", container_name, "-f"],
+        [clincus_binary, "snapshot", "restore", "state1", "-c", container_name, "-f"],
         capture_output=True,
         text=True,
         timeout=60,
@@ -449,7 +449,7 @@ def test_multiple_snapshot_branching(coi_binary, cleanup_containers, workspace_d
     assert result.returncode == 0, "Restore to state1 should succeed"
 
     result = subprocess.run(
-        [coi_binary, "container", "start", container_name],
+        [clincus_binary, "container", "start", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -461,7 +461,7 @@ def test_multiple_snapshot_branching(coi_binary, cleanup_containers, workspace_d
     # File A should exist
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,
@@ -480,7 +480,7 @@ def test_multiple_snapshot_branching(coi_binary, cleanup_containers, workspace_d
 
     # Files B and C should NOT exist
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--", "ls", "/root/fileB.txt"],
+        [clincus_binary, "container", "exec", container_name, "--", "ls", "/root/fileB.txt"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -488,7 +488,7 @@ def test_multiple_snapshot_branching(coi_binary, cleanup_containers, workspace_d
     assert result.returncode != 0, "File B should not exist after restore to state1"
 
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--", "ls", "/root/fileC.txt"],
+        [clincus_binary, "container", "exec", container_name, "--", "ls", "/root/fileC.txt"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -497,13 +497,13 @@ def test_multiple_snapshot_branching(coi_binary, cleanup_containers, workspace_d
 
     # === Cleanup ===
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
 
 
-def test_file_permissions_preserved(coi_binary, cleanup_containers, workspace_dir):
+def test_file_permissions_preserved(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that file permissions are preserved across snapshot restore.
 
@@ -520,7 +520,7 @@ def test_file_permissions_preserved(coi_binary, cleanup_containers, workspace_di
 
     # === Phase 1: Launch container ===
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -531,7 +531,7 @@ def test_file_permissions_preserved(coi_binary, cleanup_containers, workspace_di
     # === Phase 2: Create file with chmod 600 ===
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,
@@ -549,7 +549,7 @@ def test_file_permissions_preserved(coi_binary, cleanup_containers, workspace_di
     # Verify permissions are 600
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,
@@ -570,7 +570,7 @@ def test_file_permissions_preserved(coi_binary, cleanup_containers, workspace_di
 
     # === Phase 3: Create snapshot ===
     result = subprocess.run(
-        [coi_binary, "snapshot", "create", snapshot_name, "-c", container_name],
+        [clincus_binary, "snapshot", "create", snapshot_name, "-c", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -579,7 +579,7 @@ def test_file_permissions_preserved(coi_binary, cleanup_containers, workspace_di
 
     # === Phase 4: Change permissions to 777 ===
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--", "chmod", "777", test_file],
+        [clincus_binary, "container", "exec", container_name, "--", "chmod", "777", test_file],
         capture_output=True,
         text=True,
         timeout=30,
@@ -589,7 +589,7 @@ def test_file_permissions_preserved(coi_binary, cleanup_containers, workspace_di
     # Verify permissions are now 777
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,
@@ -610,7 +610,7 @@ def test_file_permissions_preserved(coi_binary, cleanup_containers, workspace_di
 
     # === Phase 5: Restore snapshot ===
     result = subprocess.run(
-        [coi_binary, "container", "stop", container_name],
+        [clincus_binary, "container", "stop", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -618,7 +618,7 @@ def test_file_permissions_preserved(coi_binary, cleanup_containers, workspace_di
     assert result.returncode == 0, "Container stop should succeed"
 
     result = subprocess.run(
-        [coi_binary, "snapshot", "restore", snapshot_name, "-c", container_name, "-f"],
+        [clincus_binary, "snapshot", "restore", snapshot_name, "-c", container_name, "-f"],
         capture_output=True,
         text=True,
         timeout=60,
@@ -626,7 +626,7 @@ def test_file_permissions_preserved(coi_binary, cleanup_containers, workspace_di
     assert result.returncode == 0, "Snapshot restore should succeed"
 
     result = subprocess.run(
-        [coi_binary, "container", "start", container_name],
+        [clincus_binary, "container", "start", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -637,7 +637,7 @@ def test_file_permissions_preserved(coi_binary, cleanup_containers, workspace_di
     # === Phase 6: Verify permissions restored to 600 ===
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,
@@ -658,7 +658,7 @@ def test_file_permissions_preserved(coi_binary, cleanup_containers, workspace_di
 
     # === Cleanup ===
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

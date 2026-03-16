@@ -1,5 +1,5 @@
 """
-Test for coi shell - custom directory mounting in ephemeral mode.
+Test for clincus shell - custom directory mounting in ephemeral mode.
 
 Tests that:
 1. Create a temp directory with a test file
@@ -15,7 +15,7 @@ from pexpect import EOF, TIMEOUT
 from support.helpers import (
     calculate_container_name,
     get_container_list,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
     wait_for_text_in_monitor,
@@ -23,13 +23,13 @@ from support.helpers import (
 )
 
 
-def test_custom_mount_ephemeral(coi_binary, cleanup_containers, workspace_dir, tmp_path):
+def test_custom_mount_ephemeral(clincus_binary, cleanup_containers, workspace_dir, tmp_path):
     """
     Test that custom directory mounting works in ephemeral mode.
 
     Flow:
     1. Create a temp directory with a unique test file
-    2. Start coi shell with the temp dir as workspace
+    2. Start clincus shell with the temp dir as workspace
     3. Exit claude to bash
     4. Verify the test file exists in /workspace
     5. Cleanup
@@ -53,8 +53,8 @@ def test_custom_mount_ephemeral(coi_binary, cleanup_containers, workspace_dir, t
 
     # === Phase 2: Start ephemeral shell with custom workspace ===
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell", f"--workspace={custom_dir}"],
         cwd=str(custom_dir),
         env=env,
@@ -112,7 +112,7 @@ def test_custom_mount_ephemeral(coi_binary, cleanup_containers, workspace_dir, t
 
     # Force delete container if still exists
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

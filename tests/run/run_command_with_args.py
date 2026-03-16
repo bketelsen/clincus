@@ -1,5 +1,5 @@
 """
-Test for coi run - execute command with multiple arguments.
+Test for clincus run - execute command with multiple arguments.
 
 Tests that:
 1. Run a command with multiple arguments
@@ -9,16 +9,16 @@ Tests that:
 import subprocess
 
 
-def test_run_command_with_args(coi_binary, cleanup_containers, workspace_dir):
+def test_run_command_with_args(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test running a command with multiple arguments.
 
     Flow:
-    1. Run coi run with multiple args
+    1. Run clincus run with multiple args
     2. Verify output shows all args were received
     """
     result = subprocess.run(
-        [coi_binary, "run", "--workspace", workspace_dir, "echo", "arg1", "arg2", "arg3"],
+        [clincus_binary, "run", "--workspace", workspace_dir, "echo", "arg1", "arg2", "arg3"],
         capture_output=True,
         text=True,
         timeout=180,

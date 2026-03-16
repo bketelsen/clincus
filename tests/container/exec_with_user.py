@@ -1,5 +1,5 @@
 """
-Test for coi container exec --user - executes as specified user.
+Test for clincus container exec --user - executes as specified user.
 
 Tests that:
 1. Launch a container
@@ -15,7 +15,7 @@ from support.helpers import (
 )
 
 
-def test_exec_with_user(coi_binary, cleanup_containers, workspace_dir):
+def test_exec_with_user(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test executing command as a specific user.
 
@@ -31,7 +31,7 @@ def test_exec_with_user(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -44,7 +44,7 @@ def test_exec_with_user(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 2: Execute as root (UID 0) ===
 
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--user", "0", "--", "whoami"],
+        [clincus_binary, "container", "exec", container_name, "--user", "0", "--", "whoami"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -58,13 +58,13 @@ def test_exec_with_user(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 3: Execute as code (UID 1000) ===
 
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--user", "1000", "--", "whoami"],
+        [clincus_binary, "container", "exec", container_name, "--user", "1000", "--", "whoami"],
         capture_output=True,
         text=True,
         timeout=30,
     )
 
-    # code user exists in coi image with UID 1000
+    # code user exists in clincus image with UID 1000
     assert result.returncode == 0, f"Exec as code should succeed. stderr: {result.stderr}"
 
     combined_output = result.stdout + result.stderr
@@ -73,7 +73,7 @@ def test_exec_with_user(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 4: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

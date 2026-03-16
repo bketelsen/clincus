@@ -1,5 +1,5 @@
 """
-Test for coi health - text output format.
+Test for clincus health - text output format.
 
 Tests that:
 1. Health command runs successfully
@@ -10,17 +10,17 @@ Tests that:
 import subprocess
 
 
-def test_health_text_output(coi_binary):
+def test_health_text_output(clincus_binary):
     """
     Test health command with default text output.
 
     Flow:
-    1. Run coi health
+    1. Run clincus health
     2. Verify expected sections appear in output
     3. Verify exit code is 0
     """
     result = subprocess.run(
-        [coi_binary, "health"],
+        [clincus_binary, "health"],
         capture_output=True,
         text=True,
         timeout=120,

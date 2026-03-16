@@ -1,5 +1,5 @@
 """
-Test for coi shell --env - passing environment variables to container.
+Test for clincus shell --env - passing environment variables to container.
 
 Tests that:
 1. Start shell with --env KEY=VALUE
@@ -13,7 +13,7 @@ from pexpect import EOF, TIMEOUT
 
 from support.helpers import (
     calculate_container_name,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
     wait_for_text_in_monitor,
@@ -21,12 +21,12 @@ from support.helpers import (
 )
 
 
-def test_env_var_passing(coi_binary, cleanup_containers, workspace_dir):
+def test_env_var_passing(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that --env flag passes environment variables to container.
 
     Flow:
-    1. Start coi shell --env TEST_VAR=hello123
+    1. Start clincus shell --env TEST_VAR=hello123
     2. Exit claude to bash
     3. Echo $TEST_VAR and verify it's set
     4. Cleanup
@@ -39,8 +39,8 @@ def test_env_var_passing(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 1: Start session with custom env var ===
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell", f"--env={test_var_name}={test_var_value}"],
         cwd=workspace_dir,
         env=env,
@@ -85,7 +85,7 @@ def test_env_var_passing(coi_binary, cleanup_containers, workspace_dir):
     time.sleep(5)
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

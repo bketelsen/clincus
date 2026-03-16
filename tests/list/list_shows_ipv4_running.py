@@ -1,9 +1,9 @@
 """
-Test for coi list - shows IPv4 address for running containers.
+Test for clincus list - shows IPv4 address for running containers.
 
 Tests that:
 1. Launch a container
-2. Run coi list
+2. Run clincus list
 3. Verify it shows the container's IPv4 address
 """
 
@@ -13,13 +13,13 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_list_shows_ipv4_running(coi_binary, cleanup_containers, workspace_dir):
+def test_list_shows_ipv4_running(clincus_binary, cleanup_containers, workspace_dir):
     """
-    Test that coi list shows IPv4 address for running containers.
+    Test that clincus list shows IPv4 address for running containers.
 
     Flow:
     1. Launch a container
-    2. Run coi list
+    2. Run clincus list
     3. Verify container appears with IPv4 address
     4. Cleanup
     """
@@ -28,7 +28,7 @@ def test_list_shows_ipv4_running(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -40,7 +40,7 @@ def test_list_shows_ipv4_running(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 2: Run list ===
 
     result = subprocess.run(
-        [coi_binary, "list"],
+        [clincus_binary, "list"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -75,7 +75,7 @@ def test_list_shows_ipv4_running(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 4: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

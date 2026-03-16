@@ -1,5 +1,5 @@
 """
-Test for coi file pull - pull nonexistent remote file.
+Test for clincus file pull - pull nonexistent remote file.
 
 Tests that:
 1. Launch a container
@@ -14,7 +14,7 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_pull_nonexistent_remote_file(coi_binary, cleanup_containers, workspace_dir):
+def test_pull_nonexistent_remote_file(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that pulling a nonexistent remote file fails gracefully.
 
@@ -29,7 +29,7 @@ def test_pull_nonexistent_remote_file(coi_binary, cleanup_containers, workspace_
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -42,7 +42,7 @@ def test_pull_nonexistent_remote_file(coi_binary, cleanup_containers, workspace_
 
     local_file = os.path.join(workspace_dir, "should-not-exist.txt")
     result = subprocess.run(
-        [coi_binary, "file", "pull", f"{container_name}:/nonexistent/path/file.txt", local_file],
+        [clincus_binary, "file", "pull", f"{container_name}:/nonexistent/path/file.txt", local_file],
         capture_output=True,
         text=True,
         timeout=30,
@@ -62,7 +62,7 @@ def test_pull_nonexistent_remote_file(coi_binary, cleanup_containers, workspace_
     # === Phase 4: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

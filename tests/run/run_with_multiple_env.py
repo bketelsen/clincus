@@ -1,5 +1,5 @@
 """
-Test for coi run - with multiple environment variables.
+Test for clincus run - with multiple environment variables.
 
 Tests that:
 1. Run command with multiple -e flags
@@ -9,17 +9,17 @@ Tests that:
 import subprocess
 
 
-def test_run_with_multiple_env(coi_binary, cleanup_containers, workspace_dir):
+def test_run_with_multiple_env(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test running command with multiple environment variables.
 
     Flow:
-    1. Run coi run with multiple -e flags
+    1. Run clincus run with multiple -e flags
     2. Verify all env vars are set
     """
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,

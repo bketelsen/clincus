@@ -13,12 +13,12 @@ import subprocess
 from pathlib import Path
 
 
-def test_cli_flags_override_config(coi_binary, workspace_dir, cleanup_containers):
+def test_cli_flags_override_config(clincus_binary, workspace_dir, cleanup_containers):
     """Test that CLI flags override config file settings."""
-    container_name = f"coi-{Path(workspace_dir).name}-1"
+    container_name = f"clincus-{Path(workspace_dir).name}-1"
 
     # Create project config with limits
-    project_config = Path(workspace_dir) / ".coi.toml"
+    project_config = Path(workspace_dir) / ".clincus.toml"
     config_content = """
 [limits.cpu]
 count = "4"
@@ -31,7 +31,7 @@ limit = "4GiB"
     # Launch with CLI flags that override config
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -64,15 +64,15 @@ limit = "4GiB"
     )
 
 
-def test_cli_flags_override_profile(coi_binary, workspace_dir, cleanup_containers):
+def test_cli_flags_override_profile(clincus_binary, workspace_dir, cleanup_containers):
     """Test that CLI flags override profile settings."""
-    container_name = f"coi-{Path(workspace_dir).name}-1"
+    container_name = f"clincus-{Path(workspace_dir).name}-1"
 
     # Create project config with profile
-    project_config = Path(workspace_dir) / ".coi.toml"
+    project_config = Path(workspace_dir) / ".clincus.toml"
     config_content = """
 [profiles.limited]
-image = "coi"
+image = "clincus"
 
 [profiles.limited.limits.cpu]
 count = "1"
@@ -85,7 +85,7 @@ limit = "512MiB"
     # Launch with profile but override with CLI flags
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -120,9 +120,9 @@ limit = "512MiB"
     )
 
 
-def test_cli_flags_override_env_vars(coi_binary, workspace_dir, cleanup_containers):
+def test_cli_flags_override_env_vars(clincus_binary, workspace_dir, cleanup_containers):
     """Test that CLI flags override environment variables."""
-    container_name = f"coi-{Path(workspace_dir).name}-1"
+    container_name = f"clincus-{Path(workspace_dir).name}-1"
 
     env = os.environ.copy()
     env["COI_LIMIT_CPU"] = "1"
@@ -131,7 +131,7 @@ def test_cli_flags_override_env_vars(coi_binary, workspace_dir, cleanup_containe
     # Launch with CLI flags that override env vars
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -165,12 +165,12 @@ def test_cli_flags_override_env_vars(coi_binary, workspace_dir, cleanup_containe
     )
 
 
-def test_profile_overrides_config(coi_binary, workspace_dir, cleanup_containers):
+def test_profile_overrides_config(clincus_binary, workspace_dir, cleanup_containers):
     """Test that profile settings override global config."""
-    container_name = f"coi-{Path(workspace_dir).name}-1"
+    container_name = f"clincus-{Path(workspace_dir).name}-1"
 
     # Create project config with both global and profile limits
-    project_config = Path(workspace_dir) / ".coi.toml"
+    project_config = Path(workspace_dir) / ".clincus.toml"
     config_content = """
 [limits.cpu]
 count = "4"
@@ -179,7 +179,7 @@ count = "4"
 limit = "4GiB"
 
 [profiles.limited]
-image = "coi"
+image = "clincus"
 
 [profiles.limited.limits.cpu]
 count = "1"
@@ -192,7 +192,7 @@ limit = "512MiB"
     # Launch with profile (no CLI flags)
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -225,12 +225,12 @@ limit = "512MiB"
     )
 
 
-def test_partial_cli_override(coi_binary, workspace_dir, cleanup_containers):
+def test_partial_cli_override(clincus_binary, workspace_dir, cleanup_containers):
     """Test that CLI flags can partially override config (only specified flags override)."""
-    container_name = f"coi-{Path(workspace_dir).name}-1"
+    container_name = f"clincus-{Path(workspace_dir).name}-1"
 
     # Create project config with multiple limits
-    project_config = Path(workspace_dir) / ".coi.toml"
+    project_config = Path(workspace_dir) / ".clincus.toml"
     config_content = """
 [limits.cpu]
 count = "4"
@@ -246,7 +246,7 @@ max_processes = 100
     # Launch with only CPU override (memory and processes should come from config)
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -275,12 +275,12 @@ max_processes = 100
     assert 'limits.processes: "100"' in config_output, "Processes should remain from config (100)"
 
 
-def test_empty_cli_flag_does_not_override(coi_binary, workspace_dir, cleanup_containers):
+def test_empty_cli_flag_does_not_override(clincus_binary, workspace_dir, cleanup_containers):
     """Test that not specifying a CLI flag doesn't override config."""
-    container_name = f"coi-{Path(workspace_dir).name}-1"
+    container_name = f"clincus-{Path(workspace_dir).name}-1"
 
     # Create project config with limits
-    project_config = Path(workspace_dir) / ".coi.toml"
+    project_config = Path(workspace_dir) / ".clincus.toml"
     config_content = """
 [limits.cpu]
 count = "2"
@@ -292,7 +292,7 @@ limit = "2GiB"
 
     # Launch without any CLI limit flags
     result = subprocess.run(
-        [coi_binary, "run", "--workspace", workspace_dir, "echo", "test"],
+        [clincus_binary, "run", "--workspace", workspace_dir, "echo", "test"],
         capture_output=True,
         text=True,
         timeout=120,

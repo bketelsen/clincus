@@ -1,5 +1,5 @@
 """
-Test for coi run - execute a simple command.
+Test for clincus run - execute a simple command.
 
 Tests that:
 1. Run a simple echo command
@@ -10,17 +10,17 @@ Tests that:
 import subprocess
 
 
-def test_run_simple_command(coi_binary, cleanup_containers, workspace_dir):
+def test_run_simple_command(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test running a simple echo command.
 
     Flow:
-    1. Run coi run "echo hello-test-xyz"
+    1. Run clincus run "echo hello-test-xyz"
     2. Verify output contains the text
     3. Verify success exit code
     """
     result = subprocess.run(
-        [coi_binary, "run", "--workspace", workspace_dir, "echo", "hello-test-xyz-123"],
+        [clincus_binary, "run", "--workspace", workspace_dir, "echo", "hello-test-xyz-123"],
         capture_output=True,
         text=True,
         timeout=180,

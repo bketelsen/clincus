@@ -1,5 +1,5 @@
 """
-Test for coi container mount - fails for nonexistent source directory.
+Test for clincus container mount - fails for nonexistent source directory.
 
 Tests that:
 1. Launch a container
@@ -15,7 +15,7 @@ from support.helpers import (
 )
 
 
-def test_mount_nonexistent_source(coi_binary, cleanup_containers, workspace_dir):
+def test_mount_nonexistent_source(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that mounting nonexistent source directory fails.
 
@@ -30,7 +30,7 @@ def test_mount_nonexistent_source(coi_binary, cleanup_containers, workspace_dir)
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -41,13 +41,13 @@ def test_mount_nonexistent_source(coi_binary, cleanup_containers, workspace_dir)
     time.sleep(3)
 
     # === Phase 2: Try to mount nonexistent source ===
-    # Syntax: coi container mount <name> <device-name> <source> <path>
+    # Syntax: clincus container mount <name> <device-name> <source> <path>
 
     nonexistent_source = "/nonexistent/path/12345"
     mount_name = "bad-mount"
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "mount",
             container_name,
@@ -78,7 +78,7 @@ def test_mount_nonexistent_source(coi_binary, cleanup_containers, workspace_dir)
     # === Phase 4: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

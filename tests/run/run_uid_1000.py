@@ -1,5 +1,5 @@
 """
-Test for coi run - executes with UID 1000.
+Test for clincus run - executes with UID 1000.
 
 Tests that:
 1. Run id command
@@ -9,16 +9,16 @@ Tests that:
 import subprocess
 
 
-def test_run_uid_1000(coi_binary, cleanup_containers, workspace_dir):
+def test_run_uid_1000(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that commands run with UID 1000.
 
     Flow:
-    1. Run coi run id
+    1. Run clincus run id
     2. Verify UID is 1000
     """
     result = subprocess.run(
-        [coi_binary, "run", "--workspace", workspace_dir, "--", "id", "-u"],
+        [clincus_binary, "run", "--workspace", workspace_dir, "--", "id", "-u"],
         capture_output=True,
         text=True,
         timeout=180,

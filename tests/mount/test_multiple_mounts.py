@@ -3,7 +3,7 @@
 import subprocess
 
 
-def test_multiple_cli_mounts(coi_binary, cleanup_containers, workspace_dir, tmp_path):
+def test_multiple_cli_mounts(clincus_binary, cleanup_containers, workspace_dir, tmp_path):
     """Test mounting multiple directories via CLI."""
     dir1 = tmp_path / "data1"
     dir2 = tmp_path / "data2"
@@ -18,7 +18,7 @@ def test_multiple_cli_mounts(coi_binary, cleanup_containers, workspace_dir, tmp_
 
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,

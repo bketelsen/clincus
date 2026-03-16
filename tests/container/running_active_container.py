@@ -1,5 +1,5 @@
 """
-Test for coi container running - returns true for running container.
+Test for clincus container running - returns true for running container.
 
 Tests that:
 1. Launch a container
@@ -14,7 +14,7 @@ from support.helpers import (
 )
 
 
-def test_running_active_container(coi_binary, cleanup_containers, workspace_dir):
+def test_running_active_container(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that running returns success for a running container.
 
@@ -28,7 +28,7 @@ def test_running_active_container(coi_binary, cleanup_containers, workspace_dir)
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -41,7 +41,7 @@ def test_running_active_container(coi_binary, cleanup_containers, workspace_dir)
     # === Phase 2: Check running ===
 
     result = subprocess.run(
-        [coi_binary, "container", "running", container_name],
+        [clincus_binary, "container", "running", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -52,7 +52,7 @@ def test_running_active_container(coi_binary, cleanup_containers, workspace_dir)
     # === Phase 3: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

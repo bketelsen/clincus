@@ -1,5 +1,5 @@
 """
-Test for coi health --format json - JSON output format.
+Test for clincus health --format json - JSON output format.
 
 Tests that:
 1. Health command with --format json returns valid JSON
@@ -11,17 +11,17 @@ import json
 import subprocess
 
 
-def test_health_json_output(coi_binary):
+def test_health_json_output(clincus_binary):
     """
     Test health command with JSON output format.
 
     Flow:
-    1. Run coi health --format json
+    1. Run clincus health --format json
     2. Verify output is valid JSON
     3. Verify structure contains required fields
     """
     result = subprocess.run(
-        [coi_binary, "health", "--format", "json"],
+        [clincus_binary, "health", "--format", "json"],
         capture_output=True,
         text=True,
         timeout=120,

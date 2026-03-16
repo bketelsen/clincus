@@ -1,9 +1,9 @@
 """
-Test for coi list - persistent containers should show as persistent.
+Test for clincus list - persistent containers should show as persistent.
 
 Tests that:
 1. Start a persistent session with dummy
-2. Run coi list
+2. Run clincus list
 3. Verify container IS marked as (persistent)
 4. Cleanup container
 """
@@ -17,7 +17,7 @@ from support.helpers import (
     calculate_container_name,
     get_container_list,
     send_prompt,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
     wait_for_text_in_monitor,
@@ -25,22 +25,22 @@ from support.helpers import (
 )
 
 
-def test_list_persistent(coi_binary, cleanup_containers, workspace_dir):
+def test_list_persistent(clincus_binary, cleanup_containers, workspace_dir):
     """
-    Test that persistent containers are marked as persistent in coi list.
+    Test that persistent containers are marked as persistent in clincus list.
 
     Flow:
-    1. Start coi shell --persistent
+    1. Start clincus shell --persistent
     2. Verify container is running
-    3. Run coi list and verify container IS marked as (persistent)
+    3. Run clincus list and verify container IS marked as (persistent)
     4. Cleanup
     """
     env = {"COI_USE_DUMMY": "1"}
 
     # === Phase 1: Start persistent session ===
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell", "--persistent"],
         cwd=workspace_dir,
         env=env,
@@ -63,17 +63,17 @@ def test_list_persistent(coi_binary, cleanup_containers, workspace_dir):
         responded = wait_for_text_in_monitor(monitor, "test message-BACK", timeout=30)
         assert responded, "Dummy CLI should respond"
 
-    # === Phase 2: Run coi list and check output ===
+    # === Phase 2: Run clincus list and check output ===
 
     list_result = subprocess.run(
-        [coi_binary, "list"],
+        [clincus_binary, "list"],
         capture_output=True,
         text=True,
         timeout=30,
         cwd=workspace_dir,
     )
 
-    assert list_result.returncode == 0, f"coi list should succeed. stderr: {list_result.stderr}"
+    assert list_result.returncode == 0, f"clincus list should succeed. stderr: {list_result.stderr}"
 
     list_output = list_result.stdout
 
@@ -125,7 +125,7 @@ def test_list_persistent(coi_binary, cleanup_containers, workspace_dir):
 
     # Force delete the container
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

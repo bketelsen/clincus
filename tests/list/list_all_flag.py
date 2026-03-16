@@ -1,24 +1,24 @@
 """
-Test for coi list --all - shows saved sessions section.
+Test for clincus list --all - shows saved sessions section.
 
 Tests that:
-1. Run coi list --all
+1. Run clincus list --all
 2. Verify it shows both Active Containers and Saved Sessions sections
 """
 
 import subprocess
 
 
-def test_list_all_flag(coi_binary, cleanup_containers):
+def test_list_all_flag(clincus_binary, cleanup_containers):
     """
-    Test that coi list --all shows Saved Sessions section.
+    Test that clincus list --all shows Saved Sessions section.
 
     Flow:
-    1. Run coi list --all
+    1. Run clincus list --all
     2. Verify both sections appear
     """
     result = subprocess.run(
-        [coi_binary, "list", "--all"],
+        [clincus_binary, "list", "--all"],
         capture_output=True,
         text=True,
         timeout=30,

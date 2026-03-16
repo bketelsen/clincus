@@ -1,61 +1,61 @@
 """
-Test for coi images - alias for coi image list.
+Test for clincus images - alias for clincus image list.
 
 Tests that:
-1. Run coi images
-2. Verify it behaves like coi image list
+1. Run clincus images
+2. Verify it behaves like clincus image list
 """
 
 import subprocess
 
 
-def test_images_alias(coi_binary, cleanup_containers):
+def test_images_alias(clincus_binary, cleanup_containers):
     """
-    Test that 'coi images' is an alias for 'coi image list'.
+    Test that 'clincus images' is an alias for 'clincus image list'.
 
     Flow:
-    1. Run coi images
-    2. Verify output is similar to coi image list
+    1. Run clincus images
+    2. Verify output is similar to clincus image list
     """
-    # === Phase 1: Run coi images ===
+    # === Phase 1: Run clincus images ===
 
     result = subprocess.run(
-        [coi_binary, "images"],
+        [clincus_binary, "images"],
         capture_output=True,
         text=True,
         timeout=30,
     )
 
-    assert result.returncode == 0, f"coi images should succeed. stderr: {result.stderr}"
+    assert result.returncode == 0, f"clincus images should succeed. stderr: {result.stderr}"
 
     # === Phase 2: Verify output format ===
 
     combined_output = result.stdout + result.stderr
 
     # Should show same content as image list
-    assert "COI Images:" in combined_output or "Available Images:" in combined_output, (
-        f"Should show COI Images section. Got:\n{combined_output}"
+    assert "Clincus Images:" in combined_output or "Available Images:" in combined_output, (
+        f"Should show Clincus Images section. Got:\n{combined_output}"
     )
 
 
-def test_images_all_flag(coi_binary, cleanup_containers):
+def test_images_all_flag(clincus_binary, cleanup_containers):
     """
-    Test that 'coi images --all' works.
+    Test that 'clincus images --all' works.
 
     Flow:
-    1. Run coi images --all
+    1. Run clincus images --all
     2. Verify it shows all local images
     """
-    # === Phase 1: Run coi images --all ===
+    # === Phase 1: Run clincus images --all ===
 
     result = subprocess.run(
-        [coi_binary, "images", "--all"],
+        [clincus_binary, "images", "--all"],
         capture_output=True,
         text=True,
         timeout=30,
     )
 
-    assert result.returncode == 0, f"coi images --all should succeed. stderr: {result.stderr}"
+    assert result.returncode == 0, f"clincus images --all should succeed. stderr: {result.stderr}"
 
     # === Phase 2: Verify output ===
 

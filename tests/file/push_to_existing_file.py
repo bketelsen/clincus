@@ -1,5 +1,5 @@
 """
-Test for coi file push - push to existing remote file (overwrite).
+Test for clincus file push - push to existing remote file (overwrite).
 
 Tests that:
 1. Launch a container
@@ -15,7 +15,7 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_push_to_existing_file(coi_binary, cleanup_containers, workspace_dir):
+def test_push_to_existing_file(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that pushing overwrites existing remote file.
 
@@ -31,7 +31,7 @@ def test_push_to_existing_file(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -45,7 +45,7 @@ def test_push_to_existing_file(coi_binary, cleanup_containers, workspace_dir):
     old_content = "old-content-should-be-replaced"
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,
@@ -68,7 +68,7 @@ def test_push_to_existing_file(coi_binary, cleanup_containers, workspace_dir):
         f.write(new_content)
 
     result = subprocess.run(
-        [coi_binary, "file", "push", local_file, f"{container_name}:/tmp/overwrite-test.txt"],
+        [clincus_binary, "file", "push", local_file, f"{container_name}:/tmp/overwrite-test.txt"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -79,7 +79,7 @@ def test_push_to_existing_file(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 4: Verify content was replaced ===
 
     result = subprocess.run(
-        [coi_binary, "container", "exec", container_name, "--", "cat", "/tmp/overwrite-test.txt"],
+        [clincus_binary, "container", "exec", container_name, "--", "cat", "/tmp/overwrite-test.txt"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -96,7 +96,7 @@ def test_push_to_existing_file(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 5: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

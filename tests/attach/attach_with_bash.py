@@ -1,9 +1,9 @@
 """
-Test for coi attach --bash - attach to bash instead of tmux.
+Test for clincus attach --bash - attach to bash instead of tmux.
 
 Tests that:
 1. Start a shell session and detach
-2. Run coi attach --bash
+2. Run clincus attach --bash
 3. Verify it attaches to bash shell (not tmux)
 """
 
@@ -15,7 +15,7 @@ from pexpect import EOF, TIMEOUT
 from support.helpers import (
     calculate_container_name,
     get_container_list,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
     wait_for_text_in_monitor,
@@ -23,14 +23,14 @@ from support.helpers import (
 )
 
 
-def test_attach_with_bash(coi_binary, cleanup_containers, workspace_dir):
+def test_attach_with_bash(clincus_binary, cleanup_containers, workspace_dir):
     """
-    Test that coi attach --bash attaches to bash shell.
+    Test that clincus attach --bash attaches to bash shell.
 
     Flow:
-    1. Start coi shell --persistent
+    1. Start clincus shell --persistent
     2. Detach from session
-    3. Run coi attach <name> --bash
+    3. Run clincus attach <name> --bash
     4. Verify we get a bash shell (can run commands)
     5. Cleanup
     """
@@ -39,8 +39,8 @@ def test_attach_with_bash(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 1: Start persistent session ===
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell", "--persistent"],
         cwd=workspace_dir,
         env=env,
@@ -80,10 +80,10 @@ def test_attach_with_bash(coi_binary, cleanup_containers, workspace_dir):
     containers = get_container_list()
     assert container_name in containers, f"Container {container_name} should still be running"
 
-    # === Phase 3: Test coi attach --bash ===
+    # === Phase 3: Test clincus attach --bash ===
 
-    child2 = spawn_coi(
-        coi_binary,
+    child2 = spawn_clincus(
+        clincus_binary,
         ["attach", container_name, "--bash"],
         cwd=workspace_dir,
         env=env,
@@ -121,7 +121,7 @@ def test_attach_with_bash(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 4: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

@@ -13,12 +13,12 @@ import subprocess
 from pathlib import Path
 
 
-def test_config_file_limits_loaded(coi_binary, workspace_dir, cleanup_containers):
+def test_config_file_limits_loaded(clincus_binary, workspace_dir, cleanup_containers):
     """Test that limits from config file are loaded and applied."""
-    container_name = f"coi-{Path(workspace_dir).name}-1"
+    container_name = f"clincus-{Path(workspace_dir).name}-1"
 
     # Create config file with limits
-    config_dir = Path.home() / ".config" / "coi"
+    config_dir = Path.home() / ".config" / "clincus"
     config_dir.mkdir(parents=True, exist_ok=True)
     config_file = config_dir / "config.toml"
 
@@ -31,7 +31,7 @@ def test_config_file_limits_loaded(coi_binary, workspace_dir, cleanup_containers
     try:
         config_content = """
 [defaults]
-image = "coi"
+image = "clincus"
 
 [incus]
 project = "default"
@@ -47,9 +47,9 @@ max_processes = 100
 """
         config_file.write_text(config_content)
 
-        # Launch container with coi run (quick test)
+        # Launch container with clincus run (quick test)
         result = subprocess.run(
-            [coi_binary, "run", "--workspace", workspace_dir, "echo", "test"],
+            [clincus_binary, "run", "--workspace", workspace_dir, "echo", "test"],
             capture_output=True,
             text=True,
             timeout=120,
@@ -78,10 +78,10 @@ max_processes = 100
             backup_file.rename(config_file)
 
 
-def test_profile_limits_override_global(coi_binary, workspace_dir, cleanup_containers):
+def test_profile_limits_override_global(clincus_binary, workspace_dir, cleanup_containers):
     """Test that profile limits override global limits."""
     # Create project config with profile
-    project_config = Path(workspace_dir) / ".coi.toml"
+    project_config = Path(workspace_dir) / ".clincus.toml"
 
     config_content = """
 [limits.cpu]
@@ -91,7 +91,7 @@ count = "4"
 limit = "4GiB"
 
 [profiles.limited]
-image = "coi"
+image = "clincus"
 
 [profiles.limited.limits.cpu]
 count = "1"
@@ -101,11 +101,11 @@ limit = "512MiB"
 """
     project_config.write_text(config_content)
 
-    container_name = f"coi-{Path(workspace_dir).name}-1"
+    container_name = f"clincus-{Path(workspace_dir).name}-1"
 
     # Launch with profile
     result = subprocess.run(
-        [coi_binary, "run", "--workspace", workspace_dir, "--profile", "limited", "echo", "test"],
+        [clincus_binary, "run", "--workspace", workspace_dir, "--profile", "limited", "echo", "test"],
         capture_output=True,
         text=True,
         timeout=120,
@@ -126,16 +126,16 @@ limit = "512MiB"
     assert "limits.memory: 512MiB" in config_output, "Profile memory limit should override global"
 
 
-def test_environment_variables_work(coi_binary, workspace_dir, cleanup_containers):
+def test_environment_variables_work(clincus_binary, workspace_dir, cleanup_containers):
     """Test that environment variables set limits."""
-    container_name = f"coi-{Path(workspace_dir).name}-1"
+    container_name = f"clincus-{Path(workspace_dir).name}-1"
 
     env = os.environ.copy()
     env["COI_LIMIT_CPU"] = "2"
     env["COI_LIMIT_MEMORY"] = "2GiB"
 
     result = subprocess.run(
-        [coi_binary, "run", "--workspace", workspace_dir, "echo", "test"],
+        [clincus_binary, "run", "--workspace", workspace_dir, "echo", "test"],
         capture_output=True,
         text=True,
         timeout=120,
@@ -157,13 +157,13 @@ def test_environment_variables_work(coi_binary, workspace_dir, cleanup_container
     assert "limits.memory: 2GiB" in config_output, "Memory limit from env should be applied"
 
 
-def test_empty_limits_means_unlimited(coi_binary, workspace_dir, cleanup_containers):
+def test_empty_limits_means_unlimited(clincus_binary, workspace_dir, cleanup_containers):
     """Test that empty/missing limits result in unlimited (no limits applied)."""
-    container_name = f"coi-{Path(workspace_dir).name}-1"
+    container_name = f"clincus-{Path(workspace_dir).name}-1"
 
     # Launch without any limits configured
     result = subprocess.run(
-        [coi_binary, "run", "--workspace", workspace_dir, "echo", "test"],
+        [clincus_binary, "run", "--workspace", workspace_dir, "echo", "test"],
         capture_output=True,
         text=True,
         timeout=120,

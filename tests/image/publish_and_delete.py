@@ -1,5 +1,5 @@
 """
-Test for coi image publish and delete - full lifecycle.
+Test for clincus image publish and delete - full lifecycle.
 
 Tests that:
 1. Launch and stop a container
@@ -15,7 +15,7 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_publish_and_delete_image(coi_binary, cleanup_containers, workspace_dir):
+def test_publish_and_delete_image(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test publishing a container as image and deleting it.
 
@@ -34,7 +34,7 @@ def test_publish_and_delete_image(coi_binary, cleanup_containers, workspace_dir)
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -46,7 +46,7 @@ def test_publish_and_delete_image(coi_binary, cleanup_containers, workspace_dir)
     # === Phase 2: Stop container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "stop", container_name],
+        [clincus_binary, "container", "stop", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -59,7 +59,7 @@ def test_publish_and_delete_image(coi_binary, cleanup_containers, workspace_dir)
 
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "image",
             "publish",
             container_name,
@@ -81,7 +81,7 @@ def test_publish_and_delete_image(coi_binary, cleanup_containers, workspace_dir)
     # === Phase 4: Verify image exists ===
 
     result = subprocess.run(
-        [coi_binary, "image", "exists", test_image_name],
+        [clincus_binary, "image", "exists", test_image_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -91,7 +91,7 @@ def test_publish_and_delete_image(coi_binary, cleanup_containers, workspace_dir)
     # === Phase 5: Delete the image ===
 
     result = subprocess.run(
-        [coi_binary, "image", "delete", test_image_name],
+        [clincus_binary, "image", "delete", test_image_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -101,7 +101,7 @@ def test_publish_and_delete_image(coi_binary, cleanup_containers, workspace_dir)
     # === Phase 6: Verify image no longer exists ===
 
     result = subprocess.run(
-        [coi_binary, "image", "exists", test_image_name],
+        [clincus_binary, "image", "exists", test_image_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -111,7 +111,7 @@ def test_publish_and_delete_image(coi_binary, cleanup_containers, workspace_dir)
     # === Phase 7: Cleanup container ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

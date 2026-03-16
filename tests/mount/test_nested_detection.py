@@ -4,7 +4,7 @@ import subprocess
 from pathlib import Path
 
 
-def test_nested_mounts_rejected(coi_binary, workspace_dir, tmp_path):
+def test_nested_mounts_rejected(clincus_binary, workspace_dir, tmp_path):
     """Test that nested paths fail validation."""
     dir1 = tmp_path / "data"
     dir2 = tmp_path / "other"
@@ -13,7 +13,7 @@ def test_nested_mounts_rejected(coi_binary, workspace_dir, tmp_path):
 
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "run",
             "--workspace",
             workspace_dir,
@@ -35,7 +35,7 @@ def test_nested_mounts_rejected(coi_binary, workspace_dir, tmp_path):
     assert "nested" in combined.lower() or "conflict" in combined.lower()
 
 
-def test_config_nested_mounts_rejected(coi_binary, workspace_dir, tmp_path):
+def test_config_nested_mounts_rejected(clincus_binary, workspace_dir, tmp_path):
     """Test nested paths in config file are rejected."""
     dir1 = tmp_path / "d1"
     dir2 = tmp_path / "d2"
@@ -52,16 +52,16 @@ container = "/app"
 host = "{dir2}"
 container = "/app/subdir"
 """
-    config_file = Path(workspace_dir) / ".coi.toml"
+    config_file = Path(workspace_dir) / ".clincus.toml"
     config_file.write_text(config_content)
 
     # Run from workspace directory so config is loaded
     result = subprocess.run(
-        [coi_binary, "run", "--", "echo", "test"],
+        [clincus_binary, "run", "--", "echo", "test"],
         capture_output=True,
         text=True,
         timeout=120,
-        cwd=workspace_dir,  # Run from workspace directory to load .coi.toml
+        cwd=workspace_dir,  # Run from workspace directory to load .clincus.toml
     )
 
     assert result.returncode != 0

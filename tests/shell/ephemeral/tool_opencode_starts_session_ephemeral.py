@@ -1,10 +1,10 @@
 """
-Test that coi shell with [tool] name = "opencode" starts the real opencode binary
+Test that clincus shell with [tool] name = "opencode" starts the real opencode binary
 and injects the permission bypass into ~/.opencode.json.
 
 Verifies that:
-1. Writing [tool] name = "opencode" to .coi.toml is accepted
-2. coi shell starts the container and launches the real opencode binary
+1. Writing [tool] name = "opencode" to .clincus.toml is accepted
+2. clincus shell starts the container and launches the real opencode binary
 3. Opencode's startup UI appears on screen (provider/login screen)
 4. ~/.opencode.json is created in the container with the permission bypass
    ({"permission": {"*": "allow"}}) via the ToolWithHomeConfigFile injection path
@@ -21,33 +21,33 @@ from pexpect import EOF, TIMEOUT
 
 from support.helpers import (
     calculate_container_name,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_text_on_screen,
 )
 
 
-def test_opencode_tool_starts_session(coi_binary, cleanup_containers, workspace_dir):
+def test_opencode_tool_starts_session(clincus_binary, cleanup_containers, workspace_dir):
     """
-    Smoke test: coi shell with tool = "opencode" launches the real opencode binary
+    Smoke test: clincus shell with tool = "opencode" launches the real opencode binary
     and injects the sandbox config into ~/.opencode.json.
 
     Flow:
-    1. Write .coi.toml with [tool] name = "opencode" to the workspace
-    2. Start coi shell (no COI_USE_DUMMY - use the real binary)
+    1. Write .clincus.toml with [tool] name = "opencode" to the workspace
+    2. Start clincus shell (no COI_USE_DUMMY - use the real binary)
     3. Wait for container setup to complete
     4. Wait for opencode's startup UI to appear on screen
     5. While TUI is running, use incus exec to inspect ~/.opencode.json
     6. Ctrl+C to exit the TUI, then poweroff
     """
-    config_path = os.path.join(workspace_dir, ".coi.toml")
+    config_path = os.path.join(workspace_dir, ".clincus.toml")
     with open(config_path, "w") as f:
         f.write('[tool]\nname = "opencode"\n')
 
     container_name = calculate_container_name(workspace_dir, 1)
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell"],
         cwd=workspace_dir,
         timeout=120,
@@ -114,13 +114,13 @@ def test_opencode_tool_starts_session(coi_binary, cleanup_containers, workspace_
     time.sleep(5)
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
 
     assert opencode_started, (
-        "coi shell with [tool] name = 'opencode' should launch the opencode binary "
+        "clincus shell with [tool] name = 'opencode' should launch the opencode binary "
         "and display its startup UI"
     )
     assert permission_injected, (

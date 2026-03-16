@@ -1,10 +1,10 @@
 """
-Test for coi persist --all flag.
+Test for clincus persist --all flag.
 
 Tests that:
 1. Launch 2 ephemeral containers
 2. Create session metadata for both
-3. Run coi persist --all --force
+3. Run clincus persist --all --force
 4. Verify both containers' metadata updated
 5. Verify success message shows "Persisted 2"
 """
@@ -21,7 +21,7 @@ from support.helpers import calculate_container_name
 
 def create_session_metadata(container_name, workspace_dir, persistent=False):
     """Create a session metadata file for a container."""
-    sessions_dir = Path.home() / ".coi" / "sessions-claude"
+    sessions_dir = Path.home() / ".clincus" / "sessions-claude"
     sessions_dir.mkdir(parents=True, exist_ok=True)
 
     session_id = str(uuid.uuid4())
@@ -43,7 +43,7 @@ def create_session_metadata(container_name, workspace_dir, persistent=False):
     return metadata_path
 
 
-def test_persist_all_flag(coi_binary, cleanup_containers, workspace_dir):
+def test_persist_all_flag(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test persist --all flag on multiple containers.
 
@@ -60,7 +60,7 @@ def test_persist_all_flag(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch 2 containers ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name_1],
+        [clincus_binary, "container", "launch", "clincus", container_name_1],
         capture_output=True,
         text=True,
         timeout=120,
@@ -68,7 +68,7 @@ def test_persist_all_flag(coi_binary, cleanup_containers, workspace_dir):
     assert result.returncode == 0, f"Container 1 launch should succeed. stderr: {result.stderr}"
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name_2],
+        [clincus_binary, "container", "launch", "clincus", container_name_2],
         capture_output=True,
         text=True,
         timeout=120,
@@ -85,7 +85,7 @@ def test_persist_all_flag(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 2: Persist all containers ===
 
     result = subprocess.run(
-        [coi_binary, "persist", "--all", "--force"],
+        [clincus_binary, "persist", "--all", "--force"],
         capture_output=True,
         text=True,
         timeout=60,
@@ -107,7 +107,7 @@ def test_persist_all_flag(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 3: Verify both metadata files updated ===
 
-    sessions_dir = Path.home() / ".coi" / "sessions-claude"
+    sessions_dir = Path.home() / ".clincus" / "sessions-claude"
     assert sessions_dir.exists(), f"Sessions directory should exist: {sessions_dir}"
 
     # Helper to find metadata for a container

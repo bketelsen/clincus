@@ -1,10 +1,10 @@
 """
-Test for coi attach --slot - attach by slot number.
+Test for clincus attach --slot - attach by slot number.
 
 Tests that:
 1. Start a shell session on slot 1
 2. Detach from session
-3. Run coi attach --slot=1
+3. Run clincus attach --slot=1
 4. Verify it attaches to slot 1
 """
 
@@ -16,20 +16,20 @@ from pexpect import EOF, TIMEOUT
 from support.helpers import (
     calculate_container_name,
     get_container_list,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
 )
 
 
-def test_attach_by_slot(coi_binary, cleanup_containers, workspace_dir):
+def test_attach_by_slot(clincus_binary, cleanup_containers, workspace_dir):
     """
-    Test that coi attach --slot attaches to the specified slot.
+    Test that clincus attach --slot attaches to the specified slot.
 
     Flow:
-    1. Start coi shell --persistent --slot=1
+    1. Start clincus shell --persistent --slot=1
     2. Detach from session
-    3. Run coi attach --slot=1
+    3. Run clincus attach --slot=1
     4. Verify it attaches and shows "Attaching to ... (slot 1)"
     5. Cleanup
     """
@@ -38,8 +38,8 @@ def test_attach_by_slot(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 1: Start persistent session on slot 1 ===
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell", "--persistent", "--slot=1"],
         cwd=workspace_dir,
         env=env,
@@ -79,10 +79,10 @@ def test_attach_by_slot(coi_binary, cleanup_containers, workspace_dir):
     containers = get_container_list()
     assert container_name in containers, f"Container {container_name} should still be running"
 
-    # === Phase 3: Test coi attach --slot=1 ===
+    # === Phase 3: Test clincus attach --slot=1 ===
 
     result = subprocess.run(
-        [coi_binary, "attach", "--slot=1", f"--workspace={workspace_dir}"],
+        [clincus_binary, "attach", "--slot=1", f"--workspace={workspace_dir}"],
         capture_output=True,
         text=True,
         timeout=5,
@@ -103,7 +103,7 @@ def test_attach_by_slot(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 4: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

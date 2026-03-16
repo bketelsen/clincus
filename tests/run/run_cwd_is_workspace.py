@@ -1,5 +1,5 @@
 """
-Test for coi run - current working directory is /workspace.
+Test for clincus run - current working directory is /workspace.
 
 Tests that:
 1. Run pwd command
@@ -9,16 +9,16 @@ Tests that:
 import subprocess
 
 
-def test_run_cwd_is_workspace(coi_binary, cleanup_containers, workspace_dir):
+def test_run_cwd_is_workspace(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that current working directory is /workspace.
 
     Flow:
-    1. Run coi run pwd
+    1. Run clincus run pwd
     2. Verify output shows /workspace
     """
     result = subprocess.run(
-        [coi_binary, "run", "--workspace", workspace_dir, "pwd"],
+        [clincus_binary, "run", "--workspace", workspace_dir, "pwd"],
         capture_output=True,
         text=True,
         timeout=180,

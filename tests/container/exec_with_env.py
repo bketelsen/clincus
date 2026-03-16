@@ -1,5 +1,5 @@
 """
-Test for coi container exec --env - passes environment variables.
+Test for clincus container exec --env - passes environment variables.
 
 Tests that:
 1. Launch a container
@@ -15,7 +15,7 @@ from support.helpers import (
 )
 
 
-def test_exec_with_env(coi_binary, cleanup_containers, workspace_dir):
+def test_exec_with_env(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test executing command with environment variables.
 
@@ -30,7 +30,7 @@ def test_exec_with_env(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -44,7 +44,7 @@ def test_exec_with_env(coi_binary, cleanup_containers, workspace_dir):
 
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,
@@ -72,7 +72,7 @@ def test_exec_with_env(coi_binary, cleanup_containers, workspace_dir):
 
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,
@@ -102,7 +102,7 @@ def test_exec_with_env(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 5: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

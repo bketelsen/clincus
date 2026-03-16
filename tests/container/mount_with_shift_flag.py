@@ -1,5 +1,5 @@
 """
-Test for coi container mount --shift - mounts with UID shifting.
+Test for clincus container mount --shift - mounts with UID shifting.
 
 Tests that:
 1. Launch a container
@@ -17,7 +17,7 @@ from support.helpers import (
 )
 
 
-def test_mount_with_shift_flag(coi_binary, cleanup_containers, workspace_dir):
+def test_mount_with_shift_flag(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test mount with --shift flag for UID/GID shifting.
 
@@ -40,7 +40,7 @@ def test_mount_with_shift_flag(coi_binary, cleanup_containers, workspace_dir):
         # === Phase 2: Launch container ===
 
         result = subprocess.run(
-            [coi_binary, "container", "launch", "coi", container_name],
+            [clincus_binary, "container", "launch", "clincus", container_name],
             capture_output=True,
             text=True,
             timeout=120,
@@ -51,12 +51,12 @@ def test_mount_with_shift_flag(coi_binary, cleanup_containers, workspace_dir):
         time.sleep(3)
 
         # === Phase 3: Mount with --shift ===
-        # Syntax: coi container mount <name> <device-name> <source> <path>
+        # Syntax: clincus container mount <name> <device-name> <source> <path>
 
         mount_name = "shift-mount"
         result = subprocess.run(
             [
-                coi_binary,
+                clincus_binary,
                 "container",
                 "mount",
                 container_name,
@@ -78,7 +78,7 @@ def test_mount_with_shift_flag(coi_binary, cleanup_containers, workspace_dir):
 
         result = subprocess.run(
             [
-                coi_binary,
+                clincus_binary,
                 "container",
                 "exec",
                 container_name,
@@ -103,7 +103,7 @@ def test_mount_with_shift_flag(coi_binary, cleanup_containers, workspace_dir):
         # Check ownership appears as valid user inside container
         result = subprocess.run(
             [
-                coi_binary,
+                clincus_binary,
                 "container",
                 "exec",
                 container_name,
@@ -122,7 +122,7 @@ def test_mount_with_shift_flag(coi_binary, cleanup_containers, workspace_dir):
         # === Phase 5: Cleanup ===
 
         subprocess.run(
-            [coi_binary, "container", "delete", container_name, "--force"],
+            [clincus_binary, "container", "delete", container_name, "--force"],
             capture_output=True,
             timeout=30,
         )

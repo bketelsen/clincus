@@ -1,5 +1,5 @@
 """
-Test for coi kill - kill a stopped container.
+Test for clincus kill - kill a stopped container.
 
 Tests that:
 1. Launch a container
@@ -14,7 +14,7 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_kill_stopped_container(coi_binary, cleanup_containers, workspace_dir):
+def test_kill_stopped_container(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test killing a stopped container.
 
@@ -29,7 +29,7 @@ def test_kill_stopped_container(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -41,7 +41,7 @@ def test_kill_stopped_container(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 2: Stop container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "stop", container_name],
+        [clincus_binary, "container", "stop", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -53,7 +53,7 @@ def test_kill_stopped_container(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 3: Kill container ===
 
     result = subprocess.run(
-        [coi_binary, "kill", container_name],
+        [clincus_binary, "kill", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -68,7 +68,7 @@ def test_kill_stopped_container(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 4: Verify deleted ===
 
     result = subprocess.run(
-        [coi_binary, "container", "exists", container_name],
+        [clincus_binary, "container", "exists", container_name],
         capture_output=True,
         text=True,
         timeout=30,

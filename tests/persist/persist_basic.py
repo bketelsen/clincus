@@ -1,10 +1,10 @@
 """
-Test for coi persist - basic persist operation.
+Test for clincus persist - basic persist operation.
 
 Tests that:
 1. Launch an ephemeral container
 2. Create session metadata with persistent: false
-3. Run coi persist <container-name>
+3. Run clincus persist <container-name>
 4. Verify metadata updated to persistent: true
 5. Verify container still exists
 """
@@ -21,7 +21,7 @@ from support.helpers import calculate_container_name
 
 def create_session_metadata(container_name, workspace_dir, persistent=False):
     """Create a session metadata file for a container."""
-    sessions_dir = Path.home() / ".coi" / "sessions-claude"
+    sessions_dir = Path.home() / ".clincus" / "sessions-claude"
     sessions_dir.mkdir(parents=True, exist_ok=True)
 
     session_id = str(uuid.uuid4())
@@ -43,7 +43,7 @@ def create_session_metadata(container_name, workspace_dir, persistent=False):
     return metadata_path
 
 
-def test_persist_basic(coi_binary, cleanup_containers, workspace_dir):
+def test_persist_basic(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test basic persist operation on a single container.
 
@@ -59,7 +59,7 @@ def test_persist_basic(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch ephemeral container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -81,7 +81,7 @@ def test_persist_basic(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 3: Persist the container ===
 
     result = subprocess.run(
-        [coi_binary, "persist", container_name],
+        [clincus_binary, "persist", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -103,7 +103,7 @@ def test_persist_basic(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 5: Verify container still exists ===
 
     result = subprocess.run(
-        [coi_binary, "container", "exists", container_name],
+        [clincus_binary, "container", "exists", container_name],
         capture_output=True,
         text=True,
         timeout=30,

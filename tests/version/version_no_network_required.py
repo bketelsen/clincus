@@ -1,8 +1,8 @@
 """
-Test for coi version - no network required.
+Test for clincus version - no network required.
 
 Tests that:
-1. Run coi version
+1. Run clincus version
 2. Verify it works without network access
 3. Verify version is embedded in binary
 """
@@ -10,18 +10,18 @@ Tests that:
 import subprocess
 
 
-def test_version_no_network_required(coi_binary):
+def test_version_no_network_required(clincus_binary):
     """
     Test version command works offline.
 
     Flow:
-    1. Run coi version
+    1. Run clincus version
     2. Verify exit code is 0
     3. Verify complete output is produced
     4. This confirms version is embedded in binary, not fetched from network
     """
     result = subprocess.run(
-        [coi_binary, "version"],
+        [clincus_binary, "version"],
         capture_output=True,
         text=True,
         timeout=10,
@@ -32,7 +32,7 @@ def test_version_no_network_required(coi_binary):
     output = result.stdout
 
     # Verify complete version output
-    assert "code-on-incus (coi) v" in output, f"Should contain version string. Got:\n{output}"
+    assert "code-on-incus (clincus) v" in output, f"Should contain version string. Got:\n{output}"
 
     assert "https://github.com/mensfeld/code-on-incus" in output, (
         f"Should contain repository URL. Got:\n{output}"

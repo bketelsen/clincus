@@ -1,4 +1,4 @@
-"""Test coi list --format=json with active containers"""
+"""Test clincus list --format=json with active containers"""
 
 import json
 import subprocess
@@ -6,13 +6,13 @@ import subprocess
 from support.helpers import calculate_container_name
 
 
-def test_list_format_json_active(coi_binary, cleanup_containers, workspace_dir):
-    """Test that coi list --format=json outputs valid JSON with active containers."""
+def test_list_format_json_active(clincus_binary, cleanup_containers, workspace_dir):
+    """Test that clincus list --format=json outputs valid JSON with active containers."""
     container_name = calculate_container_name(workspace_dir, 1)
 
     # Phase 1: Launch container
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -21,7 +21,7 @@ def test_list_format_json_active(coi_binary, cleanup_containers, workspace_dir):
 
     # Phase 2: Run list with JSON format
     result = subprocess.run(
-        [coi_binary, "list", "--format=json"],
+        [clincus_binary, "list", "--format=json"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -54,7 +54,7 @@ def test_list_format_json_active(coi_binary, cleanup_containers, workspace_dir):
 
     # Phase 4: Cleanup
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

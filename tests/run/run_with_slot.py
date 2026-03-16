@@ -1,5 +1,5 @@
 """
-Test for coi run - with --slot flag.
+Test for clincus run - with --slot flag.
 
 Tests that:
 1. Run command with --slot flag
@@ -9,16 +9,16 @@ Tests that:
 import subprocess
 
 
-def test_run_with_slot(coi_binary, cleanup_containers, workspace_dir):
+def test_run_with_slot(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test running command with specific slot.
 
     Flow:
-    1. Run coi run --slot 5 "echo hello"
+    1. Run clincus run --slot 5 "echo hello"
     2. Verify command succeeds
     """
     result = subprocess.run(
-        [coi_binary, "run", "--workspace", workspace_dir, "--slot", "5", "echo", "slot-test-123"],
+        [clincus_binary, "run", "--workspace", workspace_dir, "--slot", "5", "echo", "slot-test-123"],
         capture_output=True,
         text=True,
         timeout=180,

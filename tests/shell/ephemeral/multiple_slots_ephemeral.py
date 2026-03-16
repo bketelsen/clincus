@@ -1,5 +1,5 @@
 """
-Test for coi shell - multiple slots running in parallel with isolation.
+Test for clincus shell - multiple slots running in parallel with isolation.
 
 Tests that:
 1. Start session on slot 1, create marker file in ~/
@@ -20,7 +20,7 @@ from support.helpers import (
     calculate_container_name,
     get_container_list,
     send_prompt,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
     wait_for_text_in_monitor,
@@ -28,15 +28,15 @@ from support.helpers import (
 )
 
 
-def test_multiple_slots_parallel(coi_binary, cleanup_containers, workspace_dir):
+def test_multiple_slots_parallel(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that multiple slots can run in parallel with isolated home directories.
 
     Flow:
-    1. Start coi shell (slot 1 auto-allocated)
+    1. Start clincus shell (slot 1 auto-allocated)
     2. Interact with dummy, create marker file in ~/
     3. Exit claude, exit bash (detach - container stays running)
-    4. Start coi shell again (slot 2 auto-allocated)
+    4. Start clincus shell again (slot 2 auto-allocated)
     5. Verify both containers are running
     6. Create marker file in slot 2, verify slot 1's file is NOT visible (isolation)
     7. Cleanup both containers
@@ -48,8 +48,8 @@ def test_multiple_slots_parallel(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 1: Start session on slot 1 ===
 
-    child1 = spawn_coi(
-        coi_binary,
+    child1 = spawn_clincus(
+        clincus_binary,
         ["shell"],
         cwd=workspace_dir,
         env=env,
@@ -132,8 +132,8 @@ def test_multiple_slots_parallel(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 3: Start session on slot 2 ===
 
-    child2 = spawn_coi(
-        coi_binary,
+    child2 = spawn_clincus(
+        clincus_binary,
         ["shell"],
         cwd=workspace_dir,
         env=env,
@@ -225,12 +225,12 @@ def test_multiple_slots_parallel(coi_binary, cleanup_containers, workspace_dir):
 
     # Force delete both containers
     subprocess.run(
-        [coi_binary, "container", "delete", container_name_1, "--force"],
+        [clincus_binary, "container", "delete", container_name_1, "--force"],
         capture_output=True,
         timeout=30,
     )
     subprocess.run(
-        [coi_binary, "container", "delete", container_name_2, "--force"],
+        [clincus_binary, "container", "delete", container_name_2, "--force"],
         capture_output=True,
         timeout=30,
     )

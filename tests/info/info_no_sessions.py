@@ -1,8 +1,8 @@
 """
-Test for coi info - no sessions exist.
+Test for clincus info - no sessions exist.
 
 Tests that:
-1. Run coi info without arguments when no sessions exist
+1. Run clincus info without arguments when no sessions exist
 2. Verify it fails with appropriate error message
 
 Note: This test requires a clean state with no saved sessions.
@@ -12,12 +12,12 @@ Note: This test requires a clean state with no saved sessions.
 import subprocess
 
 
-def test_info_no_sessions(coi_binary, cleanup_containers):
+def test_info_no_sessions(clincus_binary, cleanup_containers):
     """
-    Test that coi info without args fails when no sessions exist.
+    Test that clincus info without args fails when no sessions exist.
 
     Flow:
-    1. Run coi info (no args)
+    1. Run clincus info (no args)
     2. If no sessions exist, should fail with "no sessions found"
     3. If sessions exist (from other tests), behavior is acceptable
 
@@ -26,7 +26,7 @@ def test_info_no_sessions(coi_binary, cleanup_containers):
     # === Phase 1: Run info without arguments ===
 
     result = subprocess.run(
-        [coi_binary, "info"],
+        [clincus_binary, "info"],
         capture_output=True,
         text=True,
         timeout=30,

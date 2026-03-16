@@ -1,26 +1,26 @@
 """
-Test for coi image exists - missing argument.
+Test for clincus image exists - missing argument.
 
 Tests that:
-1. Run coi image exists without image name
+1. Run clincus image exists without image name
 2. Verify it shows usage error
 """
 
 import subprocess
 
 
-def test_exists_missing_arg(coi_binary, cleanup_containers):
+def test_exists_missing_arg(clincus_binary, cleanup_containers):
     """
-    Test that coi image exists without argument shows error.
+    Test that clincus image exists without argument shows error.
 
     Flow:
-    1. Run coi image exists (no alias)
+    1. Run clincus image exists (no alias)
     2. Verify it fails with usage message
     """
     # === Phase 1: Run without argument ===
 
     result = subprocess.run(
-        [coi_binary, "image", "exists"],
+        [clincus_binary, "image", "exists"],
         capture_output=True,
         text=True,
         timeout=30,

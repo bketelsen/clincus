@@ -1,5 +1,5 @@
 """
-Test for coi run - workspace is mounted at /workspace.
+Test for clincus run - workspace is mounted at /workspace.
 
 Tests that:
 1. Create a file in local workspace
@@ -11,13 +11,13 @@ import os
 import subprocess
 
 
-def test_run_workspace_mounted(coi_binary, cleanup_containers, workspace_dir):
+def test_run_workspace_mounted(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that workspace directory is mounted at /workspace.
 
     Flow:
     1. Create a test file in workspace
-    2. Run coi run to cat the file
+    2. Run clincus run to cat the file
     3. Verify file content is accessible
     """
     # Create a test file in workspace
@@ -28,7 +28,7 @@ def test_run_workspace_mounted(coi_binary, cleanup_containers, workspace_dir):
 
     # Run command to read the file
     result = subprocess.run(
-        [coi_binary, "run", "--workspace", workspace_dir, "cat", "/workspace/mount-test.txt"],
+        [clincus_binary, "run", "--workspace", workspace_dir, "cat", "/workspace/mount-test.txt"],
         capture_output=True,
         text=True,
         timeout=180,

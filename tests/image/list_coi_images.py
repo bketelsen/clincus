@@ -1,28 +1,28 @@
 """
-Test for coi image list - list COI images (default behavior).
+Test for clincus image list - list clincus images (default behavior).
 
 Tests that:
-1. Run coi image list
-2. Verify it shows COI images section
+1. Run clincus image list
+2. Verify it shows clincus images section
 3. Verify output format is correct
 """
 
 import subprocess
 
 
-def test_list_coi_images(coi_binary, cleanup_containers):
+def test_list_coi_images(clincus_binary, cleanup_containers):
     """
-    Test listing COI images (default behavior).
+    Test listing clincus images (default behavior).
 
     Flow:
-    1. Run coi image list
-    2. Verify output contains COI Images section
-    3. Verify coi image is shown (exists or not built)
+    1. Run clincus image list
+    2. Verify output contains Clincus Images section
+    3. Verify clincus image is shown (exists or not built)
     """
     # === Phase 1: Run image list ===
 
     result = subprocess.run(
-        [coi_binary, "image", "list"],
+        [clincus_binary, "image", "list"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -33,9 +33,9 @@ def test_list_coi_images(coi_binary, cleanup_containers):
     # === Phase 2: Verify output format ===
 
     combined_output = result.stdout + result.stderr
-    assert "COI Images:" in combined_output or "Available Images:" in combined_output, (
-        f"Should show COI Images section. Got:\n{combined_output}"
+    assert "Clincus Images:" in combined_output or "Available Images:" in combined_output, (
+        f"Should show Clincus Images section. Got:\n{combined_output}"
     )
 
-    # Should mention the coi image (either built or not)
-    assert "coi" in combined_output.lower(), f"Should mention coi image. Got:\n{combined_output}"
+    # Should mention the clincus image (either built or not)
+    assert "clincus" in combined_output.lower(), f"Should mention clincus image. Got:\n{combined_output}"

@@ -1,5 +1,5 @@
 """
-Test for coi shutdown --all --force.
+Test for clincus shutdown --all --force.
 
 Tests that:
 1. Launch multiple containers
@@ -13,13 +13,13 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_shutdown_all_with_force(coi_binary, cleanup_containers, workspace_dir):
+def test_shutdown_all_with_force(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test shutting down all containers with --all --force.
 
     Flow:
     1. Launch two containers
-    2. Run coi shutdown --all --force
+    2. Run clincus shutdown --all --force
     3. Verify all containers are deleted
     """
     container1 = calculate_container_name(workspace_dir, 1)
@@ -27,7 +27,7 @@ def test_shutdown_all_with_force(coi_binary, cleanup_containers, workspace_dir):
 
     # Launch first container
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container1],
+        [clincus_binary, "container", "launch", "clincus", container1],
         capture_output=True,
         text=True,
         timeout=120,
@@ -36,7 +36,7 @@ def test_shutdown_all_with_force(coi_binary, cleanup_containers, workspace_dir):
 
     # Launch second container
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container2],
+        [clincus_binary, "container", "launch", "clincus", container2],
         capture_output=True,
         text=True,
         timeout=120,
@@ -47,7 +47,7 @@ def test_shutdown_all_with_force(coi_binary, cleanup_containers, workspace_dir):
 
     # Shutdown all with force
     result = subprocess.run(
-        [coi_binary, "shutdown", "--all", "--force"],
+        [clincus_binary, "shutdown", "--all", "--force"],
         capture_output=True,
         text=True,
         timeout=180,
@@ -64,7 +64,7 @@ def test_shutdown_all_with_force(coi_binary, cleanup_containers, workspace_dir):
     time.sleep(2)
 
     result = subprocess.run(
-        [coi_binary, "container", "exists", container1],
+        [clincus_binary, "container", "exists", container1],
         capture_output=True,
         text=True,
         timeout=30,
@@ -72,7 +72,7 @@ def test_shutdown_all_with_force(coi_binary, cleanup_containers, workspace_dir):
     assert result.returncode != 0, "Container 1 should not exist after shutdown --all"
 
     result = subprocess.run(
-        [coi_binary, "container", "exists", container2],
+        [clincus_binary, "container", "exists", container2],
         capture_output=True,
         text=True,
         timeout=30,

@@ -42,18 +42,18 @@ def pytest_collection_modifyitems(config, items):
 
 
 @pytest.fixture(scope="session")
-def coi_binary():
-    """Return path to coi binary."""
-    # Check COI_BINARY env var first (for CI)
-    if "COI_BINARY" in os.environ:
-        binary_path = os.environ["COI_BINARY"]
+def clincus_binary():
+    """Return path to clincus binary."""
+    # Check CLINCUS_BINARY env var first (for CI)
+    if "CLINCUS_BINARY" in os.environ:
+        binary_path = os.environ["CLINCUS_BINARY"]
         if os.path.exists(binary_path):
             return os.path.abspath(binary_path)
 
-    # Look for coi binary in project root
-    binary_path = os.path.join(os.path.dirname(__file__), "..", "coi")
+    # Look for clincus binary in project root
+    binary_path = os.path.join(os.path.dirname(__file__), "..", "clincus")
     if not os.path.exists(binary_path):
-        pytest.skip("coi binary not found - run 'make build' first")
+        pytest.skip("clincus binary not found - run 'make build' first")
     return os.path.abspath(binary_path)
 
 
@@ -67,7 +67,7 @@ def workspace_dir(tmp_path):
 
 
 @pytest.fixture
-def cleanup_containers(workspace_dir, coi_binary):
+def cleanup_containers(workspace_dir, clincus_binary):
     """Cleanup test containers and associated network resources after each test."""
     # Import here to avoid circular imports
     from support.helpers import calculate_container_name, get_container_list
@@ -84,9 +84,9 @@ def cleanup_containers(workspace_dir, coi_binary):
     for container in containers:
         if container in workspace_containers:
             # Delete the container
-            # Note: ACLs are already cleaned up by coi shell cleanup when it exits
+            # Note: ACLs are already cleaned up by clincus shell cleanup when it exits
             subprocess.run(
-                [coi_binary, "container", "delete", container, "--force"],
+                [clincus_binary, "container", "delete", container, "--force"],
                 capture_output=True,
                 timeout=30,
                 check=False,
@@ -117,7 +117,7 @@ def dummy_path():
 
 
 @pytest.fixture(scope="session")
-def dummy_image(coi_binary):
+def dummy_image(clincus_binary):
     """Build and return a test image with dummy pre-installed.
 
     This image includes dummy at /usr/local/bin/dummy, allowing
@@ -150,10 +150,10 @@ def dummy_image(coi_binary):
             hasher.update(f.read())
 
     script_hash = hasher.hexdigest()[:8]
-    image_name = f"coi-test-dummy-{script_hash}"
+    image_name = f"clincus-test-dummy-{script_hash}"
 
     # Check if image already exists
-    result = subprocess.run([coi_binary, "image", "exists", image_name], capture_output=True)
+    result = subprocess.run([clincus_binary, "image", "exists", image_name], capture_output=True)
 
     if result.returncode == 0:
         return image_name  # Already built
@@ -161,7 +161,7 @@ def dummy_image(coi_binary):
     print(f"\nBuilding test image with dummy (script hash: {script_hash})...")
 
     result = subprocess.run(
-        [coi_binary, "build", "custom", image_name, "--script", script_path],
+        [clincus_binary, "build", "custom", image_name, "--script", script_path],
         capture_output=True,
         text=True,
         timeout=300,
@@ -214,21 +214,21 @@ def pytest_sessionfinish(session, exitstatus):
     This runs even if tests crash, ensuring firewall rules, veth interfaces,
     and other resources don't leak on the developer's machine.
     """
-    # Find the coi binary
-    coi_binary = None
-    if "COI_BINARY" in os.environ:
-        coi_binary = os.environ["COI_BINARY"]
+    # Find the clincus binary
+    clincus_binary = None
+    if "CLINCUS_BINARY" in os.environ:
+        clincus_binary = os.environ["CLINCUS_BINARY"]
     else:
-        binary_path = os.path.join(os.path.dirname(__file__), "..", "coi")
+        binary_path = os.path.join(os.path.dirname(__file__), "..", "clincus")
         if os.path.exists(binary_path):
-            coi_binary = os.path.abspath(binary_path)
+            clincus_binary = os.path.abspath(binary_path)
 
-    if not coi_binary or not os.path.exists(coi_binary):
+    if not clincus_binary or not os.path.exists(clincus_binary):
         return  # Can't clean up without the binary
 
     # Clean up any orphaned resources (veths, firewall rules, zone bindings)
     subprocess.run(
-        [coi_binary, "clean", "--orphans", "--force"],
+        [clincus_binary, "clean", "--orphans", "--force"],
         capture_output=True,
         timeout=120,
         check=False,
@@ -236,7 +236,7 @@ def pytest_sessionfinish(session, exitstatus):
 
     # Also kill all test containers to be safe
     subprocess.run(
-        [coi_binary, "kill", "--all", "--force"],
+        [clincus_binary, "kill", "--all", "--force"],
         capture_output=True,
         timeout=120,
         check=False,

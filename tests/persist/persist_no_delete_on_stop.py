@@ -1,5 +1,5 @@
 """
-Test for coi persist - verify container not deleted on stop.
+Test for clincus persist - verify container not deleted on stop.
 
 Tests that:
 1. Launch ephemeral container
@@ -21,7 +21,7 @@ from support.helpers import calculate_container_name
 
 def create_session_metadata(container_name, workspace_dir, persistent=False):
     """Create a session metadata file for a container."""
-    sessions_dir = Path.home() / ".coi" / "sessions-claude"
+    sessions_dir = Path.home() / ".clincus" / "sessions-claude"
     sessions_dir.mkdir(parents=True, exist_ok=True)
 
     session_id = str(uuid.uuid4())
@@ -43,7 +43,7 @@ def create_session_metadata(container_name, workspace_dir, persistent=False):
     return metadata_path
 
 
-def test_persist_no_delete_on_stop(coi_binary, cleanup_containers, workspace_dir):
+def test_persist_no_delete_on_stop(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that persisted containers are not deleted when stopped.
 
@@ -59,7 +59,7 @@ def test_persist_no_delete_on_stop(coi_binary, cleanup_containers, workspace_dir
     # === Phase 1: Launch ephemeral container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -70,7 +70,7 @@ def test_persist_no_delete_on_stop(coi_binary, cleanup_containers, workspace_dir
 
     # Verify container is running
     result = subprocess.run(
-        [coi_binary, "container", "running", container_name],
+        [clincus_binary, "container", "running", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -84,7 +84,7 @@ def test_persist_no_delete_on_stop(coi_binary, cleanup_containers, workspace_dir
     # === Phase 2: Persist the container ===
 
     result = subprocess.run(
-        [coi_binary, "persist", container_name],
+        [clincus_binary, "persist", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -94,7 +94,7 @@ def test_persist_no_delete_on_stop(coi_binary, cleanup_containers, workspace_dir
     # === Phase 3: Stop the container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "stop", container_name],
+        [clincus_binary, "container", "stop", container_name],
         capture_output=True,
         text=True,
         timeout=60,
@@ -106,7 +106,7 @@ def test_persist_no_delete_on_stop(coi_binary, cleanup_containers, workspace_dir
     # === Phase 4: Verify container still exists ===
 
     result = subprocess.run(
-        [coi_binary, "container", "exists", container_name],
+        [clincus_binary, "container", "exists", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -117,7 +117,7 @@ def test_persist_no_delete_on_stop(coi_binary, cleanup_containers, workspace_dir
 
     # Verify it's stopped (not running)
     result = subprocess.run(
-        [coi_binary, "container", "running", container_name],
+        [clincus_binary, "container", "running", container_name],
         capture_output=True,
         text=True,
         timeout=30,

@@ -1,5 +1,5 @@
 """
-Test for coi attach - attach to persistent container.
+Test for clincus attach - attach to persistent container.
 
 Tests that:
 1. Start a persistent shell session
@@ -17,7 +17,7 @@ from support.helpers import (
     calculate_container_name,
     get_container_list,
     send_prompt,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
     wait_for_text_in_monitor,
@@ -25,12 +25,12 @@ from support.helpers import (
 )
 
 
-def test_attach_to_persistent(coi_binary, cleanup_containers, workspace_dir):
+def test_attach_to_persistent(clincus_binary, cleanup_containers, workspace_dir):
     """
-    Test that coi attach works with persistent containers.
+    Test that clincus attach works with persistent containers.
 
     Flow:
-    1. Start coi shell --persistent
+    1. Start clincus shell --persistent
     2. Detach with Ctrl+b d (claude keeps running)
     3. Attach to container
     4. Verify we can still interact with CLI
@@ -41,8 +41,8 @@ def test_attach_to_persistent(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 1: Start persistent session ===
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell", "--persistent"],
         cwd=workspace_dir,
         env=env,
@@ -86,8 +86,8 @@ def test_attach_to_persistent(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 3: Attach to persistent container ===
 
-    child2 = spawn_coi(
-        coi_binary,
+    child2 = spawn_clincus(
+        clincus_binary,
         ["attach", container_name],
         cwd=workspace_dir,
         env=env,
@@ -126,7 +126,7 @@ def test_attach_to_persistent(coi_binary, cleanup_containers, workspace_dir):
         child2.close(force=True)
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

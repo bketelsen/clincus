@@ -1,5 +1,5 @@
 """
-Test for coi kill - gracefully handle already-stopped containers.
+Test for clincus kill - gracefully handle already-stopped containers.
 
 Tests that:
 1. Launch a container
@@ -13,7 +13,7 @@ import subprocess
 from support.helpers import calculate_container_name
 
 
-def test_kill_stopped_container_gracefully(coi_binary, cleanup_containers, workspace_dir):
+def test_kill_stopped_container_gracefully(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that kill command handles already-stopped containers gracefully.
 
@@ -31,7 +31,7 @@ def test_kill_stopped_container_gracefully(coi_binary, cleanup_containers, works
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -42,7 +42,7 @@ def test_kill_stopped_container_gracefully(coi_binary, cleanup_containers, works
     # === Phase 2: Stop the container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "stop", container_name, "--force"],
+        [clincus_binary, "container", "stop", container_name, "--force"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -53,7 +53,7 @@ def test_kill_stopped_container_gracefully(coi_binary, cleanup_containers, works
     # === Phase 3: Kill the already-stopped container ===
 
     result = subprocess.run(
-        [coi_binary, "kill", container_name, "--force"],
+        [clincus_binary, "kill", container_name, "--force"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -75,7 +75,7 @@ def test_kill_stopped_container_gracefully(coi_binary, cleanup_containers, works
     # === Phase 4: Verify container is gone ===
 
     result = subprocess.run(
-        [coi_binary, "container", "exists", container_name],
+        [clincus_binary, "container", "exists", container_name],
         capture_output=True,
         text=True,
         timeout=30,

@@ -1,5 +1,5 @@
 """
-Test for coi kill - kill multiple containers at once.
+Test for clincus kill - kill multiple containers at once.
 
 Tests that:
 1. Launch multiple containers
@@ -13,7 +13,7 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_kill_multiple_containers(coi_binary, cleanup_containers, workspace_dir):
+def test_kill_multiple_containers(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test killing multiple containers at once.
 
@@ -29,7 +29,7 @@ def test_kill_multiple_containers(coi_binary, cleanup_containers, workspace_dir)
 
     for container_name in [container1, container2]:
         result = subprocess.run(
-            [coi_binary, "container", "launch", "coi", container_name],
+            [clincus_binary, "container", "launch", "clincus", container_name],
             capture_output=True,
             text=True,
             timeout=120,
@@ -41,7 +41,7 @@ def test_kill_multiple_containers(coi_binary, cleanup_containers, workspace_dir)
     # === Phase 2: Kill both containers with --force (skip confirmation) ===
 
     result = subprocess.run(
-        [coi_binary, "kill", "--force", container1, container2],
+        [clincus_binary, "kill", "--force", container1, container2],
         capture_output=True,
         text=True,
         timeout=120,
@@ -57,7 +57,7 @@ def test_kill_multiple_containers(coi_binary, cleanup_containers, workspace_dir)
 
     for container_name in [container1, container2]:
         result = subprocess.run(
-            [coi_binary, "container", "exists", container_name],
+            [clincus_binary, "container", "exists", container_name],
             capture_output=True,
             text=True,
             timeout=30,

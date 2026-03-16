@@ -1,5 +1,5 @@
 """
-Test for coi shell --persistent - session with resume.
+Test for clincus shell --persistent - session with resume.
 
 Tests the resume lifecycle in persistent mode:
 1. Start dummy in persistent mode
@@ -7,7 +7,7 @@ Tests the resume lifecycle in persistent mode:
 3. Exit to bash shell
 4. Issue sudo poweroff (container kept in persistent mode)
 5. Delete container to simulate fresh start
-6. Run coi shell --persistent --resume
+6. Run clincus shell --persistent --resume
 7. Verify session was resumed (dummy shows "Resuming session")
 8. Cleanup
 """
@@ -21,7 +21,7 @@ from support.helpers import (
     calculate_container_name,
     get_container_list,
     send_prompt,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
     wait_for_text_in_monitor,
@@ -30,16 +30,16 @@ from support.helpers import (
 )
 
 
-def test_persistent_session_with_resume(coi_binary, cleanup_containers, workspace_dir):
+def test_persistent_session_with_resume(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test persistent session resume.
 
     Flow:
-    1. Start coi shell --persistent
+    1. Start clincus shell --persistent
     2. Interact with dummy
     3. Exit claude to bash, then poweroff
     4. Delete container (for clean slate)
-    5. Run coi shell --persistent --resume
+    5. Run clincus shell --persistent --resume
     6. Verify resume worked
     7. Cleanup
     """
@@ -47,8 +47,8 @@ def test_persistent_session_with_resume(coi_binary, cleanup_containers, workspac
 
     # === Phase 1: Initial persistent session ===
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell", "--persistent"],
         cwd=workspace_dir,
         env=env,
@@ -120,7 +120,7 @@ def test_persistent_session_with_resume(coi_binary, cleanup_containers, workspac
 
     # In persistent mode, container is kept - delete it for clean resume test
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
@@ -128,8 +128,8 @@ def test_persistent_session_with_resume(coi_binary, cleanup_containers, workspac
 
     # === Phase 2: Resume persistent session ===
 
-    child2 = spawn_coi(
-        coi_binary,
+    child2 = spawn_clincus(
+        clincus_binary,
         ["shell", "--persistent", "--resume"],
         cwd=workspace_dir,
         env=env,
@@ -179,7 +179,7 @@ def test_persistent_session_with_resume(coi_binary, cleanup_containers, workspac
     # Force delete container
     container_name2 = calculate_container_name(workspace_dir, 1)
     subprocess.run(
-        [coi_binary, "container", "delete", container_name2, "--force"],
+        [clincus_binary, "container", "delete", container_name2, "--force"],
         capture_output=True,
         timeout=30,
     )

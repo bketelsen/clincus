@@ -1,5 +1,5 @@
 """
-Test for coi tmux send - send commands to a tmux session.
+Test for clincus tmux send - send commands to a tmux session.
 
 Tests that:
 1. Launch a container
@@ -14,14 +14,14 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_tmux_send_command(coi_binary, cleanup_containers, workspace_dir):
+def test_tmux_send_command(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test sending commands to a tmux session.
 
     Flow:
     1. Launch a container
     2. Create a tmux session inside container
-    3. Use coi tmux send to send a command
+    3. Use clincus tmux send to send a command
     4. Capture tmux output to verify command executed
     5. Cleanup
     """
@@ -30,7 +30,7 @@ def test_tmux_send_command(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -42,12 +42,12 @@ def test_tmux_send_command(coi_binary, cleanup_containers, workspace_dir):
 
     # === Phase 2: Create tmux session inside container ===
 
-    tmux_session = f"coi-{container_name}"
+    tmux_session = f"clincus-{container_name}"
 
     # Start a tmux session with a shell
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             container_name,
@@ -68,10 +68,10 @@ def test_tmux_send_command(coi_binary, cleanup_containers, workspace_dir):
 
     time.sleep(1)
 
-    # === Phase 3: Send command via coi tmux send ===
+    # === Phase 3: Send command via clincus tmux send ===
 
     result = subprocess.run(
-        [coi_binary, "tmux", "send", container_name, "echo TMUX_TEST_MARKER"],
+        [clincus_binary, "tmux", "send", container_name, "echo TMUX_TEST_MARKER"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -88,7 +88,7 @@ def test_tmux_send_command(coi_binary, cleanup_containers, workspace_dir):
 
     result = subprocess.run(
         [
-            coi_binary,
+            clincus_binary,
             "container",
             "exec",
             "--capture",
@@ -113,7 +113,7 @@ def test_tmux_send_command(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 5: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

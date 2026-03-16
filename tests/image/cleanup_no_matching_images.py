@@ -1,24 +1,24 @@
 """
-Test for coi image cleanup - no matching images.
+Test for clincus image cleanup - no matching images.
 
 Tests that:
-1. Run coi image cleanup with prefix that matches nothing
+1. Run clincus image cleanup with prefix that matches nothing
 2. Verify it succeeds with appropriate message
 """
 
 import subprocess
 
 
-def test_cleanup_no_matching_images(coi_binary, cleanup_containers):
+def test_cleanup_no_matching_images(clincus_binary, cleanup_containers):
     """
     Test cleanup with prefix that matches no images.
 
     Flow:
-    1. Run coi image cleanup with unique prefix --keep 1
+    1. Run clincus image cleanup with unique prefix --keep 1
     2. Verify it succeeds (nothing to delete)
     """
     result = subprocess.run(
-        [coi_binary, "image", "cleanup", "nonexistent-prefix-xyz-123-", "--keep", "1"],
+        [clincus_binary, "image", "cleanup", "nonexistent-prefix-xyz-123-", "--keep", "1"],
         capture_output=True,
         text=True,
         timeout=30,

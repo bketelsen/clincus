@@ -5,9 +5,9 @@ This test acts as a smoke test for the entire installation workflow:
 1. Launch a fresh Ubuntu 24.04 container
 2. Install Incus inside it (nested Incus)
 3. Follow the README installation steps
-4. Build the coi binary
-5. Verify coi --help works
-6. Verify basic coi commands work
+4. Build the clincus binary
+5. Verify clincus --help works
+6. Verify basic clincus commands work
 
 This validates the complete setup process from scratch.
 
@@ -27,9 +27,9 @@ def meta_container():
     Launch a fresh Ubuntu container to test the installation process.
 
     This validates that the README installation steps work correctly
-    and produce a functioning coi binary.
+    and produce a functioning clincus binary.
     """
-    container_name = "coi-meta-test"
+    container_name = "clincus-meta-test"
 
     # Clean up any existing test container
     subprocess.run(
@@ -79,7 +79,7 @@ def exec_in_container(container_name, command, timeout=300, check=True):
     return result
 
 
-def test_full_installation_process(meta_container, coi_binary):
+def test_full_installation_process(meta_container, clincus_binary):
     """
     Test the complete installation process from README.
 
@@ -87,9 +87,9 @@ def test_full_installation_process(meta_container, coi_binary):
     1. System dependencies can be installed
     2. Go can be installed
     3. Repository can be cloned
-    4. coi binary can be built from source
-    5. coi --help works
-    6. coi version works
+    4. clincus binary can be built from source
+    5. clincus --help works
+    6. clincus version works
 
     This does NOT test Incus functionality - it only validates the
     build process and that the binary executes correctly.
@@ -157,7 +157,7 @@ def test_full_installation_process(meta_container, coi_binary):
     assert result.returncode == 0, f"Failed to install Go: {result.stderr}"
     assert "go version" in result.stdout, "Go installation verification failed"
 
-    # Phase 3: Clone repository and build coi
+    # Phase 3: Clone repository and build clincus
     # In CI (pull requests), try PR branch first, fall back to default branch
     # This handles:
     # - Fork PRs (branch doesn't exist in main repo)
@@ -187,45 +187,45 @@ def test_full_installation_process(meta_container, coi_binary):
         cd /root
         {clone_script}
         cd code-on-incus
-        /usr/local/go/bin/go build -o coi ./cmd/coi
-        ./coi version
+        /usr/local/go/bin/go build -o clincus ./cmd/clincus
+        ./clincus version
         """,
         timeout=300,
     )
-    assert result.returncode == 0, f"Failed to build coi: {result.stderr}"
-    assert "code-on-incus (coi) v" in result.stdout, "coi version check failed"
+    assert result.returncode == 0, f"Failed to build clincus: {result.stderr}"
+    assert "code-on-incus (clincus) v" in result.stdout, "clincus version check failed"
 
-    # Phase 4: Test coi --help
+    # Phase 4: Test clincus --help
     result = exec_in_container(
         container_name,
         """
         cd /root/code-on-incus
-        ./coi --help
+        ./clincus --help
         """,
         timeout=30,
     )
-    assert result.returncode == 0, f"coi --help failed: {result.stderr}"
-    assert "code-on-incus (coi) is a CLI tool" in result.stdout, (
-        "coi help output missing expected text"
+    assert result.returncode == 0, f"clincus --help failed: {result.stderr}"
+    assert "code-on-incus (clincus) is a CLI tool" in result.stdout, (
+        "clincus help output missing expected text"
     )
-    assert "Available Commands:" in result.stdout, "coi help missing commands section"
+    assert "Available Commands:" in result.stdout, "clincus help missing commands section"
 
-    # Phase 5: Test coi basic commands
+    # Phase 5: Test clincus basic commands
     result = exec_in_container(
         container_name,
         """
         cd /root/code-on-incus
-        ./coi images --help
-        ./coi list --help
-        ./coi shell --help
+        ./clincus images --help
+        ./clincus list --help
+        ./clincus shell --help
         echo "Basic commands work"
         """,
         timeout=30,
     )
-    assert result.returncode == 0, f"Basic coi commands failed: {result.stderr}"
+    assert result.returncode == 0, f"Basic clincus commands failed: {result.stderr}"
 
 
-def test_installation_with_prebuilt_binary(meta_container, coi_binary):
+def test_installation_with_prebuilt_binary(meta_container, clincus_binary):
     """
     Test installation using pre-built binary (simpler workflow).
 
@@ -234,15 +234,15 @@ def test_installation_with_prebuilt_binary(meta_container, coi_binary):
     just validates the binary executes correctly.
 
     Flow:
-    1. Copy pre-built coi binary into container
-    2. Test coi --help works
-    3. Test coi version works
+    1. Copy pre-built clincus binary into container
+    2. Test clincus --help works
+    3. Test clincus version works
     """
     container_name = meta_container
 
     # Push pre-built binary to container
     result = subprocess.run(
-        ["incus", "file", "push", coi_binary, f"{container_name}/usr/local/bin/coi"],
+        ["incus", "file", "push", clincus_binary, f"{container_name}/usr/local/bin/clincus"],
         capture_output=True,
         text=True,
         timeout=30,
@@ -253,11 +253,11 @@ def test_installation_with_prebuilt_binary(meta_container, coi_binary):
     result = exec_in_container(
         container_name,
         """
-        chmod +x /usr/local/bin/coi
-        coi --help
-        coi version
+        chmod +x /usr/local/bin/clincus
+        clincus --help
+        clincus version
         """,
         timeout=30,
     )
     assert result.returncode == 0, f"Pre-built binary test failed: {result.stderr}"
-    assert "code-on-incus (coi)" in result.stdout, "coi binary not working correctly"
+    assert "code-on-incus (clincus)" in result.stdout, "clincus binary not working correctly"

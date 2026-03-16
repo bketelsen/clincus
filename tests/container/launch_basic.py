@@ -1,5 +1,5 @@
 """
-Test for coi container launch - basic container launch.
+Test for clincus container launch - basic container launch.
 
 Tests that:
 1. Launch a container with image and name
@@ -15,12 +15,12 @@ from support.helpers import (
 )
 
 
-def test_launch_basic(coi_binary, cleanup_containers, workspace_dir):
+def test_launch_basic(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test basic container launch with image and name.
 
     Flow:
-    1. Launch a container with coi image
+    1. Launch a container with clincus image
     2. Verify container is running
     3. Cleanup
     """
@@ -29,7 +29,7 @@ def test_launch_basic(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 1: Launch container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name],
+        [clincus_binary, "container", "launch", "clincus", container_name],
         capture_output=True,
         text=True,
         timeout=120,
@@ -46,7 +46,7 @@ def test_launch_basic(coi_binary, cleanup_containers, workspace_dir):
 
     # Check container status
     result = subprocess.run(
-        [coi_binary, "container", "running", container_name],
+        [clincus_binary, "container", "running", container_name],
         capture_output=True,
         text=True,
         timeout=30,
@@ -57,7 +57,7 @@ def test_launch_basic(coi_binary, cleanup_containers, workspace_dir):
     # === Phase 3: Cleanup ===
 
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )

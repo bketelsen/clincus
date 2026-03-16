@@ -1,10 +1,10 @@
 """
-Test for coi clean --all - removes containers and sessions.
+Test for clincus clean --all - removes containers and sessions.
 
 Tests that:
 1. Create a stopped container
 2. Create a session
-3. Run coi clean --all --force
+3. Run clincus clean --all --force
 4. Verify both are removed
 """
 
@@ -17,7 +17,7 @@ from support.helpers import (
     calculate_container_name,
     get_container_list,
     send_prompt,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
     wait_for_text_in_monitor,
@@ -25,14 +25,14 @@ from support.helpers import (
 )
 
 
-def test_clean_all_removes_everything(coi_binary, cleanup_containers, workspace_dir):
+def test_clean_all_removes_everything(clincus_binary, cleanup_containers, workspace_dir):
     """
-    Test that coi clean --all removes containers and sessions.
+    Test that clincus clean --all removes containers and sessions.
 
     Flow:
     1. Start a session, poweroff (creates session data)
     2. Launch and stop another container
-    3. Run coi clean --all --force
+    3. Run clincus clean --all --force
     4. Verify both container and session are gone
     """
     env = {"COI_USE_DUMMY": "1"}
@@ -41,8 +41,8 @@ def test_clean_all_removes_everything(coi_binary, cleanup_containers, workspace_
 
     # === Phase 1: Create a session ===
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell"],
         cwd=workspace_dir,
         env=env,
@@ -80,7 +80,7 @@ def test_clean_all_removes_everything(coi_binary, cleanup_containers, workspace_
     # === Phase 2: Create a stopped container ===
 
     result = subprocess.run(
-        [coi_binary, "container", "launch", "coi", container_name_2],
+        [clincus_binary, "container", "launch", "clincus", container_name_2],
         capture_output=True,
         text=True,
         timeout=120,
@@ -89,7 +89,7 @@ def test_clean_all_removes_everything(coi_binary, cleanup_containers, workspace_
     time.sleep(3)
 
     result = subprocess.run(
-        [coi_binary, "container", "stop", container_name_2],
+        [clincus_binary, "container", "stop", container_name_2],
         capture_output=True,
         text=True,
         timeout=60,
@@ -100,13 +100,13 @@ def test_clean_all_removes_everything(coi_binary, cleanup_containers, workspace_
     # === Phase 3: Clean all ===
 
     result = subprocess.run(
-        [coi_binary, "clean", "--all", "--force"],
+        [clincus_binary, "clean", "--all", "--force"],
         capture_output=True,
         text=True,
         timeout=120,
     )
 
-    assert result.returncode == 0, f"coi clean --all should succeed. stderr: {result.stderr}"
+    assert result.returncode == 0, f"clincus clean --all should succeed. stderr: {result.stderr}"
 
     time.sleep(3)
 
@@ -120,7 +120,7 @@ def test_clean_all_removes_everything(coi_binary, cleanup_containers, workspace_
 
     # Check sessions
     result = subprocess.run(
-        [coi_binary, "list", "--all"],
+        [clincus_binary, "list", "--all"],
         capture_output=True,
         text=True,
         timeout=30,

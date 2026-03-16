@@ -1,5 +1,5 @@
 """
-Test for coi file pull - pull from nonexistent container.
+Test for clincus file pull - pull from nonexistent container.
 
 Tests that:
 1. Try to pull from a container that doesn't exist
@@ -12,7 +12,7 @@ import subprocess
 from support.helpers import calculate_container_name
 
 
-def test_pull_nonexistent_container(coi_binary, cleanup_containers, workspace_dir):
+def test_pull_nonexistent_container(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that pulling from a nonexistent container fails gracefully.
 
@@ -27,7 +27,7 @@ def test_pull_nonexistent_container(coi_binary, cleanup_containers, workspace_di
     # === Phase 1: Try to pull from nonexistent container ===
 
     result = subprocess.run(
-        [coi_binary, "file", "pull", f"{fake_container}:/tmp/test.txt", local_file],
+        [clincus_binary, "file", "pull", f"{fake_container}:/tmp/test.txt", local_file],
         capture_output=True,
         text=True,
         timeout=30,

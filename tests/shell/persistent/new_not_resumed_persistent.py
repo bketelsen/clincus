@@ -1,11 +1,11 @@
 """
-Test for coi shell --persistent - new session is NOT resumed without --resume flag.
+Test for clincus shell --persistent - new session is NOT resumed without --resume flag.
 
 Verifies that:
 1. Start dummy in persistent mode, interact with it
 2. Poweroff container (container kept in persistent mode)
 3. Delete container for clean slate
-4. Start coi shell --persistent again WITHOUT --resume
+4. Start clincus shell --persistent again WITHOUT --resume
 5. Verify it's a NEW session (not resuming the old one)
 """
 
@@ -18,7 +18,7 @@ from support.helpers import (
     calculate_container_name,
     get_container_list,
     send_prompt,
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
     wait_for_text_in_monitor,
@@ -26,15 +26,15 @@ from support.helpers import (
 )
 
 
-def test_persistent_new_session_not_resumed(coi_binary, cleanup_containers, workspace_dir):
+def test_persistent_new_session_not_resumed(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that without --resume, a new persistent session is started.
 
     Flow:
-    1. Start coi shell --persistent, interact with dummy
+    1. Start clincus shell --persistent, interact with dummy
     2. Poweroff container (kept in persistent mode)
     3. Delete container to ensure clean slate
-    4. Start coi shell --persistent again (no --resume)
+    4. Start clincus shell --persistent again (no --resume)
     5. Verify dummy shows new session, not resuming
     6. Cleanup
     """
@@ -42,8 +42,8 @@ def test_persistent_new_session_not_resumed(coi_binary, cleanup_containers, work
 
     # === Phase 1: Initial persistent session ===
 
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell", "--persistent"],
         cwd=workspace_dir,
         env=env,
@@ -88,7 +88,7 @@ def test_persistent_new_session_not_resumed(coi_binary, cleanup_containers, work
 
     # In persistent mode, container is kept - delete it for clean slate
     subprocess.run(
-        [coi_binary, "container", "delete", container_name, "--force"],
+        [clincus_binary, "container", "delete", container_name, "--force"],
         capture_output=True,
         timeout=30,
     )
@@ -96,8 +96,8 @@ def test_persistent_new_session_not_resumed(coi_binary, cleanup_containers, work
 
     # === Phase 2: Start NEW persistent session (no --resume) ===
 
-    child2 = spawn_coi(
-        coi_binary,
+    child2 = spawn_clincus(
+        clincus_binary,
         ["shell", "--persistent"],  # No --resume flag
         cwd=workspace_dir,
         env=env,
@@ -142,7 +142,7 @@ def test_persistent_new_session_not_resumed(coi_binary, cleanup_containers, work
     # Force cleanup
     container_name2 = calculate_container_name(workspace_dir, 1)
     subprocess.run(
-        [coi_binary, "container", "delete", container_name2, "--force"],
+        [clincus_binary, "container", "delete", container_name2, "--force"],
         capture_output=True,
         timeout=30,
     )

@@ -9,9 +9,9 @@ Expected:
 import subprocess
 
 
-def test_main_help_flag(coi_binary):
-    """Test that coi --help displays help text."""
-    result = subprocess.run([coi_binary, "--help"], capture_output=True, text=True, timeout=5)
+def test_main_help_flag(clincus_binary):
+    """Test that clincus --help displays help text."""
+    result = subprocess.run([clincus_binary, "--help"], capture_output=True, text=True, timeout=5)
 
     assert result.returncode == 0, f"Expected exit code 0, got {result.returncode}"
     assert "code-on-incus" in result.stdout.lower()

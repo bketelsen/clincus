@@ -1,5 +1,5 @@
 """
-Test for coi shell --resume when no saved session exists.
+Test for clincus shell --resume when no saved session exists.
 
 Tests that:
 1. Running --resume with no saved session errors gracefully
@@ -13,17 +13,17 @@ from pexpect import EOF, TIMEOUT
 
 from support.helpers import (
     get_container_list,
-    spawn_coi,
+    spawn_clincus,
     with_live_screen,
 )
 
 
-def test_resume_without_session(coi_binary, cleanup_containers, workspace_dir):
+def test_resume_without_session(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that --resume with no saved session errors gracefully.
 
     Flow:
-    1. Run coi shell --resume in fresh workspace (no saved sessions)
+    1. Run clincus shell --resume in fresh workspace (no saved sessions)
     2. Verify it exits with error
     3. Verify error message is helpful
     4. Verify no containers were created
@@ -34,8 +34,8 @@ def test_resume_without_session(coi_binary, cleanup_containers, workspace_dir):
     containers_before = get_container_list()
 
     # Launch with --resume - should fail since no session exists
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell", "--resume"],
         cwd=workspace_dir,
         env=env,
@@ -71,7 +71,7 @@ def test_resume_without_session(coi_binary, cleanup_containers, workspace_dir):
         f"Expected non-zero exit code, got {child.exitstatus}. Output:\n{output}"
     )
 
-    # Error message should be helpful - coi exits early with workspace-specific error
+    # Error message should be helpful - clincus exits early with workspace-specific error
     output_lower = output.lower()
 
     assert "no previous session to resume" in output_lower or "no saved sessions" in output_lower, (

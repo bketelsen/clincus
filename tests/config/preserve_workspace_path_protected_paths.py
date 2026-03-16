@@ -16,7 +16,7 @@ import time
 from pexpect import EOF, TIMEOUT
 
 from support.helpers import (
-    spawn_coi,
+    spawn_clincus,
     wait_for_container_ready,
     wait_for_prompt,
     wait_for_text_in_monitor,
@@ -25,7 +25,7 @@ from support.helpers import (
 
 
 def test_protected_paths_work_with_preserve_workspace_path(
-    coi_binary, cleanup_containers, workspace_dir
+    clincus_binary, cleanup_containers, workspace_dir
 ):
     """
     Test that protected paths (.git/hooks) are read-only when preserve_workspace_path is enabled.
@@ -37,14 +37,14 @@ def test_protected_paths_work_with_preserve_workspace_path(
     Flow:
     1. Create a git repo in workspace with a hook file
     2. Enable preserve_workspace_path
-    3. Start coi shell
+    3. Start clincus shell
     4. Try to modify .git/hooks from inside container
     5. Verify modification is blocked (read-only)
     """
     env = {"COI_USE_DUMMY": "1"}
 
-    # Create .coi.toml with preserve_workspace_path enabled
-    config_path = os.path.join(workspace_dir, ".coi.toml")
+    # Create .clincus.toml with preserve_workspace_path enabled
+    config_path = os.path.join(workspace_dir, ".clincus.toml")
     with open(config_path, "w") as f:
         f.write(
             """
@@ -63,8 +63,8 @@ preserve_workspace_path = true
     os.chmod(hook_file, 0o755)
 
     # Start shell
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell"],
         cwd=workspace_dir,
         env=env,
@@ -130,7 +130,7 @@ preserve_workspace_path = true
         child.close(force=True)
 
 
-def test_protected_paths_default_workspace(coi_binary, cleanup_containers, workspace_dir):
+def test_protected_paths_default_workspace(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that protected paths work correctly with default /workspace path.
 
@@ -148,8 +148,8 @@ def test_protected_paths_default_workspace(coi_binary, cleanup_containers, works
     os.chmod(hook_file, 0o755)
 
     # Start shell (default config, no preserve_workspace_path)
-    child = spawn_coi(
-        coi_binary,
+    child = spawn_clincus(
+        clincus_binary,
         ["shell"],
         cwd=workspace_dir,
         env=env,

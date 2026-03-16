@@ -1,5 +1,5 @@
 """
-Test for coi container exec - fails for nonexistent container.
+Test for clincus container exec - fails for nonexistent container.
 
 Tests that:
 1. Try to exec in a nonexistent container
@@ -9,7 +9,7 @@ Tests that:
 import subprocess
 
 
-def test_exec_nonexistent_container(coi_binary, cleanup_containers):
+def test_exec_nonexistent_container(clincus_binary, cleanup_containers):
     """
     Test that exec in nonexistent container fails.
 
@@ -23,7 +23,7 @@ def test_exec_nonexistent_container(coi_binary, cleanup_containers):
     # === Phase 1: Try to exec ===
 
     result = subprocess.run(
-        [coi_binary, "container", "exec", nonexistent_name, "--", "echo", "test"],
+        [clincus_binary, "container", "exec", nonexistent_name, "--", "echo", "test"],
         capture_output=True,
         text=True,
         timeout=30,

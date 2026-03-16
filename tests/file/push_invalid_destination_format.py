@@ -1,5 +1,5 @@
 """
-Test for coi file push - invalid destination format.
+Test for clincus file push - invalid destination format.
 
 Tests that:
 1. Create a local file
@@ -11,7 +11,7 @@ import os
 import subprocess
 
 
-def test_push_invalid_destination_format(coi_binary, cleanup_containers, workspace_dir):
+def test_push_invalid_destination_format(clincus_binary, cleanup_containers, workspace_dir):
     """
     Test that push with invalid destination format fails gracefully.
 
@@ -29,7 +29,7 @@ def test_push_invalid_destination_format(coi_binary, cleanup_containers, workspa
     # === Phase 2: Try to push with invalid format ===
 
     result = subprocess.run(
-        [coi_binary, "file", "push", local_file, "container-no-path"],
+        [clincus_binary, "file", "push", local_file, "container-no-path"],
         capture_output=True,
         text=True,
         timeout=30,

@@ -1,5 +1,5 @@
 """
-Test for coi container list - invalid format error handling.
+Test for clincus container list - invalid format error handling.
 
 Tests that:
 1. Container list rejects invalid format values
@@ -9,19 +9,19 @@ Tests that:
 import subprocess
 
 
-def test_container_list_invalid_format(coi_binary):
+def test_container_list_invalid_format(clincus_binary):
     """
     Test container list with invalid format.
 
     Flow:
-    1. Run coi container list --format=invalid
+    1. Run clincus container list --format=invalid
     2. Verify command fails with exit code 2 (usage error)
     3. Verify error message mentions invalid format
     """
     # === Test: Try invalid format ===
 
     result = subprocess.run(
-        [coi_binary, "container", "list", "--format=invalid"],
+        [clincus_binary, "container", "list", "--format=invalid"],
         capture_output=True,
         text=True,
         timeout=30,
