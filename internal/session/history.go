@@ -60,16 +60,19 @@ func (h *History) RecordStop(id string, exitCode int) error {
 }
 
 func (h *History) appendRecord(rec HistoryRecord) error {
-	f, err := os.OpenFile(h.Path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+	f, err := os.OpenFile(h.Path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o644)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
 
-	if err := syscall.Flock(int(f.Fd()), syscall.LOCK_EX); err != nil {
+	if err := syscall.Flock(int(f.Fd()), syscall.LOCK_EX); err != nil { //nolint:gosec // fd to int conversion is safe
 		return err
 	}
-	defer syscall.Flock(int(f.Fd()), syscall.LOCK_UN)
+	defer func() { //nolint:errcheck // unlock failure on defer is non-actionable
+		//nolint:gosec // fd to int conversion is safe within this context
+		_ = syscall.Flock(int(f.Fd()), syscall.LOCK_UN)
+	}()
 
 	data, err := json.Marshal(rec)
 	if err != nil {

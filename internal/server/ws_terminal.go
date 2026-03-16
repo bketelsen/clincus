@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gorilla/websocket"
 	"github.com/bketelsen/clincus/internal/container"
+	"github.com/gorilla/websocket"
 )
 
 var upgrader = websocket.Upgrader{
@@ -43,7 +43,8 @@ func (s *Server) handleTerminalWS(w http.ResponseWriter, r *http.Request) {
 
 	bridge, err := NewBridge(ws, containerID, tmuxSession, codeUID)
 	if err != nil {
-		ws.WriteJSON(WSMessage{Type: "error", Msg: err.Error()})
+		//nolint:errcheck // best-effort error notification to client
+		_ = ws.WriteJSON(WSMessage{Type: "error", Msg: err.Error()})
 		return
 	}
 	defer bridge.Close()

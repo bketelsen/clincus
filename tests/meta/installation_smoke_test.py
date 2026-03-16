@@ -163,7 +163,7 @@ def test_full_installation_process(meta_container, clincus_binary):
     # - Fork PRs (branch doesn't exist in main repo)
     # - Deleted branches (branch was deleted after PR merged)
     github_branch = os.environ.get("GITHUB_HEAD_REF", "")
-    github_repo = os.environ.get("GITHUB_REPOSITORY", "mensfeld/code-on-incus")
+    github_repo = os.environ.get("GITHUB_REPOSITORY", "bketelsen/clincus")
     github_server = os.environ.get("GITHUB_SERVER_URL", "https://github.com")
     repo_url = f"{github_server}/{github_repo}.git"
 
@@ -186,26 +186,26 @@ def test_full_installation_process(meta_container, clincus_binary):
         set -e
         cd /root
         {clone_script}
-        cd code-on-incus
+        cd clincus
         /usr/local/go/bin/go build -o clincus ./cmd/clincus
         ./clincus version
         """,
         timeout=300,
     )
     assert result.returncode == 0, f"Failed to build clincus: {result.stderr}"
-    assert "code-on-incus (clincus) v" in result.stdout, "clincus version check failed"
+    assert "clincus " in result.stdout, "clincus version check failed"
 
     # Phase 4: Test clincus --help
     result = exec_in_container(
         container_name,
         """
-        cd /root/code-on-incus
+        cd /root/clincus
         ./clincus --help
         """,
         timeout=30,
     )
     assert result.returncode == 0, f"clincus --help failed: {result.stderr}"
-    assert "code-on-incus (clincus) is a CLI tool" in result.stdout, (
+    assert "clincus is a CLI tool" in result.stdout, (
         "clincus help output missing expected text"
     )
     assert "Available Commands:" in result.stdout, "clincus help missing commands section"
@@ -214,7 +214,7 @@ def test_full_installation_process(meta_container, clincus_binary):
     result = exec_in_container(
         container_name,
         """
-        cd /root/code-on-incus
+        cd /root/clincus
         ./clincus images --help
         ./clincus list --help
         ./clincus shell --help
@@ -260,4 +260,4 @@ def test_installation_with_prebuilt_binary(meta_container, clincus_binary):
         timeout=30,
     )
     assert result.returncode == 0, f"Pre-built binary test failed: {result.stderr}"
-    assert "code-on-incus (clincus)" in result.stdout, "clincus binary not working correctly"
+    assert "clincus" in result.stdout, "clincus binary not working correctly"

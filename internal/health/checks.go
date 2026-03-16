@@ -1038,4 +1038,3 @@ func CheckCgroupAvailability() HealthCheck {
 		},
 	}
 }
-

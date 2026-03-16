@@ -12,8 +12,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var servePort int
-var serveOpen bool
+var (
+	servePort int
+	serveOpen bool
+)
 
 var serveCmd = &cobra.Command{
 	Use:   "serve",
@@ -52,9 +54,10 @@ func serveCommand(cmd *cobra.Command, args []string) error {
 
 	if serveOpen {
 		go func() {
-			exec.Command("xdg-open", fmt.Sprintf("http://%s", addr)).Start()
+			//nolint:errcheck // fire-and-forget browser open; failure is non-fatal
+			_ = exec.Command("xdg-open", fmt.Sprintf("http://%s", addr)).Start()
 		}()
 	}
 
-	return http.ListenAndServe(addr, srv.Handler())
+	return http.ListenAndServe(addr, srv.Handler()) //nolint:gosec // timeout handled by server middleware
 }

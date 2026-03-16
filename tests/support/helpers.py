@@ -636,7 +636,7 @@ def get_latest_session_id():
     """
     Get the most recent session ID from sessions directory.
     """
-    sessions_dir = Path.home() / ".claude-on-incus" / "sessions"
+    sessions_dir = Path.home() / ".clincus" / "sessions"
 
     if not sessions_dir.exists():
         return None
@@ -1178,7 +1178,7 @@ def calculate_container_name(workspace_dir, slot):
     import hashlib
 
     # Get container prefix from environment (defaults to "clincus-" but tests use "clincus-test-")
-    prefix = os.environ.get("COI_CONTAINER_PREFIX", "clincus-")
+    prefix = os.environ.get("CLINCUS_CONTAINER_PREFIX", "clincus-")
 
     # Hash the workspace path (SHA256)
     # Use os.path.abspath (not Path.resolve) to match Go's filepath.Abs behavior

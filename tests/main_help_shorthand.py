@@ -13,4 +13,4 @@ def test_main_help_shorthand(clincus_binary):
     result = subprocess.run([clincus_binary, "-h"], capture_output=True, text=True, timeout=5)
 
     assert result.returncode == 0
-    assert "code-on-incus" in result.stdout.lower()
+    assert "clincus" in result.stdout.lower()

@@ -71,13 +71,15 @@ func (s *Server) routes() {
 
 func (s *Server) writeJSON(w http.ResponseWriter, data any) {
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(data)
+	//nolint:errcheck // response write errors are non-actionable at this point
+	_ = json.NewEncoder(w).Encode(data)
 }
 
 func (s *Server) writeError(w http.ResponseWriter, msg string, code int) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
-	json.NewEncoder(w).Encode(map[string]string{"error": msg})
+	//nolint:errcheck // response write errors are non-actionable at this point
+	_ = json.NewEncoder(w).Encode(map[string]string{"error": msg})
 }
 
 func (s *Server) historyPath() string {

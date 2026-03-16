@@ -59,7 +59,8 @@ func Cleanup(opts CleanupOptions) error {
 	home, _ := os.UserHomeDir()
 	histPath := filepath.Join(home, ".clincus", "history.jsonl")
 	hist := &History{Path: histPath}
-	hist.RecordStop(opts.ContainerName, 0)
+	//nolint:errcheck // history recording failure is non-fatal
+	_ = hist.RecordStop(opts.ContainerName, 0)
 
 	// Handle container based on persistence mode
 	if opts.Persistent {

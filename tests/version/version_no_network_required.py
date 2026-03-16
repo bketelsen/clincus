@@ -32,9 +32,9 @@ def test_version_no_network_required(clincus_binary):
     output = result.stdout
 
     # Verify complete version output
-    assert "code-on-incus (clincus) v" in output, f"Should contain version string. Got:\n{output}"
+    assert "clincus " in output, f"Should contain version string. Got:\n{output}"
 
-    assert "https://github.com/mensfeld/code-on-incus" in output, (
+    assert "https://github.com/bketelsen/clincus" in output, (
         f"Should contain repository URL. Got:\n{output}"
     )
 

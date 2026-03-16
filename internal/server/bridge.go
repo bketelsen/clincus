@@ -44,9 +44,9 @@ func NewBridge(ws *websocket.Conn, containerName, tmuxSession string, uid int) (
 		for _, a := range incusArgs {
 			fullCmd += " " + shellQuote(a)
 		}
-		cmd = exec.Command("sg", "incus-admin", "-c", fullCmd)
+		cmd = exec.Command("sg", "incus-admin", "-c", fullCmd) //nolint:gosec // args are shell-quoted; sg requires string
 	} else {
-		cmd = exec.Command("incus", incusArgs...)
+		cmd = exec.Command("incus", incusArgs...) //nolint:gosec // args are controlled incus parameters
 	}
 	cmd.Env = append(os.Environ(), "TERM=xterm-256color")
 
@@ -96,10 +96,12 @@ func (b *Bridge) Run() {
 			}
 			switch msg.Type {
 			case "input":
-				b.ptmx.Write([]byte(msg.Data))
+				//nolint:errcheck // write to PTY; error handled via next read failure
+				_, _ = b.ptmx.Write([]byte(msg.Data))
 			case "resize":
 				if msg.Cols > 0 && msg.Rows > 0 {
-					pty.Setsize(b.ptmx, &pty.Winsize{
+					//nolint:errcheck,gosec // resize failure non-fatal; int->uint16 bounded by terminal dimensions
+					_ = pty.Setsize(b.ptmx, &pty.Winsize{
 						Cols: uint16(msg.Cols),
 						Rows: uint16(msg.Rows),
 					})
@@ -115,15 +117,17 @@ func (b *Bridge) Run() {
 		}
 	}
 
-	b.ws.WriteJSON(WSMessage{Type: "exit", Code: exitCode})
-	b.ws.Close()
+	//nolint:errcheck // best-effort exit notification to client
+	_ = b.ws.WriteJSON(WSMessage{Type: "exit", Code: exitCode})
+	_ = b.ws.Close()
 	wg.Wait()
 }
 
 func (b *Bridge) Close() {
 	b.once.Do(func() {
 		if b.cmd.Process != nil {
-			b.cmd.Process.Kill()
+			//nolint:errcheck // best-effort process kill
+			_ = b.cmd.Process.Kill()
 		}
 		b.ptmx.Close()
 	})

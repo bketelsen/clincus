@@ -11,10 +11,7 @@ func DetectAll() (*OrphanedResources, error) {
 }
 
 // CleanupAll cleans up all orphaned resources
-func CleanupAll(logger func(string)) error {
-	if logger == nil {
-		logger = func(msg string) {}
-	}
+func CleanupAll(_ func(string)) error {
 	return nil
 }
 

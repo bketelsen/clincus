@@ -627,4 +627,3 @@ func runCLIInTmux(result *session.SetupResult, sessionID string, detached bool, 
 		return err
 	}
 }
-

@@ -11,8 +11,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gorilla/websocket"
 	"github.com/bketelsen/clincus/internal/session"
+	"github.com/gorilla/websocket"
 )
 
 type EventHub struct {
@@ -88,7 +88,9 @@ func (s *Server) watchIncusEvents() error {
 	if err := cmd.Start(); err != nil {
 		return err
 	}
-	defer cmd.Process.Kill()
+	defer func() { //nolint:errcheck // best-effort process cleanup
+		_ = cmd.Process.Kill()
+	}()
 
 	prefix := session.GetContainerPrefix()
 	scanner := bufio.NewScanner(stdout)

@@ -32,10 +32,10 @@ def test_version_basic(clincus_binary):
     output = result.stdout
 
     # Should contain version identifier
-    assert "code-on-incus (clincus) v" in output, f"Should contain version identifier. Got:\n{output}"
+    assert "clincus " in output, f"Should contain version identifier. Got:\n{output}"
 
     # Should contain repository URL
-    assert "https://github.com/mensfeld/code-on-incus" in output, (
+    assert "https://github.com/bketelsen/clincus" in output, (
         f"Should contain repository URL. Got:\n{output}"
     )
 

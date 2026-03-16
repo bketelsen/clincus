@@ -529,7 +529,7 @@ func TestDashboardConfigLoading(t *testing.T) {
 [dashboard]
 port = 8080
 workspace_roots = ["~/projects", "~/work"]
-`), 0644)
+`), 0o644)
 
 	var cfg Config
 	_, err := toml.DecodeFile(configPath, &cfg)

@@ -15,8 +15,8 @@ import (
 )
 
 const (
-	DefaultImage  = "images:ubuntu/24.04"
-	ClincusImage  = "clincus"
+	DefaultImage = "images:ubuntu/24.04"
+	ClincusImage = "clincus"
 )
 
 // isColimaOrLimaEnvironment detects if we're running inside a Colima or Lima VM
@@ -84,10 +84,10 @@ type SetupOptions struct {
 	Persistent            bool // Keep container between sessions (don't delete on cleanup)
 	ResumeFromID          string
 	Slot                  int
-	MountConfig           *MountConfig // Multi-mount support
-	SessionsDir           string       // e.g., ~/.clincus/sessions-claude
-	CLIConfigPath         string       // e.g., ~/.claude (host CLI config to copy credentials from)
-	Tool                  tool.Tool    // AI coding tool being used
+	MountConfig           *MountConfig         // Multi-mount support
+	SessionsDir           string               // e.g., ~/.clincus/sessions-claude
+	CLIConfigPath         string               // e.g., ~/.claude (host CLI config to copy credentials from)
+	Tool                  tool.Tool            // AI coding tool being used
 	DisableShift          bool                 // Disable UID shifting (for Colima/Lima environments)
 	LimitsConfig          *config.LimitsConfig // Resource and time limits
 	IncusProject          string               // Incus project name
@@ -363,11 +363,12 @@ func Setup(opts SetupOptions) (*SetupResult, error) {
 
 	// 6b. Set metadata labels for dashboard discovery
 	if opts.Tool != nil {
-		result.Manager.SetConfig("user.clincus.managed", "true")
-		result.Manager.SetConfig("user.clincus.workspace", opts.WorkspacePath)
-		result.Manager.SetConfig("user.clincus.tool", opts.Tool.Name())
-		result.Manager.SetConfig("user.clincus.persistent", fmt.Sprintf("%v", opts.Persistent))
-		result.Manager.SetConfig("user.clincus.created", time.Now().UTC().Format(time.RFC3339))
+		//nolint:errcheck // metadata labels are best-effort; container is already running
+		_ = result.Manager.SetConfig("user.clincus.managed", "true")
+		_ = result.Manager.SetConfig("user.clincus.workspace", opts.WorkspacePath)
+		_ = result.Manager.SetConfig("user.clincus.tool", opts.Tool.Name())
+		_ = result.Manager.SetConfig("user.clincus.persistent", fmt.Sprintf("%v", opts.Persistent))
+		_ = result.Manager.SetConfig("user.clincus.created", time.Now().UTC().Format(time.RFC3339))
 	}
 
 	// 6c. Record session start in history
@@ -378,7 +379,8 @@ func Setup(opts SetupOptions) (*SetupResult, error) {
 	if opts.Tool != nil {
 		toolName = opts.Tool.Name()
 	}
-	hist.RecordStart(result.ContainerName, opts.WorkspacePath, toolName, opts.Persistent)
+	//nolint:errcheck // history recording failure is non-fatal
+	_ = hist.RecordStart(result.ContainerName, opts.WorkspacePath, toolName, opts.Persistent)
 
 	// 7. Start timeout monitor if max_duration is configured
 	if opts.LimitsConfig != nil && opts.LimitsConfig.Runtime.MaxDuration != "" {

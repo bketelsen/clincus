@@ -16,7 +16,7 @@ Before installing Clincus, verify that your system meets the requirements below.
 
 !!! note "macOS"
     Clincus runs on macOS via [Colima](https://github.com/abiosoft/colima) or
-    [Lima](https://lima-vm.io/). See the [macOS section](#macos-via-colima--lima) below.
+    [Lima](https://lima-vm.io/). See the [macOS section](#macos-via-colima-lima) below.
 
 ---
 
