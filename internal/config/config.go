@@ -7,18 +7,16 @@ import (
 
 // Config represents the complete configuration
 type Config struct {
-	Defaults   DefaultsConfig           `toml:"defaults"`
-	Paths      PathsConfig              `toml:"paths"`
-	Incus      IncusConfig              `toml:"incus"`
-	Network    NetworkConfig            `toml:"network"`
-	Tool       ToolConfig               `toml:"tool"`
-	Mounts     MountsConfig             `toml:"mounts"`
-	Limits     LimitsConfig             `toml:"limits"`
-	Git        GitConfig                `toml:"git"`
-	Security   SecurityConfig           `toml:"security"`
-	Monitoring MonitoringConfig         `toml:"monitoring"`
-	Profiles   map[string]ProfileConfig `toml:"profiles"`
-	Dashboard  DashboardConfig          `toml:"dashboard"`
+	Defaults  DefaultsConfig           `toml:"defaults"`
+	Paths     PathsConfig              `toml:"paths"`
+	Incus     IncusConfig              `toml:"incus"`
+	Tool      ToolConfig               `toml:"tool"`
+	Mounts    MountsConfig             `toml:"mounts"`
+	Limits    LimitsConfig             `toml:"limits"`
+	Git       GitConfig                `toml:"git"`
+	Security  SecurityConfig           `toml:"security"`
+	Profiles  map[string]ProfileConfig `toml:"profiles"`
+	Dashboard DashboardConfig          `toml:"dashboard"`
 }
 
 // GitConfig contains git-related security settings
@@ -82,35 +80,6 @@ type IncusConfig struct {
 	CodeUID      int    `toml:"code_uid"`
 	CodeUser     string `toml:"code_user"`
 	DisableShift bool   `toml:"disable_shift"` // Disable UID shifting (for Colima/Lima environments)
-}
-
-// NetworkMode represents the network isolation mode
-type NetworkMode string
-
-const (
-	// NetworkModeRestricted blocks local/internal networks, allows internet
-	NetworkModeRestricted NetworkMode = "restricted"
-	// NetworkModeOpen allows all network access (current behavior)
-	NetworkModeOpen NetworkMode = "open"
-	// NetworkModeAllowlist allows only specific domains (with RFC1918 always blocked)
-	NetworkModeAllowlist NetworkMode = "allowlist"
-)
-
-// NetworkConfig contains network isolation settings
-type NetworkConfig struct {
-	Mode                    NetworkMode          `toml:"mode"`
-	BlockPrivateNetworks    bool                 `toml:"block_private_networks"`
-	BlockMetadataEndpoint   bool                 `toml:"block_metadata_endpoint"`
-	AllowedDomains          []string             `toml:"allowed_domains"`
-	RefreshIntervalMinutes  int                  `toml:"refresh_interval_minutes"`
-	AllowLocalNetworkAccess bool                 `toml:"allow_local_network_access"` // Allow established connections from entire local network (not just gateway)
-	Logging                 NetworkLoggingConfig `toml:"logging"`
-}
-
-// NetworkLoggingConfig contains network logging settings
-type NetworkLoggingConfig struct {
-	Enabled bool   `toml:"enabled"`
-	Path    string `toml:"path"`
 }
 
 // ProfileConfig represents a named profile
@@ -183,17 +152,6 @@ type RuntimeLimits struct {
 	StopGraceful bool   `toml:"stop_graceful"` // graceful vs force stop
 }
 
-// MonitoringConfig contains security monitoring settings
-type MonitoringConfig struct {
-	Enabled               bool    `toml:"enabled"`                   // Enable background monitoring
-	AutoPauseOnHigh       bool    `toml:"auto_pause_on_high"`        // Pause container on high-severity threats
-	AutoKillOnCritical    bool    `toml:"auto_kill_on_critical"`     // Kill container on critical threats
-	PollIntervalSec       int     `toml:"poll_interval_sec"`         // How often to collect stats
-	FileReadThresholdMB   float64 `toml:"file_read_threshold_mb"`    // MB read in poll interval before alert
-	FileReadRateMBPerSec  float64 `toml:"file_read_rate_mb_per_sec"` // MB/sec sustained rate before alert
-	AuditLogRetentionDays int     `toml:"audit_log_retention_days"`  // How long to keep audit logs
-}
-
 // DashboardConfig contains web dashboard settings
 type DashboardConfig struct {
 	Port           int      `toml:"port"`
@@ -206,11 +164,11 @@ func GetDefaultConfig() *Config {
 	if err != nil {
 		homeDir = "/tmp" // Fallback if home dir cannot be determined
 	}
-	baseDir := filepath.Join(homeDir, ".coi")
+	baseDir := filepath.Join(homeDir, ".clincus")
 
 	return &Config{
 		Defaults: DefaultsConfig{
-			Image:      "coi",
+			Image:      "clincus",
 			Persistent: false,
 			Model:      "claude-sonnet-4-5",
 		},
@@ -224,26 +182,6 @@ func GetDefaultConfig() *Config {
 			Group:    "incus-admin",
 			CodeUID:  1000,
 			CodeUser: "code",
-		},
-		Network: NetworkConfig{
-			Mode:                  NetworkModeOpen,
-			BlockPrivateNetworks:  true,
-			BlockMetadataEndpoint: true,
-			AllowedDomains: []string{
-				// Default allowlist for allowlist mode (--network=allowlist)
-				// Note: Gateway IP is auto-detected and added automatically
-				"8.8.8.8",             // Google DNS (REQUIRED for DNS resolution)
-				"1.1.1.1",             // Cloudflare DNS (REQUIRED for DNS resolution)
-				"registry.npmjs.org",  // npm package registry
-				"npm.pkg.github.com",  // GitHub packages
-				"api.anthropic.com",   // Claude API
-				"platform.claude.com", // Claude Platform (OAuth, Console)
-			},
-			RefreshIntervalMinutes: 30,
-			Logging: NetworkLoggingConfig{
-				Enabled: true,
-				Path:    filepath.Join(baseDir, "logs", "network.log"),
-			},
 		},
 		Tool: ToolConfig{
 			Name:   "claude",
@@ -285,22 +223,13 @@ func GetDefaultConfig() *Config {
 				StopGraceful: true,
 			},
 		},
-		Monitoring: MonitoringConfig{
-			Enabled:               false,
-			AutoPauseOnHigh:       true,
-			AutoKillOnCritical:    true,
-			PollIntervalSec:       2,
-			FileReadThresholdMB:   50.0,
-			FileReadRateMBPerSec:  10.0,
-			AuditLogRetentionDays: 30,
-		},
 		Profiles:  make(map[string]ProfileConfig),
 		Dashboard: DashboardConfig{Port: 3000},
 	}
 }
 
 // GetConfigPaths returns the list of config file paths to check (in order)
-// If COI_CONFIG environment variable is set, it is added as highest priority
+// If CLINCUS_CONFIG environment variable is set, it is added as highest priority
 func GetConfigPaths() []string {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
@@ -312,13 +241,13 @@ func GetConfigPaths() []string {
 	}
 
 	paths := []string{
-		"/etc/coi/config.toml",                            // System config
-		filepath.Join(homeDir, ".config/coi/config.toml"), // User config
-		filepath.Join(workDir, ".coi.toml"),               // Project config
+		"/etc/clincus/config.toml",                            // System config
+		filepath.Join(homeDir, ".config/clincus/config.toml"), // User config
+		filepath.Join(workDir, ".clincus.toml"),               // Project config
 	}
 
-	// COI_CONFIG environment variable has highest priority
-	if envConfig := os.Getenv("COI_CONFIG"); envConfig != "" {
+	// CLINCUS_CONFIG environment variable has highest priority
+	if envConfig := os.Getenv("CLINCUS_CONFIG"); envConfig != "" {
 		paths = append(paths, envConfig)
 	}
 
@@ -390,31 +319,6 @@ func (c *Config) Merge(other *Config) {
 		c.Incus.CodeUser = other.Incus.CodeUser
 	}
 
-	// Merge Network settings
-	if other.Network.Mode != "" {
-		c.Network.Mode = other.Network.Mode
-	}
-	// For booleans, we merge if they appear to be explicitly set
-	// This is imperfect in TOML but works for most cases
-	c.Network.BlockPrivateNetworks = other.Network.BlockPrivateNetworks
-	c.Network.BlockMetadataEndpoint = other.Network.BlockMetadataEndpoint
-	c.Network.AllowLocalNetworkAccess = other.Network.AllowLocalNetworkAccess
-
-	// Merge allowed domains (replace entirely if set)
-	if len(other.Network.AllowedDomains) > 0 {
-		c.Network.AllowedDomains = other.Network.AllowedDomains
-	}
-
-	// Merge refresh interval
-	if other.Network.RefreshIntervalMinutes != 0 {
-		c.Network.RefreshIntervalMinutes = other.Network.RefreshIntervalMinutes
-	}
-
-	if other.Network.Logging.Path != "" {
-		c.Network.Logging.Path = ExpandPath(other.Network.Logging.Path)
-	}
-	c.Network.Logging.Enabled = other.Network.Logging.Enabled
-
 	// Merge Tool settings
 	if other.Tool.Name != "" {
 		c.Tool.Name = other.Tool.Name
@@ -455,9 +359,6 @@ func (c *Config) Merge(other *Config) {
 	if other.Security.DisableProtection {
 		c.Security.DisableProtection = true
 	}
-
-	// Merge monitoring
-	mergeMonitoring(&c.Monitoring, &other.Monitoring)
 
 	// Merge profiles
 	for name, profile := range other.Profiles {
@@ -525,28 +426,6 @@ func mergeLimits(base *LimitsConfig, other *LimitsConfig) {
 	// This is imperfect but works for most cases
 	base.Runtime.AutoStop = other.Runtime.AutoStop
 	base.Runtime.StopGraceful = other.Runtime.StopGraceful
-}
-
-// mergeMonitoring merges monitoring configurations (other takes precedence)
-func mergeMonitoring(base *MonitoringConfig, other *MonitoringConfig) {
-	// For booleans, we take the other value
-	base.Enabled = other.Enabled
-	base.AutoPauseOnHigh = other.AutoPauseOnHigh
-	base.AutoKillOnCritical = other.AutoKillOnCritical
-
-	// Merge thresholds
-	if other.PollIntervalSec != 0 {
-		base.PollIntervalSec = other.PollIntervalSec
-	}
-	if other.FileReadThresholdMB != 0 {
-		base.FileReadThresholdMB = other.FileReadThresholdMB
-	}
-	if other.FileReadRateMBPerSec != 0 {
-		base.FileReadRateMBPerSec = other.FileReadRateMBPerSec
-	}
-	if other.AuditLogRetentionDays != 0 {
-		base.AuditLogRetentionDays = other.AuditLogRetentionDays
-	}
 }
 
 // GetProfile returns a profile by name, or nil if not found

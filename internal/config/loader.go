@@ -11,10 +11,10 @@ import (
 // Load loads configuration from all available sources
 // Hierarchy (lowest to highest precedence):
 // 1. Built-in defaults
-// 2. System config (/etc/coi/config.toml)
-// 3. User config (~/.config/coi/config.toml)
-// 4. Project config (./.coi.toml)
-// 5. Environment variables (CLAUDE_ON_INCUS_* or COI_*)
+// 2. System config (/etc/clincus/config.toml)
+// 3. User config (~/.config/clincus/config.toml)
+// 4. Project config (./.clincus.toml)
+// 5. Environment variables (CLINCUS_*)
 func Load() (*Config, error) {
 	// Start with defaults
 	cfg := GetDefaultConfig()
@@ -63,53 +63,53 @@ func loadConfigFile(cfg *Config, path string) error {
 
 // loadFromEnv loads configuration from environment variables
 func loadFromEnv(cfg *Config) {
-	// CLAUDE_ON_INCUS_IMAGE
-	if env := os.Getenv("CLAUDE_ON_INCUS_IMAGE"); env != "" {
+	// CLINCUS_IMAGE
+	if env := os.Getenv("CLINCUS_IMAGE"); env != "" {
 		cfg.Defaults.Image = env
 	}
 
-	// CLAUDE_ON_INCUS_SESSIONS_DIR
-	if env := os.Getenv("CLAUDE_ON_INCUS_SESSIONS_DIR"); env != "" {
+	// CLINCUS_SESSIONS_DIR
+	if env := os.Getenv("CLINCUS_SESSIONS_DIR"); env != "" {
 		cfg.Paths.SessionsDir = ExpandPath(env)
 	}
 
-	// CLAUDE_ON_INCUS_STORAGE_DIR
-	if env := os.Getenv("CLAUDE_ON_INCUS_STORAGE_DIR"); env != "" {
+	// CLINCUS_STORAGE_DIR
+	if env := os.Getenv("CLINCUS_STORAGE_DIR"); env != "" {
 		cfg.Paths.StorageDir = ExpandPath(env)
 	}
 
-	// CLAUDE_ON_INCUS_PERSISTENT
-	if env := os.Getenv("CLAUDE_ON_INCUS_PERSISTENT"); env == "true" || env == "1" {
+	// CLINCUS_PERSISTENT
+	if env := os.Getenv("CLINCUS_PERSISTENT"); env == "true" || env == "1" {
 		cfg.Defaults.Persistent = true
 	}
 
-	// Limit environment variables (using COI_ prefix for brevity)
+	// Limit environment variables (using CLINCUS_ prefix)
 	// CPU limits
-	if env := os.Getenv("COI_LIMIT_CPU"); env != "" {
+	if env := os.Getenv("CLINCUS_LIMIT_CPU"); env != "" {
 		cfg.Limits.CPU.Count = env
 	}
-	if env := os.Getenv("COI_LIMIT_CPU_ALLOWANCE"); env != "" {
+	if env := os.Getenv("CLINCUS_LIMIT_CPU_ALLOWANCE"); env != "" {
 		cfg.Limits.CPU.Allowance = env
 	}
 
 	// Memory limits
-	if env := os.Getenv("COI_LIMIT_MEMORY"); env != "" {
+	if env := os.Getenv("CLINCUS_LIMIT_MEMORY"); env != "" {
 		cfg.Limits.Memory.Limit = env
 	}
-	if env := os.Getenv("COI_LIMIT_MEMORY_SWAP"); env != "" {
+	if env := os.Getenv("CLINCUS_LIMIT_MEMORY_SWAP"); env != "" {
 		cfg.Limits.Memory.Swap = env
 	}
 
 	// Disk limits
-	if env := os.Getenv("COI_LIMIT_DISK_READ"); env != "" {
+	if env := os.Getenv("CLINCUS_LIMIT_DISK_READ"); env != "" {
 		cfg.Limits.Disk.Read = env
 	}
-	if env := os.Getenv("COI_LIMIT_DISK_WRITE"); env != "" {
+	if env := os.Getenv("CLINCUS_LIMIT_DISK_WRITE"); env != "" {
 		cfg.Limits.Disk.Write = env
 	}
 
 	// Runtime limits
-	if env := os.Getenv("COI_LIMIT_DURATION"); env != "" {
+	if env := os.Getenv("CLINCUS_LIMIT_DURATION"); env != "" {
 		cfg.Limits.Runtime.MaxDuration = env
 	}
 }
@@ -133,19 +133,19 @@ func ensureDirectories(cfg *Config) error {
 
 // WriteExample writes an example config file to the specified path
 func WriteExample(path string) error {
-	example := `# Claude on Incus Configuration
-# See: https://github.com/mensfeld/code-on-incus
+	example := `# Clincus Configuration
+# See: https://github.com/bketelsen/clincus
 
 [defaults]
-image = "coi"
+image = "clincus"
 # Set persistent=true to reuse containers across sessions (keeps installed tools)
 persistent = false
 model = "claude-sonnet-4-5"
 
 [paths]
-sessions_dir = "~/.coi/sessions"
-storage_dir = "~/.coi/storage"
-logs_dir = "~/.coi/logs"
+sessions_dir = "~/.clincus/sessions"
+storage_dir = "~/.clincus/storage"
+logs_dir = "~/.clincus/logs"
 
 [incus]
 project = "default"
@@ -246,19 +246,19 @@ writable_hooks = false
 
 # Example profile for Rust development with persistent container
 # [profiles.rust]
-# image = "coi-rust"
+# image = "clincus-rust"
 # environment = { RUST_BACKTRACE = "1" }
 # persistent = true
 
 # Example profile for web development
 # [profiles.web]
-# image = "coi"
+# image = "clincus"
 # environment = { NODE_ENV = "development" }
 # persistent = true
 
 # Example profile with resource limits
 # [profiles.limited]
-# image = "coi"
+# image = "clincus"
 # persistent = false
 # [profiles.limited.limits.cpu]
 # count = "2"

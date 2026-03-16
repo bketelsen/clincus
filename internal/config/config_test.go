@@ -16,8 +16,8 @@ func TestGetDefaultConfig(t *testing.T) {
 	}
 
 	// Check defaults
-	if cfg.Defaults.Image != "coi" {
-		t.Errorf("Expected default image 'coi', got '%s'", cfg.Defaults.Image)
+	if cfg.Defaults.Image != "clincus" {
+		t.Errorf("Expected default image 'clincus', got '%s'", cfg.Defaults.Image)
 	}
 
 	if cfg.Defaults.Model != "claude-sonnet-4-5" {
@@ -179,7 +179,7 @@ func TestGetConfigPaths(t *testing.T) {
 
 	// Check that paths are in expected order
 	expectedPaths := []string{
-		"/etc/coi/config.toml",
+		"/etc/clincus/config.toml",
 	}
 
 	for i, expected := range expectedPaths {
@@ -190,7 +190,7 @@ func TestGetConfigPaths(t *testing.T) {
 
 	// Check that user config path contains .config
 	homeDir, _ := os.UserHomeDir()
-	expectedUserPath := filepath.Join(homeDir, ".config/coi/config.toml")
+	expectedUserPath := filepath.Join(homeDir, ".config/clincus/config.toml")
 	if paths[1] != expectedUserPath {
 		t.Errorf("User config path: expected %q, got %q", expectedUserPath, paths[1])
 	}

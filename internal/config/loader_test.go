@@ -9,8 +9,8 @@ import (
 func TestLoad(t *testing.T) {
 	// Clean environment
 	cleanEnv := func() {
-		os.Unsetenv("CLAUDE_ON_INCUS_IMAGE")
-		os.Unsetenv("CLAUDE_ON_INCUS_PERSISTENT")
+		os.Unsetenv("CLINCUS_IMAGE")
+		os.Unsetenv("CLINCUS_PERSISTENT")
 	}
 	defer cleanEnv()
 
@@ -31,11 +31,11 @@ func TestLoad(t *testing.T) {
 
 func TestLoadFromEnv(t *testing.T) {
 	// Set environment variables
-	os.Setenv("CLAUDE_ON_INCUS_IMAGE", "env-image")
-	os.Setenv("CLAUDE_ON_INCUS_PERSISTENT", "1")
+	os.Setenv("CLINCUS_IMAGE", "env-image")
+	os.Setenv("CLINCUS_PERSISTENT", "1")
 	defer func() {
-		os.Unsetenv("CLAUDE_ON_INCUS_IMAGE")
-		os.Unsetenv("CLAUDE_ON_INCUS_PERSISTENT")
+		os.Unsetenv("CLINCUS_IMAGE")
+		os.Unsetenv("CLINCUS_PERSISTENT")
 	}()
 
 	cfg := GetDefaultConfig()
