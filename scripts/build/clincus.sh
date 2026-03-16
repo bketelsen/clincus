@@ -1,5 +1,5 @@
 #!/bin/bash
-# Build script for coi image
+# Build script for clincus image
 # This script runs INSIDE the container during image build
 #
 # It installs all dependencies needed for CLI tool execution:
@@ -18,7 +18,7 @@ CODE_USER="code"
 CODE_UID=1000
 
 log() {
-    echo "[coi] $*"
+    echo "[clincus] $*"
 }
 
 #######################################
@@ -45,7 +45,7 @@ configure_dns_if_needed() {
     rm -f /etc/resolv.conf
     cat > /etc/resolv.conf << 'EOF'
 # Static DNS configuration (auto-configured due to DNS misconfiguration)
-# See: https://github.com/mensfeld/code-on-incus#troubleshooting
+# See: https://github.com/bketelsen/clincus#troubleshooting
 nameserver 8.8.8.8
 nameserver 8.8.4.4
 nameserver 1.1.1.1
@@ -335,15 +335,15 @@ configure_tmp_cleanup() {
 
     # Age threshold: remove files in /tmp not accessed for more than 1 hour.
     # The 'D' type removes the directory contents but keeps /tmp itself.
-    cat > /etc/tmpfiles.d/coi-tmp-cleanup.conf << 'EOF'
-# COI: clean files in /tmp that have not been accessed for 1 hour.
+    cat > /etc/tmpfiles.d/clincus-tmp-cleanup.conf << 'EOF'
+# Clincus: clean files in /tmp that have not been accessed for 1 hour.
 # This prevents abandoned build artefacts from exhausting the tmpfs.
 D /tmp 1777 root root 1h
 EOF
 
     # Override the cleanup timer to run every 15 minutes.
     mkdir -p /etc/systemd/system/systemd-tmpfiles-clean.timer.d
-    cat > /etc/systemd/system/systemd-tmpfiles-clean.timer.d/coi-interval.conf << 'EOF'
+    cat > /etc/systemd/system/systemd-tmpfiles-clean.timer.d/clincus-interval.conf << 'EOF'
 [Timer]
 # Reset inherited values before setting our own
 OnBootSec=
@@ -373,7 +373,7 @@ cleanup() {
 # Main
 #######################################
 main() {
-    log "Starting coi image build..."
+    log "Starting clincus image build..."
 
     configure_dns_if_needed
     install_base_dependencies
@@ -389,7 +389,7 @@ main() {
     install_homebrew
     cleanup
 
-    log "coi image build complete!"
+    log "clincus image build complete!"
 }
 
 main "$@"

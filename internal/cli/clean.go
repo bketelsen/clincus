@@ -27,12 +27,12 @@ var cleanCmd = &cobra.Command{
 By default, cleans only stopped containers. Use flags to control what gets cleaned.
 
 Examples:
-  coi clean                    # Clean stopped containers
-  coi clean --sessions         # Clean saved session data
-  coi clean --orphans          # Clean orphaned stopped containers
-  coi clean --all              # Clean everything
-  coi clean --all --force      # Clean without confirmation
-  coi clean --orphans --dry-run # Show what orphans would be cleaned
+  clincus clean                    # Clean stopped containers
+  clincus clean --sessions         # Clean saved session data
+  clincus clean --orphans          # Clean orphaned stopped containers
+  clincus clean --all              # Clean everything
+  clincus clean --all --force      # Clean without confirmation
+  clincus clean --orphans --dry-run # Show what orphans would be cleaned
 `,
 	RunE: cleanCommand,
 }
@@ -117,7 +117,7 @@ func cleanCommand(cmd *cobra.Command, args []string) error {
 // cleanStoppedContainers finds and removes stopped containers.
 // Returns (count cleaned, was cancelled, error).
 func cleanStoppedContainers() (int, bool, error) {
-	fmt.Println("Checking for stopped claude-on-incus containers...")
+	fmt.Println("Checking for stopped clincus containers...")
 
 	containers, err := listActiveContainers()
 	if err != nil {

@@ -20,17 +20,17 @@ var imageCmd = &cobra.Command{
 	Long:  `Operations for listing, publishing, deleting, and managing container images.`,
 }
 
-// Legacy imagesCmd for backwards compatibility (coi images)
+// Legacy imagesCmd for backwards compatibility (clincus images)
 var imagesCmd = &cobra.Command{
 	Use:   "images",
 	Short: "List available Incus images (alias for 'image list')",
 	Long: `List available Incus images for use with --image flag.
 
-Shows both built COI images and available remote images.
+Shows both built Clincus images and available remote images.
 
 Examples:
-  coi images              # List COI images only
-  coi images --all        # List all local images
+  clincus images              # List Clincus images only
+  clincus images --all        # List all local images
 `,
 	RunE: imageListCommand,
 }
@@ -42,10 +42,10 @@ var imageListCmd = &cobra.Command{
 	Long: `List available Incus images with optional filtering.
 
 Examples:
-  coi image list                           # List COI images
-  coi image list --all                     # List all local images
-  coi image list --prefix claudeyard-      # List images starting with prefix
-  coi image list --format json             # Output as JSON`,
+  clincus image list                           # List Clincus images
+  clincus image list --all                     # List all local images
+  clincus image list --prefix claudeyard-      # List images starting with prefix
+  clincus image list --format json             # Output as JSON`,
 	RunE: imageListCommand,
 }
 
@@ -56,7 +56,7 @@ var imagePublishCmd = &cobra.Command{
 	Long: `Publish a container as an image with the given alias.
 
 Example:
-  coi image publish my-container my-image --description "Custom build with Python 3.11"`,
+  clincus image publish my-container my-image --description "Custom build with Python 3.11"`,
 	Args: cobra.ExactArgs(2),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		containerName := args[0]
@@ -130,7 +130,7 @@ Image aliases must follow format: prefix-YYYYMMDD-HHMMSS
 
 Example:
   # Keep only the 3 most recent versions of node-42 images
-  coi image cleanup claudeyard-node-42- --keep 3`,
+  clincus image cleanup claudeyard-node-42- --keep 3`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		prefix := args[0]
@@ -165,12 +165,12 @@ Example:
 
 func init() {
 	// Add flags to list command
-	imageListCmd.Flags().BoolVarP(&showAll, "all", "a", false, "Show all local images, not just COI images")
+	imageListCmd.Flags().BoolVarP(&showAll, "all", "a", false, "Show all local images, not just Clincus images")
 	imageListCmd.Flags().String("prefix", "", "Filter images by alias prefix")
 	imageListCmd.Flags().String("format", "table", "Output format: table or json")
 
 	// Add flags to legacy images command
-	imagesCmd.Flags().BoolVarP(&showAll, "all", "a", false, "Show all local images, not just COI images")
+	imagesCmd.Flags().BoolVarP(&showAll, "all", "a", false, "Show all local images, not just Clincus images")
 
 	// Add flags to publish command
 	imagePublishCmd.Flags().String("description", "", "Image description")
@@ -234,20 +234,20 @@ func imageListCommand(cmd *cobra.Command, args []string) error {
 		return nil
 	}
 
-	// Default listing (COI images + optional all)
+	// Default listing (Clincus images + optional all)
 	fmt.Println("Available Images:")
 	fmt.Println()
 
-	// Check COI images
+	// Check Clincus images
 	coiImages := []struct {
 		alias       string
 		description string
 		buildCmd    string
 	}{
-		{"coi", "coi image (Claude CLI, Node.js, Docker, GitHub CLI, tmux)", "coi build"},
+		{"clincus", "clincus image (Claude CLI, Node.js, Docker, GitHub CLI, tmux)", "clincus build"},
 	}
 
-	fmt.Println("COI Images:")
+	fmt.Println("Clincus Images:")
 	for _, img := range coiImages {
 		exists, err := container.ImageExists(img.alias)
 		if err != nil {
@@ -282,10 +282,10 @@ func imageListCommand(cmd *cobra.Command, args []string) error {
 	fmt.Println("  - debian:12, debian:11")
 	fmt.Println("  - alpine:3.19")
 	fmt.Println()
-	fmt.Println("  Example: coi shell --image ubuntu:24.04")
+	fmt.Println("  Example: clincus shell --image ubuntu:24.04")
 	fmt.Println()
 	fmt.Println("Custom Images:")
-	fmt.Println("  Build your own: coi build custom --script setup.sh my-image")
+	fmt.Println("  Build your own: clincus build custom --script setup.sh my-image")
 	fmt.Println()
 
 	return nil

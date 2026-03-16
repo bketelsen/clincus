@@ -60,7 +60,7 @@ func TestExoticTermWithTmuxCommand(t *testing.T) {
 			}
 
 			// Create a unique session name
-			sessionName := fmt.Sprintf("coi-test-cmd-%d", os.Getpid())
+			sessionName := fmt.Sprintf("clincus-test-cmd-%d", os.Getpid())
 
 			// Clean up any existing session
 			exec.Command("tmux", "kill-session", "-t", sessionName).Run()
@@ -121,7 +121,7 @@ func TestEmptyTermWithTmuxCommand(t *testing.T) {
 		return
 	}
 
-	sessionName := fmt.Sprintf("coi-test-empty-%d", os.Getpid())
+	sessionName := fmt.Sprintf("clincus-test-empty-%d", os.Getpid())
 
 	// Clean up
 	exec.Command("tmux", "kill-session", "-t", sessionName).Run()

@@ -27,10 +27,10 @@ var runCmd = &cobra.Command{
 The container is automatically cleaned up after the command completes.
 
 Examples:
-  coi run "echo hello"
-  coi run "npm test" --capture
-  coi run "pytest" --slot 2
-  coi run --workspace ~/project "make build"
+  clincus run "echo hello"
+  clincus run "npm test" --capture
+  clincus run "pytest" --slot 2
+  clincus run --workspace ~/project "make build"
 `,
 	Args: cobra.MinimumNArgs(1),
 	RunE: runCommand,
@@ -70,7 +70,7 @@ func runCommand(cmd *cobra.Command, args []string) error {
 	// Determine image (use custom if specified, otherwise default)
 	img := imageName
 	if img == "" {
-		img = "coi"
+		img = "clincus"
 	}
 
 	// Check if image exists
@@ -79,7 +79,7 @@ func runCommand(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to check image: %w", err)
 	}
 	if !exists {
-		return fmt.Errorf("image '%s' not found - run 'coi build %s' first", img, img)
+		return fmt.Errorf("image '%s' not found - run 'clincus build %s' first", img, img)
 	}
 
 	fmt.Fprintf(os.Stderr, "Launching container %s from image %s...\n", containerName, img)

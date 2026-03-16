@@ -24,13 +24,13 @@ var persistCmd = &cobra.Command{
 Persistent containers are not automatically deleted when stopped, allowing you
 to preserve installed tools and configurations across sessions.
 
-Use 'coi list' to see active containers and their persistence mode.
+Use 'clincus list' to see active containers and their persistence mode.
 
 Examples:
-  coi persist coi-abc12345-1              # Persist specific container
-  coi persist coi-abc12345-1 coi-xyz78901-2  # Persist multiple containers
-  coi persist --all                       # Persist all containers (with confirmation)
-  coi persist --all --force               # Persist all without confirmation
+  clincus persist clincus-abc12345-1                       # Persist specific container
+  clincus persist clincus-abc12345-1 clincus-xyz78901-2    # Persist multiple containers
+  clincus persist --all                                    # Persist all containers (with confirmation)
+  clincus persist --all --force                            # Persist all without confirmation
 `,
 	RunE: persistCommand,
 }
@@ -85,7 +85,7 @@ func persistCommand(cmd *cobra.Command, args []string) error {
 	} else {
 		// Use containers from args
 		if len(args) == 0 {
-			return fmt.Errorf("no container names provided - use 'coi list' to see active containers")
+			return fmt.Errorf("no container names provided - use 'clincus list' to see active containers")
 		}
 		containerNames = args
 
@@ -112,7 +112,7 @@ func persistCommand(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return fmt.Errorf("failed to get home directory: %w", err)
 	}
-	baseDir := filepath.Join(homeDir, ".coi")
+	baseDir := filepath.Join(homeDir, ".clincus")
 	sessionsDir := session.GetSessionsDir(baseDir, toolInstance)
 
 	// Persist each container

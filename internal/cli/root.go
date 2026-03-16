@@ -8,8 +8,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Version is the current version of coi (injected via ldflags at build time)
-var Version = "dev"
+// Version, Commit, and Date are injected via ldflags at build time.
+var (
+	Version = "dev"
+	Commit  = "unknown"
+	Date    = "unknown"
+)
 
 var (
 	// Global flags
@@ -46,20 +50,20 @@ var (
 
 // rootCmd represents the base command
 var rootCmd = &cobra.Command{
-	Use:   "coi",
-	Short: "Code on Incus - Run AI coding tools in isolated Incus containers",
-	Long: `code-on-incus (coi) is a CLI tool for running AI coding assistants in Incus containers
+	Use:   "clincus",
+	Short: "Clincus - Run AI coding tools in isolated Incus containers",
+	Long: `clincus is a CLI tool for running AI coding assistants in Incus containers
 with session persistence, workspace isolation, and multi-slot support.
 
 By default runs Claude Code. Other tools can be configured via the tool.name config option.
 
 Examples:
-  coi                          # Start interactive AI coding session (same as 'coi shell')
-  coi shell --slot 2           # Use specific slot
-  coi run "npm test"           # Run command in container
-  coi build                    # Build coi image
-  coi images                   # List available images
-  coi list                     # List active sessions
+  clincus                          # Start interactive AI coding session (same as 'clincus shell')
+  clincus shell --slot 2           # Use specific slot
+  clincus run "npm test"           # Run command in container
+  clincus build                    # Build clincus image
+  clincus images                   # List available images
+  clincus list                     # List active sessions
 `,
 	Version: Version,
 	// When called without subcommand, run shell command
@@ -95,10 +99,7 @@ Examples:
 }
 
 // Execute runs the root command
-func Execute(isCoi bool) error {
-	if !isCoi {
-		rootCmd.Use = "claude-on-incus"
-	}
+func Execute() error {
 	return rootCmd.Execute()
 }
 
@@ -106,7 +107,7 @@ func init() {
 	// Global flags available to all commands
 	rootCmd.PersistentFlags().StringVarP(&workspace, "workspace", "w", ".", "Workspace directory to mount")
 	rootCmd.PersistentFlags().IntVar(&slot, "slot", 0, "Slot number for parallel sessions (0 = auto-allocate)")
-	rootCmd.PersistentFlags().StringVar(&imageName, "image", "", "Custom image to use (default: coi)")
+	rootCmd.PersistentFlags().StringVar(&imageName, "image", "", "Custom image to use (default: clincus)")
 	rootCmd.PersistentFlags().BoolVar(&persistent, "persistent", false, "Reuse container across sessions")
 	rootCmd.PersistentFlags().StringVar(&resume, "resume", "", "Resume from session ID (omit value to auto-detect)")
 	rootCmd.PersistentFlags().Lookup("resume").NoOptDefVal = "auto"
@@ -138,10 +139,10 @@ func init() {
 	rootCmd.AddCommand(listCmd)
 	rootCmd.AddCommand(infoCmd)
 	rootCmd.AddCommand(buildCmd)
-	rootCmd.AddCommand(imagesCmd)    // Legacy: coi images
-	rootCmd.AddCommand(imageCmd)     // New: coi image <subcommand>
-	rootCmd.AddCommand(containerCmd) // New: coi container <subcommand>
-	rootCmd.AddCommand(fileCmd)      // New: coi file <subcommand>
+	rootCmd.AddCommand(imagesCmd)    // Legacy: clincus images
+	rootCmd.AddCommand(imageCmd)     // New: clincus image <subcommand>
+	rootCmd.AddCommand(containerCmd) // New: clincus container <subcommand>
+	rootCmd.AddCommand(fileCmd)      // New: clincus file <subcommand>
 	rootCmd.AddCommand(cleanCmd)
 	rootCmd.AddCommand(killCmd)
 	rootCmd.AddCommand(persistCmd)
@@ -157,7 +158,7 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print version information",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("code-on-incus (coi) v%s\n", Version)
+		fmt.Printf("clincus %s (commit: %s, built: %s)\n", Version, Commit, Date)
 		fmt.Println("https://github.com/bketelsen/clincus")
 	},
 }

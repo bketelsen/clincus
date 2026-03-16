@@ -35,19 +35,19 @@ By default, runs Claude Code. Other tools can be configured via the tool.name co
 
 All sessions run in tmux for monitoring and detach/reattach support:
   - Interactive: Automatically attaches to tmux session
-  - Background: Runs detached, use 'coi tmux capture' to view output
+  - Background: Runs detached, use 'clincus tmux capture' to view output
   - Detach anytime: Ctrl+B d (session keeps running)
-  - Reattach: Run 'coi shell' again in same workspace
+  - Reattach: Run 'clincus shell' again in same workspace
 
 Examples:
-  coi shell                         # Interactive session in tmux
-  coi shell --tool opencode         # Use opencode instead of configured tool
-  coi shell --background            # Run in background (detached)
-  coi shell --resume                # Resume latest session (auto)
-  coi shell --resume=<session-id>   # Resume specific session (note: = is required)
-  coi shell --continue=<session-id> # Same as --resume (alias)
-  coi shell --slot 2                # Use specific slot
-  coi shell --debug                 # Launch bash for debugging
+  clincus shell                         # Interactive session in tmux
+  clincus shell --tool opencode         # Use opencode instead of configured tool
+  clincus shell --background            # Run in background (detached)
+  clincus shell --resume                # Resume latest session (auto)
+  clincus shell --resume=<session-id>   # Resume specific session (note: = is required)
+  clincus shell --continue=<session-id> # Same as --resume (alias)
+  clincus shell --slot 2                # Use specific slot
+  clincus shell --debug                 # Launch bash for debugging
 `,
 	RunE: shellCommand,
 }
@@ -79,7 +79,7 @@ func shellCommand(cmd *cobra.Command, args []string) error {
 	}
 
 	// Get configured tool (needed to determine tool-specific sessions directory)
-	// --tool flag overrides whatever is in .coi.toml or global config
+	// --tool flag overrides whatever is in .clincus.toml or global config
 	if toolFlag != "" {
 		cfg.Tool.Name = toolFlag
 	}
@@ -109,7 +109,7 @@ func shellCommand(cmd *cobra.Command, args []string) error {
 	resumeFlagSet := cmd.Flags().Changed("resume") || cmd.Flags().Changed("continue")
 
 	// Check if tool uses workspace-based sessions (like opencode stores in .opencode/)
-	// These tools don't need COI session tracking - their data is in the workspace
+	// These tools don't need Clincus session tracking - their data is in the workspace
 	isWorkspaceSessionTool := false
 	if _, ok := toolInstance.(tool.ToolWithHomeConfigFile); ok {
 		// File-based tools like opencode store sessions in workspace, not ~/.clincus/sessions-*
@@ -138,14 +138,14 @@ func shellCommand(cmd *cobra.Command, args []string) error {
 	} else if resumeID != "" && !isWorkspaceSessionTool {
 		// Validate that the explicitly provided session exists (skip for workspace-session tools)
 		if !session.SessionExists(sessionsDir, resumeID) {
-			return fmt.Errorf("session '%s' not found - check available sessions with: coi list --all", resumeID)
+			return fmt.Errorf("session '%s' not found - check available sessions with: clincus list --all", resumeID)
 		}
 		fmt.Fprintf(os.Stderr, "Resuming session: %s\n", resumeID)
 	}
 
 	// When resuming, inherit persistent flag from the original session
 	// unless it was explicitly overridden by the user
-	// Skip for workspace-session tools (they don't have COI metadata files)
+	// Skip for workspace-session tools (they don't have Clincus metadata files)
 	if resumeID != "" && !isWorkspaceSessionTool {
 		metadataPath := filepath.Join(sessionsDir, resumeID, "metadata.json")
 		if metadata, err := session.LoadSessionMetadata(metadataPath); err == nil {
@@ -242,7 +242,7 @@ func shellCommand(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to setup session: %w", err)
 	}
 
-	// Save metadata early so coi list shows correct persistent/ephemeral status
+	// Save metadata early so clincus list shows correct persistent/ephemeral status
 	if err := session.SaveMetadataEarly(sessionsDir, sessionID, result.ContainerName, absWorkspace, persistent); err != nil {
 		fmt.Fprintf(os.Stderr, "Warning: Failed to save early metadata: %v\n", err)
 	}
@@ -411,7 +411,7 @@ func buildCLICommand(sessionID string, useResumeFlag, restoreOnly bool, sessions
 	cmd := t.BuildCommand(sessionID, useResumeFlag || restoreOnly, cliSessionID)
 
 	// Handle dummy mode override (for testing)
-	if getEnvValue("COI_USE_DUMMY") == "1" {
+	if getEnvValue("CLINCUS_USE_DUMMY") == "1" {
 		if len(cmd) > 0 {
 			cmd[0] = "dummy"
 		}
@@ -496,7 +496,7 @@ func runCLI(result *session.SetupResult, sessionID string, useResumeFlag, restor
 
 // runCLIInTmux executes CLI tool in a tmux session for background/monitoring support
 func runCLIInTmux(result *session.SetupResult, sessionID string, detached bool, useResumeFlag, restoreOnly bool, sessionsDir, resumeID string, t tool.Tool) error {
-	tmuxSessionName := fmt.Sprintf("coi-%s", result.ContainerName)
+	tmuxSessionName := fmt.Sprintf("clincus-%s", result.ContainerName)
 
 	// Get workspace path (with fallback for backwards compatibility)
 	workspacePath := result.ContainerWorkspacePath
@@ -536,7 +536,7 @@ func runCLIInTmux(result *session.SetupResult, sessionID string, detached bool, 
 				return fmt.Errorf("failed to send command to existing tmux session: %w", err)
 			}
 			fmt.Fprintf(os.Stderr, "Sent command to existing tmux session: %s\n", tmuxSessionName)
-			fmt.Fprintf(os.Stderr, "Use 'coi tmux capture %s' to view output\n", result.ContainerName)
+			fmt.Fprintf(os.Stderr, "Use 'clincus tmux capture %s' to view output\n", result.ContainerName)
 			return nil
 		} else {
 			// Attach to existing session
@@ -575,8 +575,8 @@ func runCLIInTmux(result *session.SetupResult, sessionID string, detached bool, 
 		}
 
 		fmt.Fprintf(os.Stderr, "Created background tmux session: %s\n", tmuxSessionName)
-		fmt.Fprintf(os.Stderr, "Use 'coi tmux capture %s' to view output\n", result.ContainerName)
-		fmt.Fprintf(os.Stderr, "Use 'coi tmux send %s \"<command>\"' to send commands\n", result.ContainerName)
+		fmt.Fprintf(os.Stderr, "Use 'clincus tmux capture %s' to view output\n", result.ContainerName)
+		fmt.Fprintf(os.Stderr, "Use 'clincus tmux send %s \"<command>\"' to send commands\n", result.ContainerName)
 		return nil
 	} else {
 		// Interactive mode: create detached session, then attach

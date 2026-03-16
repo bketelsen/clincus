@@ -195,7 +195,7 @@ func getCurrentTime() string {
 	return time.Now().Format(time.RFC3339)
 }
 
-// SaveMetadataEarly saves session metadata at session start so coi list can show correct status
+// SaveMetadataEarly saves session metadata at session start so clincus list can show correct status
 func SaveMetadataEarly(sessionsDir, sessionID, containerName, workspace string, persistent bool) error {
 	// Create session directory if it doesn't exist
 	sessionDir := filepath.Join(sessionsDir, sessionID)
@@ -385,7 +385,7 @@ func extractJSONValue(line string) string {
 	return value
 }
 
-// GetCLISessionID extracts the CLI tool's session ID from a saved coi session.
+// GetCLISessionID extracts the CLI tool's session ID from a saved clincus session.
 // CLI tools store sessions in .claude/projects/-workspace/<session-id>.jsonl
 // Returns empty string if no session found.
 func GetCLISessionID(sessionsDir, coiSessionID string) string {

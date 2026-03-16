@@ -22,13 +22,13 @@ var (
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List active containers and saved sessions",
-	Long: `List active claude-on-incus containers and saved sessions.
+	Long: `List active clincus containers and saved sessions.
 
 By default, shows only active containers. Use --all to also show saved sessions.
 
 Examples:
-  coi list
-  coi list --all
+  clincus list
+  clincus list --all
 `,
 	RunE: listCommand,
 }
@@ -60,7 +60,7 @@ func listCommand(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return fmt.Errorf("failed to get home directory: %w", err)
 	}
-	baseDir := filepath.Join(homeDir, ".coi")
+	baseDir := filepath.Join(homeDir, ".clincus")
 	sessionsDir := session.GetSessionsDir(baseDir, toolInstance)
 
 	// List active containers
@@ -123,9 +123,9 @@ type SessionInfo struct {
 	Workspace string
 }
 
-// listActiveContainers lists all active claude-on-incus containers
+// listActiveContainers lists all active clincus containers
 func listActiveContainers() ([]ContainerInfo, error) {
-	// Use the configured container prefix (respects COI_CONTAINER_PREFIX env var)
+	// Use the configured container prefix (respects CLINCUS_CONTAINER_PREFIX env var)
 	prefix := session.GetContainerPrefix()
 	pattern := fmt.Sprintf("^%s", prefix)
 

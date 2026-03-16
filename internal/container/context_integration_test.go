@@ -17,12 +17,12 @@ func TestIncusOutputContext_Cancellation(t *testing.T) {
 	if !Available() {
 		t.Skip("incus daemon not running, skipping integration test")
 	}
-	exists, err := ImageExists("coi")
+	exists, err := ImageExists("clincus")
 	if err != nil || !exists {
-		t.Skip("coi image not found, skipping integration test (run 'coi build' first)")
+		t.Skip("clincus image not found, skipping integration test (run 'clincus build' first)")
 	}
 
-	containerName := "coi-test-ctx-output"
+	containerName := "clincus-test-ctx-output"
 	mgr := NewManager(containerName)
 
 	t.Cleanup(func() {
@@ -35,7 +35,7 @@ func TestIncusOutputContext_Cancellation(t *testing.T) {
 		_ = mgr.Delete(true)
 	}
 
-	if err := mgr.Launch("coi", false); err != nil {
+	if err := mgr.Launch("clincus", false); err != nil {
 		t.Fatalf("Failed to launch container: %v", err)
 	}
 
@@ -66,12 +66,12 @@ func TestIncusExecContext_Cancellation(t *testing.T) {
 	if !Available() {
 		t.Skip("incus daemon not running, skipping integration test")
 	}
-	exists, err := ImageExists("coi")
+	exists, err := ImageExists("clincus")
 	if err != nil || !exists {
-		t.Skip("coi image not found, skipping integration test (run 'coi build' first)")
+		t.Skip("clincus image not found, skipping integration test (run 'clincus build' first)")
 	}
 
-	containerName := "coi-test-ctx-exec"
+	containerName := "clincus-test-ctx-exec"
 	mgr := NewManager(containerName)
 
 	t.Cleanup(func() {
@@ -84,7 +84,7 @@ func TestIncusExecContext_Cancellation(t *testing.T) {
 		_ = mgr.Delete(true)
 	}
 
-	if err := mgr.Launch("coi", false); err != nil {
+	if err := mgr.Launch("clincus", false); err != nil {
 		t.Fatalf("Failed to launch container: %v", err)
 	}
 
@@ -113,12 +113,12 @@ func TestIncusOutputContext_Success(t *testing.T) {
 	if !Available() {
 		t.Skip("incus daemon not running, skipping integration test")
 	}
-	exists, err := ImageExists("coi")
+	exists, err := ImageExists("clincus")
 	if err != nil || !exists {
-		t.Skip("coi image not found, skipping integration test (run 'coi build' first)")
+		t.Skip("clincus image not found, skipping integration test (run 'clincus build' first)")
 	}
 
-	containerName := "coi-test-ctx-success"
+	containerName := "clincus-test-ctx-success"
 	mgr := NewManager(containerName)
 
 	t.Cleanup(func() {
@@ -131,7 +131,7 @@ func TestIncusOutputContext_Success(t *testing.T) {
 		_ = mgr.Delete(true)
 	}
 
-	if err := mgr.Launch("coi", false); err != nil {
+	if err := mgr.Launch("clincus", false); err != nil {
 		t.Fatalf("Failed to launch container: %v", err)
 	}
 

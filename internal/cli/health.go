@@ -25,9 +25,9 @@ var healthCmd = &cobra.Command{
 This helps diagnose setup issues and verify your environment is correctly configured.
 
 Examples:
-  coi health                  # Basic health check (text output)
-  coi health --format json    # JSON output for scripting
-  coi health --verbose        # Include additional checks
+  clincus health                  # Basic health check (text output)
+  clincus health --format json    # JSON output for scripting
+  clincus health --verbose        # Include additional checks
 
 Exit codes:
   0 = healthy (all checks pass)
@@ -82,8 +82,8 @@ func outputHealthJSON(result *health.HealthResult) error {
 
 // outputHealthText outputs health check results as human-readable text
 func outputHealthText(result *health.HealthResult) error {
-	fmt.Println("Code on Incus Health Check")
-	fmt.Println("==========================")
+	fmt.Println("Clincus Health Check")
+	fmt.Println("====================")
 	fmt.Println()
 
 	// Group checks by category

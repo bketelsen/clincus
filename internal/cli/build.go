@@ -15,9 +15,9 @@ var buildForce bool
 var buildCmd = &cobra.Command{
 	Use:   "build",
 	Short: "Build Incus image for AI coding sessions",
-	Long: `Build the coi Incus image for running AI coding tools (Claude Code, Aider, etc.).
+	Long: `Build the clincus Incus image for running AI coding tools (Claude Code, Aider, etc.).
 
-The coi image includes:
+The clincus image includes:
   - Base development tools
   - Node.js LTS
   - Claude CLI
@@ -27,9 +27,9 @@ The coi image includes:
   - dummy (test stub for testing)
 
 Examples:
-  coi build
-  coi build --force
-  coi build custom my-image --script setup.sh
+  clincus build
+  clincus build --force
+  clincus build custom my-image --script setup.sh
 `,
 	Args: cobra.NoArgs,
 	RunE: buildCommand,
@@ -39,14 +39,14 @@ Examples:
 var buildCustomCmd = &cobra.Command{
 	Use:   "custom <name>",
 	Short: "Build a custom image from a user script",
-	Long: `Build a custom image from the coi base image using a user-provided build script.
+	Long: `Build a custom image from the clincus base image using a user-provided build script.
 
 The build script should be a bash script that will be executed as root in the container.
 
 Examples:
-  coi build custom my-rust-image --script build-rust.sh
-  coi build custom my-image --base coi --script setup.sh
-  coi build custom my-image --base images:ubuntu/24.04 --script setup.sh`,
+  clincus build custom my-rust-image --script build-rust.sh
+  clincus build custom my-image --base clincus --script setup.sh
+  clincus build custom my-image --base images:ubuntu/24.04 --script setup.sh`,
 	Args: cobra.ExactArgs(1),
 	RunE: buildCustomCommand,
 }
@@ -56,7 +56,7 @@ func init() {
 
 	// Custom build flags
 	buildCustomCmd.Flags().String("script", "", "Path to build script (required)")
-	buildCustomCmd.Flags().String("base", "", "Base image to build from (default: coi)")
+	buildCustomCmd.Flags().String("base", "", "Base image to build from (default: clincus)")
 	buildCustomCmd.Flags().BoolVar(&buildForce, "force", false, "Force rebuild even if image exists")
 	_ = buildCustomCmd.MarkFlagRequired("script") // Always succeeds for valid flag names.
 
@@ -82,7 +82,7 @@ func buildCommand(cmd *cobra.Command, args []string) error {
 	}
 
 	// Build the image
-	fmt.Println("Building coi image...")
+	fmt.Println("Building clincus image...")
 	builder := image.NewBuilder(opts)
 	result := builder.Build()
 

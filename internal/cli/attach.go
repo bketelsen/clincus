@@ -27,11 +27,11 @@ If no container name is provided, lists all running sessions.
 If only one session is running, attaches to it automatically.
 
 Examples:
-  coi attach                    # List sessions or auto-attach if only one
-  coi attach claude-abc123-1    # Attach to specific session
-  coi attach --slot=1           # Attach to slot 1 for current workspace
-  coi attach --bash             # Attach to bash shell instead of tmux session
-  coi attach coi-123 --bash     # Attach to specific container with bash`,
+  clincus attach                         # List sessions or auto-attach if only one
+  clincus attach clincus-abc123-1        # Attach to specific session
+  clincus attach --slot=1                # Attach to slot 1 for current workspace
+  clincus attach --bash                  # Attach to bash shell instead of tmux session
+  clincus attach clincus-123 --bash      # Attach to specific container with bash`,
 	RunE: attachCommand,
 }
 
@@ -105,7 +105,7 @@ func attachCommand(cmd *cobra.Command, args []string) error {
 				}
 				fmt.Printf("  %d. %s\n", i+1, c)
 			}
-			fmt.Printf("\nUse: coi attach <container-name>\n")
+			fmt.Printf("\nUse: clincus attach <container-name>\n")
 			return nil
 		}
 	}
@@ -119,7 +119,7 @@ func attachCommand(cmd *cobra.Command, args []string) error {
 
 func attachToContainer(containerName string) error {
 	// Calculate the tmux session name (consistent with shell command)
-	tmuxSessionName := fmt.Sprintf("coi-%s", containerName)
+	tmuxSessionName := fmt.Sprintf("clincus-%s", containerName)
 
 	// Use container manager for proper user/environment handling
 	// Direct command execution without bash -c wrapper for better terminal handling
@@ -158,7 +158,7 @@ func attachToContainer(containerName string) error {
 		// Suggest using --bash to get a shell
 		fmt.Fprintf(os.Stderr, "\nNo tmux session found in container.\n")
 		fmt.Fprintf(os.Stderr, "The container is still running. To get a shell, use:\n")
-		fmt.Fprintf(os.Stderr, "  coi attach %s --bash\n", containerName)
+		fmt.Fprintf(os.Stderr, "  clincus attach %s --bash\n", containerName)
 		return nil
 	}
 

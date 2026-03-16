@@ -34,14 +34,14 @@ func TestSanitizeTerm_Integration(t *testing.T) {
 			}
 
 			// Generate unique session name for this test
-			sessionName := fmt.Sprintf("coi-test-%s-%d", strings.ReplaceAll(exoticTerm, "-", ""), os.Getpid())
+			sessionName := fmt.Sprintf("clincus-test-%s-%d", strings.ReplaceAll(exoticTerm, "-", ""), os.Getpid())
 
 			// Clean up any existing session
 			exec.Command("tmux", "kill-session", "-t", sessionName).Run()
 			defer exec.Command("tmux", "kill-session", "-t", sessionName).Run()
 
 			// Try to create a tmux session with the sanitized TERM
-			// This mimics what coi shell does internally
+			// This mimics what clincus shell does internally
 			cmd := exec.Command("tmux", "new-session", "-d", "-s", sessionName, "sleep", "1")
 			cmd.Env = append(os.Environ(), fmt.Sprintf("TERM=%s", sanitized))
 
@@ -78,7 +78,7 @@ func TestSanitizeTerm_DirectUseFailure(t *testing.T) {
 	}
 
 	exoticTerm := "xterm-ghostty"
-	sessionName := fmt.Sprintf("coi-test-exotic-%d", os.Getpid())
+	sessionName := fmt.Sprintf("clincus-test-exotic-%d", os.Getpid())
 
 	// Clean up any existing session
 	exec.Command("tmux", "kill-session", "-t", sessionName).Run()

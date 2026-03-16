@@ -742,7 +742,7 @@ func CheckIncusStoragePool() HealthCheck {
 	}
 }
 
-// CheckActiveContainers counts running COI containers
+// CheckActiveContainers counts running Clincus containers
 func CheckActiveContainers() HealthCheck {
 	prefix := session.GetContainerPrefix()
 	pattern := fmt.Sprintf("^%s", prefix)

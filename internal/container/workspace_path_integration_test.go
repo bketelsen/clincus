@@ -15,12 +15,12 @@ func TestGetWorkspacePath_DefaultMount(t *testing.T) {
 	if !Available() {
 		t.Skip("incus daemon not running, skipping integration test")
 	}
-	exists, err := ImageExists("coi")
+	exists, err := ImageExists("clincus")
 	if err != nil || !exists {
-		t.Skip("coi image not found, skipping integration test (run 'coi build' first)")
+		t.Skip("clincus image not found, skipping integration test (run 'clincus build' first)")
 	}
 
-	containerName := "coi-test-workspace-default"
+	containerName := "clincus-test-workspace-default"
 	mgr := NewManager(containerName)
 
 	t.Cleanup(func() {
@@ -34,7 +34,7 @@ func TestGetWorkspacePath_DefaultMount(t *testing.T) {
 		_ = mgr.Delete(true)
 	}
 
-	if err := mgr.Launch("coi", false); err != nil {
+	if err := mgr.Launch("clincus", false); err != nil {
 		t.Fatalf("Failed to launch container: %v", err)
 	}
 
@@ -71,12 +71,12 @@ func TestGetWorkspacePath_CustomMount(t *testing.T) {
 	if !Available() {
 		t.Skip("incus daemon not running, skipping integration test")
 	}
-	exists, err := ImageExists("coi")
+	exists, err := ImageExists("clincus")
 	if err != nil || !exists {
-		t.Skip("coi image not found, skipping integration test (run 'coi build' first)")
+		t.Skip("clincus image not found, skipping integration test (run 'clincus build' first)")
 	}
 
-	containerName := "coi-test-workspace-custom"
+	containerName := "clincus-test-workspace-custom"
 	mgr := NewManager(containerName)
 
 	t.Cleanup(func() {
@@ -90,7 +90,7 @@ func TestGetWorkspacePath_CustomMount(t *testing.T) {
 		_ = mgr.Delete(true)
 	}
 
-	if err := mgr.Launch("coi", false); err != nil {
+	if err := mgr.Launch("clincus", false); err != nil {
 		t.Fatalf("Failed to launch container: %v", err)
 	}
 
@@ -134,12 +134,12 @@ func TestGetWorkspacePath_NoWorkspaceDevice(t *testing.T) {
 	if !Available() {
 		t.Skip("incus daemon not running, skipping integration test")
 	}
-	exists, err := ImageExists("coi")
+	exists, err := ImageExists("clincus")
 	if err != nil || !exists {
-		t.Skip("coi image not found, skipping integration test (run 'coi build' first)")
+		t.Skip("clincus image not found, skipping integration test (run 'clincus build' first)")
 	}
 
-	containerName := "coi-test-workspace-no-device"
+	containerName := "clincus-test-workspace-no-device"
 	mgr := NewManager(containerName)
 
 	t.Cleanup(func() {
@@ -153,7 +153,7 @@ func TestGetWorkspacePath_NoWorkspaceDevice(t *testing.T) {
 		_ = mgr.Delete(true)
 	}
 
-	if err := mgr.Launch("coi", false); err != nil {
+	if err := mgr.Launch("clincus", false); err != nil {
 		t.Fatalf("Failed to launch container: %v", err)
 	}
 
@@ -174,12 +174,12 @@ func TestExecWithAutoDetectedWorkspace(t *testing.T) {
 	if !Available() {
 		t.Skip("incus daemon not running, skipping integration test")
 	}
-	exists, err := ImageExists("coi")
+	exists, err := ImageExists("clincus")
 	if err != nil || !exists {
-		t.Skip("coi image not found, skipping integration test (run 'coi build' first)")
+		t.Skip("clincus image not found, skipping integration test (run 'clincus build' first)")
 	}
 
-	containerName := "coi-test-exec-autodetect"
+	containerName := "clincus-test-exec-autodetect"
 	mgr := NewManager(containerName)
 
 	t.Cleanup(func() {
@@ -193,7 +193,7 @@ func TestExecWithAutoDetectedWorkspace(t *testing.T) {
 		_ = mgr.Delete(true)
 	}
 
-	if err := mgr.Launch("coi", false); err != nil {
+	if err := mgr.Launch("clincus", false); err != nil {
 		t.Fatalf("Failed to launch container: %v", err)
 	}
 

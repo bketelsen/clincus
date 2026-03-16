@@ -23,13 +23,13 @@ var shutdownCmd = &cobra.Command{
 This attempts a graceful shutdown first, waiting for the timeout before
 force-killing if necessary.
 
-Use 'coi list' to see active containers.
+Use 'clincus list' to see active containers.
 
 Examples:
-  coi shutdown claude-abc12345-1             # Graceful shutdown (60s timeout)
-  coi shutdown --timeout=30 claude-abc12345-1  # 30 second timeout
-  coi shutdown --all                         # Shutdown all containers
-  coi shutdown --all --force                 # Shutdown all without confirmation
+  clincus shutdown claude-abc12345-1               # Graceful shutdown (60s timeout)
+  clincus shutdown --timeout=30 claude-abc12345-1  # 30 second timeout
+  clincus shutdown --all                           # Shutdown all containers
+  clincus shutdown --all --force                   # Shutdown all without confirmation
 `,
 	RunE: shutdownCommand,
 }
@@ -80,7 +80,7 @@ func shutdownCommand(cmd *cobra.Command, args []string) error {
 	} else {
 		// Use containers from args
 		if len(args) == 0 {
-			return fmt.Errorf("no container names provided - use 'coi list' to see active containers")
+			return fmt.Errorf("no container names provided - use 'clincus list' to see active containers")
 		}
 		containerNames = args
 

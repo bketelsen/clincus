@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// Tool represents an AI coding tool that can be run in COI containers
+// Tool represents an AI coding tool that can be run in Clincus containers
 type Tool interface {
 	// Name returns the tool name (e.g., "claude", "aider", "cursor")
 	Name() string
@@ -23,7 +23,7 @@ type Tool interface {
 	SessionsDirName() string
 
 	// BuildCommand builds the command line for execution
-	// sessionID: COI session ID
+	// sessionID: Clincus session ID
 	// resume: whether to resume an existing session
 	// resumeSessionID: the tool's internal session ID (if resuming)
 	BuildCommand(sessionID string, resume bool, resumeSessionID string) []string

@@ -21,20 +21,20 @@ func TestResumeCommand_FrozenContainer(t *testing.T) {
 		t.Skip("incus daemon not running, skipping integration test")
 	}
 
-	// Check if the coi image exists
-	exists, err := container.ImageExists("coi")
+	// Check if the clincus image exists
+	exists, err := container.ImageExists("clincus")
 	if err != nil || !exists {
-		t.Skip("coi image not found, skipping integration test")
+		t.Skip("clincus image not found, skipping integration test")
 	}
 
 	// Create a test container
-	containerName := "coi-test-resume-frozen"
+	containerName := "clincus-test-resume-frozen"
 
 	// Clean up any existing container
 	container.IncusOutput("delete", containerName, "--force")
 
 	// Launch container
-	_, err = container.IncusOutput("launch", "coi", containerName)
+	_, err = container.IncusOutput("launch", "clincus", containerName)
 	if err != nil {
 		t.Fatalf("Failed to launch container: %v", err)
 	}
@@ -88,20 +88,20 @@ func TestResumeCommand_NotFrozen(t *testing.T) {
 		t.Skip("incus daemon not running, skipping integration test")
 	}
 
-	// Check if the coi image exists
-	exists, err := container.ImageExists("coi")
+	// Check if the clincus image exists
+	exists, err := container.ImageExists("clincus")
 	if err != nil || !exists {
-		t.Skip("coi image not found, skipping integration test")
+		t.Skip("clincus image not found, skipping integration test")
 	}
 
 	// Create a test container
-	containerName := "coi-test-resume-running"
+	containerName := "clincus-test-resume-running"
 
 	// Clean up any existing container
 	container.IncusOutput("delete", containerName, "--force")
 
 	// Launch container
-	_, err = container.IncusOutput("launch", "coi", containerName)
+	_, err = container.IncusOutput("launch", "clincus", containerName)
 	if err != nil {
 		t.Fatalf("Failed to launch container: %v", err)
 	}
@@ -136,7 +136,7 @@ func TestResumeCommand_NonExistent(t *testing.T) {
 	}
 
 	// Try to resume a non-existent container
-	err := resumeContainer("coi-nonexistent-container-12345")
+	err := resumeContainer("clincus-nonexistent-container-12345")
 	if err == nil {
 		t.Error("Expected error when resuming non-existent container, got nil")
 	}
@@ -160,14 +160,14 @@ func TestResumeAllFrozen(t *testing.T) {
 		t.Skip("incus daemon not running, skipping integration test")
 	}
 
-	// Check if the coi image exists
-	exists, err := container.ImageExists("coi")
+	// Check if the clincus image exists
+	exists, err := container.ImageExists("clincus")
 	if err != nil || !exists {
-		t.Skip("coi image not found, skipping integration test")
+		t.Skip("clincus image not found, skipping integration test")
 	}
 
 	// Create two test containers
-	containers := []string{"coi-test-resume-all-1", "coi-test-resume-all-2"}
+	containers := []string{"clincus-test-resume-all-1", "clincus-test-resume-all-2"}
 
 	// Clean up any existing containers
 	for _, name := range containers {
@@ -176,7 +176,7 @@ func TestResumeAllFrozen(t *testing.T) {
 
 	// Launch containers
 	for _, name := range containers {
-		_, err = container.IncusOutput("launch", "coi", name)
+		_, err = container.IncusOutput("launch", "clincus", name)
 		if err != nil {
 			t.Fatalf("Failed to launch container %s: %v", name, err)
 		}

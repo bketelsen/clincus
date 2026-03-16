@@ -25,15 +25,15 @@ This enables agent workflows to experiment with different approaches and roll ba
 if needed.
 
 Examples:
-  coi snapshot create                     # Create auto-named snapshot
-  coi snapshot create checkpoint-1        # Create named snapshot
-  coi snapshot create --stateful live     # Include process memory
-  coi snapshot list                       # List snapshots for current workspace
-  coi snapshot list --format json         # JSON output
-  coi snapshot restore checkpoint-1       # Restore from snapshot (requires confirmation)
-  coi snapshot restore checkpoint-1 -f    # Restore without confirmation
-  coi snapshot delete checkpoint-1        # Delete a snapshot
-  coi snapshot info checkpoint-1          # Show snapshot details
+  clincus snapshot create                     # Create auto-named snapshot
+  clincus snapshot create checkpoint-1        # Create named snapshot
+  clincus snapshot create --stateful live     # Include process memory
+  clincus snapshot list                       # List snapshots for current workspace
+  clincus snapshot list --format json         # JSON output
+  clincus snapshot restore checkpoint-1       # Restore from snapshot (requires confirmation)
+  clincus snapshot restore checkpoint-1 -f    # Restore without confirmation
+  clincus snapshot delete checkpoint-1        # Delete a snapshot
+  clincus snapshot info checkpoint-1          # Show snapshot details
 `,
 }
 
@@ -55,10 +55,10 @@ var snapshotCreateCmd = &cobra.Command{
 If no name is provided, an auto-generated name will be used (snap-YYYYMMDD-HHMMSS).
 
 Examples:
-  coi snapshot create                     # Auto-named snapshot
-  coi snapshot create checkpoint-1        # Named snapshot
-  coi snapshot create --stateful live     # Include process memory state
-  coi snapshot create -c coi-abc-1 backup # Specific container
+  clincus snapshot create                          # Auto-named snapshot
+  clincus snapshot create checkpoint-1             # Named snapshot
+  clincus snapshot create --stateful live          # Include process memory state
+  clincus snapshot create -c clincus-abc-1 backup  # Specific container
 `,
 	Args: cobra.MaximumNArgs(1),
 	RunE: snapshotCreateCommand,
@@ -73,10 +73,10 @@ var snapshotListCmd = &cobra.Command{
 By default, lists snapshots for the current workspace's container.
 
 Examples:
-  coi snapshot list                       # Current workspace container
-  coi snapshot list -c coi-abc-1          # Specific container
-  coi snapshot list --all                 # All COI containers
-  coi snapshot list --format json         # JSON output
+  clincus snapshot list                              # Current workspace container
+  clincus snapshot list -c clincus-abc-1             # Specific container
+  clincus snapshot list --all                        # All Clincus containers
+  clincus snapshot list --format json                # JSON output
 `,
 	RunE: snapshotListCommand,
 }
@@ -91,9 +91,9 @@ IMPORTANT: This operation overwrites the current container state.
 The container must be stopped before restore.
 
 Examples:
-  coi snapshot restore checkpoint-1       # Restore (with confirmation)
-  coi snapshot restore checkpoint-1 -f    # Restore without confirmation
-  coi snapshot restore checkpoint-1 -c coi-abc-1  # Specific container
+  clincus snapshot restore checkpoint-1                     # Restore (with confirmation)
+  clincus snapshot restore checkpoint-1 -f                  # Restore without confirmation
+  clincus snapshot restore checkpoint-1 -c clincus-abc-1    # Specific container
 `,
 	Args: cobra.ExactArgs(1),
 	RunE: snapshotRestoreCommand,
@@ -106,9 +106,9 @@ var snapshotDeleteCmd = &cobra.Command{
 	Long: `Delete a snapshot from a container.
 
 Examples:
-  coi snapshot delete checkpoint-1        # Delete specific snapshot
-  coi snapshot delete --all               # Delete all snapshots (with confirmation)
-  coi snapshot delete --all -f            # Delete all without confirmation
+  clincus snapshot delete checkpoint-1        # Delete specific snapshot
+  clincus snapshot delete --all               # Delete all snapshots (with confirmation)
+  clincus snapshot delete --all -f            # Delete all without confirmation
 `,
 	Args: cobra.MaximumNArgs(1),
 	RunE: snapshotDeleteCommand,
@@ -121,8 +121,8 @@ var snapshotInfoCmd = &cobra.Command{
 	Long: `Show detailed information about a snapshot.
 
 Examples:
-  coi snapshot info checkpoint-1          # Show details
-  coi snapshot info checkpoint-1 --format json  # JSON output
+  clincus snapshot info checkpoint-1                  # Show details
+  clincus snapshot info checkpoint-1 --format json    # JSON output
 `,
 	Args: cobra.ExactArgs(1),
 	RunE: snapshotInfoCommand,
@@ -136,7 +136,7 @@ func init() {
 	// Add flags to list command
 	snapshotListCmd.Flags().StringVarP(&snapshotContainer, "container", "c", "", "Container name (default: auto-detect from workspace)")
 	snapshotListCmd.Flags().StringVar(&snapshotFormat, "format", "text", "Output format: text or json")
-	snapshotListCmd.Flags().BoolVar(&snapshotAll, "all", false, "List snapshots for all COI containers")
+	snapshotListCmd.Flags().BoolVar(&snapshotAll, "all", false, "List snapshots for all Clincus containers")
 
 	// Add flags to restore command
 	snapshotRestoreCmd.Flags().StringVarP(&snapshotContainer, "container", "c", "", "Container name (default: auto-detect from workspace)")
@@ -162,7 +162,7 @@ func init() {
 
 // resolveContainer resolves the container name using the following strategy:
 // 1. Use --container flag if provided
-// 2. Check COI_CONTAINER environment variable
+// 2. Check CLINCUS_CONTAINER environment variable
 // 3. Find container for current workspace
 func resolveContainer() (string, error) {
 	// 1. Use --container flag if provided
@@ -179,15 +179,15 @@ func resolveContainer() (string, error) {
 		return snapshotContainer, nil
 	}
 
-	// 2. Check COI_CONTAINER environment variable
-	if envContainer := os.Getenv("COI_CONTAINER"); envContainer != "" {
+	// 2. Check CLINCUS_CONTAINER environment variable
+	if envContainer := os.Getenv("CLINCUS_CONTAINER"); envContainer != "" {
 		mgr := container.NewManager(envContainer)
 		exists, err := mgr.Exists()
 		if err != nil {
 			return "", fmt.Errorf("failed to check container: %w", err)
 		}
 		if !exists {
-			return "", fmt.Errorf("container '%s' from COI_CONTAINER not found", envContainer)
+			return "", fmt.Errorf("container '%s' from CLINCUS_CONTAINER not found", envContainer)
 		}
 		return envContainer, nil
 	}
@@ -204,7 +204,7 @@ func resolveContainer() (string, error) {
 	}
 
 	if len(sessions) == 0 {
-		return "", fmt.Errorf("no COI containers found for current workspace - use --container to specify")
+		return "", fmt.Errorf("no Clincus containers found for current workspace - use --container to specify")
 	}
 
 	if len(sessions) > 1 {
@@ -213,7 +213,7 @@ func resolveContainer() (string, error) {
 		for _, name := range sessions {
 			names = append(names, name)
 		}
-		return "", fmt.Errorf("multiple COI containers found for workspace, use --container to specify: %s", strings.Join(names, ", "))
+		return "", fmt.Errorf("multiple Clincus containers found for workspace, use --container to specify: %s", strings.Join(names, ", "))
 	}
 
 	// Exactly one container
@@ -221,7 +221,7 @@ func resolveContainer() (string, error) {
 		return name, nil
 	}
 
-	return "", fmt.Errorf("no COI containers found for current workspace")
+	return "", fmt.Errorf("no Clincus containers found for current workspace")
 }
 
 // generateSnapshotName generates an auto-named snapshot
@@ -309,7 +309,7 @@ func snapshotListCommand(cmd *cobra.Command, args []string) error {
 }
 
 func listAllSnapshots() error {
-	// Get all COI containers
+	// Get all Clincus containers
 	prefix := session.GetContainerPrefix()
 	pattern := fmt.Sprintf("^%s", prefix)
 
@@ -319,7 +319,7 @@ func listAllSnapshots() error {
 	}
 
 	if len(containers) == 0 {
-		fmt.Fprintf(os.Stderr, "No COI containers found\n")
+		fmt.Fprintf(os.Stderr, "No Clincus containers found\n")
 		return nil
 	}
 
@@ -444,7 +444,7 @@ func snapshotRestoreCommand(cmd *cobra.Command, args []string) error {
 		return exitError(1, fmt.Sprintf("failed to check container status: %v", err))
 	}
 	if running {
-		return exitError(1, fmt.Sprintf("container '%s' must be stopped before restore (use 'coi container stop %s')", containerName, containerName))
+		return exitError(1, fmt.Sprintf("container '%s' must be stopped before restore (use 'clincus container stop %s')", containerName, containerName))
 	}
 
 	// Confirm unless --force

@@ -17,8 +17,8 @@ var resumeCmd = &cobra.Command{
 Use this command to resume a frozen container.
 
 Examples:
-  coi resume clincus-abc123-1  # Resume a specific frozen container
-  coi resume                    # Resume all frozen clincus containers`,
+  clincus resume clincus-abc123-1  # Resume a specific frozen container
+  clincus resume                    # Resume all frozen clincus containers`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: runResume,
 }
@@ -30,7 +30,7 @@ func runResume(cmd *cobra.Command, args []string) error {
 		return resumeContainer(containerName)
 	}
 
-	// Resume all frozen COI containers
+	// Resume all frozen Clincus containers
 	return resumeAllFrozen()
 }
 
@@ -56,7 +56,7 @@ func resumeContainer(name string) error {
 }
 
 func resumeAllFrozen() error {
-	// List all COI containers
+	// List all Clincus containers
 	output, err := container.IncusOutput("list", "--format", "csv", "-c", "ns")
 	if err != nil {
 		return fmt.Errorf("failed to list containers: %w", err)

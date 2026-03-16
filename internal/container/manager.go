@@ -310,7 +310,7 @@ func (m *Manager) PushFile(source, destination string) error {
 func (m *Manager) PullDirectory(containerPath, localPath string) error {
 	// Incus creates a subdirectory when pulling, so we pull to a temp location
 	// then move the contents to the desired location
-	tempDir, err := os.MkdirTemp("", "coi-pull-*")
+	tempDir, err := os.MkdirTemp("", "clincus-pull-*")
 	if err != nil {
 		return err
 	}
@@ -345,7 +345,7 @@ func (m *Manager) PullDirectory(containerPath, localPath string) error {
 	if err := os.Rename(pulledDir, localPath); err != nil {
 		if isCrossDeviceError(err) {
 			// Create a temporary directory on the same filesystem as localPath
-			tempDestDir, err := os.MkdirTemp(filepath.Dir(localPath), "coi-pull-*")
+			tempDestDir, err := os.MkdirTemp(filepath.Dir(localPath), "clincus-pull-*")
 			if err != nil {
 				return err
 			}
@@ -522,7 +522,7 @@ func ImageExistsGlobal(imageAlias string) (bool, error) {
 // Helper function to create a file with content
 func (m *Manager) CreateFile(containerPath, content string) error {
 	// Create temp file locally
-	tmpFile := filepath.Join(os.TempDir(), fmt.Sprintf("coi-%s", filepath.Base(containerPath)))
+	tmpFile := filepath.Join(os.TempDir(), fmt.Sprintf("clincus-%s", filepath.Base(containerPath)))
 	if err := os.WriteFile(tmpFile, []byte(content), 0o644); err != nil {
 		return err
 	}
