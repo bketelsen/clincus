@@ -13,14 +13,14 @@ import (
 )
 
 // GetContainerPrefix returns the container prefix to use.
-// Checks COI_CONTAINER_PREFIX environment variable first, defaults to "coi-".
-// This allows tests to use a different prefix (e.g., "coi-test-") to avoid
+// Checks CLINCUS_CONTAINER_PREFIX environment variable first, defaults to "clincus-".
+// This allows tests to use a different prefix (e.g., "clincus-test-") to avoid
 // interfering with user's active sessions.
 func GetContainerPrefix() string {
-	if prefix := os.Getenv("COI_CONTAINER_PREFIX"); prefix != "" {
+	if prefix := os.Getenv("CLINCUS_CONTAINER_PREFIX"); prefix != "" {
 		return prefix
 	}
-	return "coi-"
+	return "clincus-"
 }
 
 // WorkspaceHash generates a short hash from workspace path
@@ -37,8 +37,8 @@ func WorkspaceHash(workspacePath string) string {
 }
 
 // ContainerName generates a container name from workspace and slot
-// Format: <prefix><workspace-hash>-<slot> where prefix defaults to "coi-"
-// Can be customized via COI_CONTAINER_PREFIX environment variable
+// Format: <prefix><workspace-hash>-<slot> where prefix defaults to "clincus-"
+// Can be customized via CLINCUS_CONTAINER_PREFIX environment variable
 func ContainerName(workspacePath string, slot int) string {
 	hash := WorkspaceHash(workspacePath)
 	prefix := GetContainerPrefix()

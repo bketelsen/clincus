@@ -1,7 +1,6 @@
 package session
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -9,17 +8,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mensfeld/code-on-incus/internal/bedrock"
 	"github.com/mensfeld/code-on-incus/internal/config"
 	"github.com/mensfeld/code-on-incus/internal/container"
 	"github.com/mensfeld/code-on-incus/internal/limits"
-	"github.com/mensfeld/code-on-incus/internal/network"
 	"github.com/mensfeld/code-on-incus/internal/tool"
 )
 
 const (
-	DefaultImage = "images:ubuntu/24.04"
-	CoiImage     = "coi"
+	DefaultImage  = "images:ubuntu/24.04"
+	ClincusImage  = "clincus"
 )
 
 // isColimaOrLimaEnvironment detects if we're running inside a Colima or Lima VM
@@ -88,10 +85,9 @@ type SetupOptions struct {
 	ResumeFromID          string
 	Slot                  int
 	MountConfig           *MountConfig // Multi-mount support
-	SessionsDir           string       // e.g., ~/.coi/sessions-claude
+	SessionsDir           string       // e.g., ~/.clincus/sessions-claude
 	CLIConfigPath         string       // e.g., ~/.claude (host CLI config to copy credentials from)
 	Tool                  tool.Tool    // AI coding tool being used
-	NetworkConfig         *config.NetworkConfig
 	DisableShift          bool                 // Disable UID shifting (for Colima/Lima environments)
 	LimitsConfig          *config.LimitsConfig // Resource and time limits
 	IncusProject          string               // Incus project name
@@ -105,7 +101,6 @@ type SetupOptions struct {
 type SetupResult struct {
 	ContainerName          string
 	Manager                *container.Manager
-	NetworkManager         *network.Manager
 	TimeoutMonitor         *limits.TimeoutMonitor
 	HomeDir                string
 	RunAsRoot              bool
@@ -141,49 +136,10 @@ func Setup(opts SetupOptions) (*SetupResult, error) {
 	result.ContainerName = containerName
 	result.Manager = container.NewManager(containerName)
 
-	// 1.5 Validate Bedrock setup if running in Colima/Lima
-	if isColimaOrLimaEnvironment() && opts.CLIConfigPath != "" {
-		settingsPath := filepath.Join(opts.CLIConfigPath, "settings.json")
-		isConfigured, err := bedrock.IsBedrockConfigured(settingsPath)
-		if err != nil {
-			opts.Logger(fmt.Sprintf("Warning: Failed to check Bedrock configuration: %v", err))
-		} else if isConfigured {
-			opts.Logger("Detected AWS Bedrock configuration, validating setup...")
-
-			// Validate Bedrock setup
-			validationResult := bedrock.ValidateColimaBedrockSetup()
-
-			// Check if .aws is mounted
-			if opts.MountConfig != nil {
-				var mountPaths []string
-				for _, mount := range opts.MountConfig.Mounts {
-					mountPaths = append(mountPaths, mount.HostPath)
-				}
-				if mountIssue := bedrock.CheckMountConfiguration(mountPaths); mountIssue != nil {
-					validationResult.Issues = append(validationResult.Issues, *mountIssue)
-				}
-			}
-
-			// If there are errors, fail with helpful message
-			if validationResult.HasErrors() {
-				return nil, fmt.Errorf("%s", validationResult.FormatError())
-			}
-
-			// Log warnings but continue
-			if len(validationResult.Issues) > 0 {
-				for _, issue := range validationResult.Issues {
-					if issue.Severity == "warning" {
-						opts.Logger(fmt.Sprintf("⚠️  %s", issue.Message))
-					}
-				}
-			}
-		}
-	}
-
 	// 2. Determine image
 	image := opts.Image
 	if image == "" {
-		image = CoiImage
+		image = ClincusImage
 	}
 	result.Image = image
 
@@ -193,14 +149,14 @@ func Setup(opts SetupOptions) (*SetupResult, error) {
 		return nil, fmt.Errorf("failed to check image: %w", err)
 	}
 	if !exists {
-		return nil, fmt.Errorf("image '%s' not found - run 'coi build' first", image)
+		return nil, fmt.Errorf("image '%s' not found - run 'clincus build' first", image)
 	}
 
 	// 3. Determine execution context
-	// coi image has the claude user pre-configured, so run as that user
+	// clincus image has the claude user pre-configured, so run as that user
 	// Other images don't have this setup, so run as root
-	usingCoiImage := image == CoiImage
-	result.RunAsRoot = !usingCoiImage
+	usingClincusImage := image == ClincusImage
+	result.RunAsRoot = !usingClincusImage
 	if result.RunAsRoot {
 		result.HomeDir = "/root"
 	} else {
@@ -407,16 +363,16 @@ func Setup(opts SetupOptions) (*SetupResult, error) {
 
 	// 6b. Set metadata labels for dashboard discovery
 	if opts.Tool != nil {
-		result.Manager.SetConfig("user.coi.managed", "true")
-		result.Manager.SetConfig("user.coi.workspace", opts.WorkspacePath)
-		result.Manager.SetConfig("user.coi.tool", opts.Tool.Name())
-		result.Manager.SetConfig("user.coi.persistent", fmt.Sprintf("%v", opts.Persistent))
-		result.Manager.SetConfig("user.coi.created", time.Now().UTC().Format(time.RFC3339))
+		result.Manager.SetConfig("user.clincus.managed", "true")
+		result.Manager.SetConfig("user.clincus.workspace", opts.WorkspacePath)
+		result.Manager.SetConfig("user.clincus.tool", opts.Tool.Name())
+		result.Manager.SetConfig("user.clincus.persistent", fmt.Sprintf("%v", opts.Persistent))
+		result.Manager.SetConfig("user.clincus.created", time.Now().UTC().Format(time.RFC3339))
 	}
 
 	// 6c. Record session start in history
 	home, _ := os.UserHomeDir()
-	histPath := filepath.Join(home, ".coi", "history.jsonl")
+	histPath := filepath.Join(home, ".clincus", "history.jsonl")
 	hist := &History{Path: histPath}
 	toolName := ""
 	if opts.Tool != nil {
@@ -440,14 +396,6 @@ func Setup(opts SetupOptions) (*SetupResult, error) {
 				opts.Logger,
 			)
 			result.TimeoutMonitor.Start()
-		}
-	}
-
-	// 8. Setup network isolation (after container is running and has IP)
-	if opts.NetworkConfig != nil {
-		result.NetworkManager = network.NewManager(opts.NetworkConfig)
-		if err := result.NetworkManager.SetupForContainer(context.Background(), result.ContainerName); err != nil {
-			return nil, fmt.Errorf("failed to setup network isolation: %w", err)
 		}
 	}
 

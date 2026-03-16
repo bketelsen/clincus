@@ -1,7 +1,6 @@
 package session
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -9,21 +8,19 @@ import (
 	"time"
 
 	"github.com/mensfeld/code-on-incus/internal/container"
-	"github.com/mensfeld/code-on-incus/internal/network"
 	"github.com/mensfeld/code-on-incus/internal/tool"
 )
 
 // CleanupOptions contains options for cleaning up a session
 type CleanupOptions struct {
-	ContainerName  string
-	SessionID      string    // COI session ID for saving tool config data
-	Persistent     bool      // If true, stop but don't delete container
-	SessionsDir    string    // e.g., ~/.coi/sessions-claude
-	SaveSession    bool      // Whether to save tool config directory
-	Workspace      string    // Workspace directory path
-	Tool           tool.Tool // AI coding tool being used
-	NetworkManager *network.Manager
-	Logger         func(string)
+	ContainerName string
+	SessionID     string    // Clincus session ID for saving tool config data
+	Persistent    bool      // If true, stop but don't delete container
+	SessionsDir   string    // e.g., ~/.clincus/sessions-claude
+	SaveSession   bool      // Whether to save tool config directory
+	Workspace     string    // Workspace directory path
+	Tool          tool.Tool // AI coding tool being used
+	Logger        func(string)
 }
 
 // Cleanup stops and deletes a container, optionally saving session data
@@ -60,7 +57,7 @@ func Cleanup(opts CleanupOptions) error {
 
 	// Record session stop in history
 	home, _ := os.UserHomeDir()
-	histPath := filepath.Join(home, ".coi", "history.jsonl")
+	histPath := filepath.Join(home, ".clincus", "history.jsonl")
 	hist := &History{Path: histPath}
 	hist.RecordStop(opts.ContainerName, 0)
 
@@ -68,7 +65,7 @@ func Cleanup(opts CleanupOptions) error {
 	if opts.Persistent {
 		// Persistent mode: keep container for reuse (with all its data/modifications)
 		if exists {
-			opts.Logger("Container kept running - use 'coi attach' to reconnect, 'coi shutdown' to stop, or 'coi kill' to force stop")
+			opts.Logger("Container kept running - use 'clincus attach' to reconnect, 'clincus shutdown' to stop, or 'clincus kill' to force stop")
 		} else {
 			opts.Logger("Container was stopped but kept for reuse")
 		}
@@ -90,36 +87,16 @@ func Cleanup(opts CleanupOptions) error {
 
 			if running {
 				// Container still running - user exited normally, keep it for potential re-attach
-				opts.Logger("Container kept running - use 'coi attach' to reconnect, 'coi shutdown' to stop, or 'coi kill' to force stop")
+				opts.Logger("Container kept running - use 'clincus attach' to reconnect, 'clincus shutdown' to stop, or 'clincus kill' to force stop")
 			} else {
 				// Container stopped (user did 'sudo shutdown 0') - delete it
 				opts.Logger("Container was stopped, removing...")
 
-				// Get the container's veth interface name BEFORE deletion
-				// We need this to clean up firewalld zone bindings after container deletion
-				vethName, _ := network.GetContainerVethName(opts.ContainerName)
-
-				// Clean up network FIRST while container still exists
-				// This ensures we can get the container IP to remove firewall rules
-				if opts.NetworkManager != nil {
-					if err := opts.NetworkManager.Teardown(context.Background(), opts.ContainerName); err != nil {
-						opts.Logger(fmt.Sprintf("Warning: Failed to cleanup network: %v", err))
-					}
-				}
-
-				// Now delete container
+				// Delete container
 				if err := mgr.Delete(true); err != nil {
 					opts.Logger(fmt.Sprintf("Warning: Failed to delete container: %v", err))
 				} else {
 					opts.Logger("Container removed (session data saved for --resume)")
-				}
-
-				// Clean up firewalld zone binding for the veth interface
-				// This must happen AFTER container deletion when the veth no longer exists
-				if vethName != "" {
-					if err := network.RemoveVethFromFirewalldZone(vethName); err != nil {
-						opts.Logger(fmt.Sprintf("Warning: Failed to cleanup firewalld zone binding: %v", err))
-					}
 				}
 			}
 		} else {
@@ -133,9 +110,9 @@ func Cleanup(opts CleanupOptions) error {
 // saveSessionData saves the tool config directory from the container
 func saveSessionData(mgr *container.Manager, sessionID string, persistent bool, workspace string, sessionsDir string, t tool.Tool, logger func(string)) error {
 	// Determine home directory
-	// For coi images, we always use /home/code
+	// For clincus images, we always use /home/code
 	// For other images, we use /root
-	// Since we currently only support coi images, always use /home/code
+	// Since we currently only support clincus images, always use /home/code
 	homeDir := "/home/" + container.CodeUser
 
 	configDirName := t.ConfigDirName()

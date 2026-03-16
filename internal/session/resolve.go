@@ -19,7 +19,7 @@ type ResolveOpts struct {
 	Persistent bool
 	MaxSlots   int
 	// SessionsDir overrides automatic sessions directory determination.
-	// If empty, derived from ~/.coi/<tool.SessionsDirName()>.
+	// If empty, derived from ~/.clincus/<tool.SessionsDirName()>.
 	SessionsDir string
 }
 
@@ -49,7 +49,7 @@ func Resolve(_ context.Context, opts ResolveOpts) (*ResolvedSession, error) {
 		if err != nil {
 			return nil, fmt.Errorf("cannot determine home directory: %w", err)
 		}
-		result.SessionsDir = filepath.Join(home, ".coi", opts.Tool.SessionsDirName())
+		result.SessionsDir = filepath.Join(home, ".clincus", opts.Tool.SessionsDirName())
 	}
 
 	// Handle resume
