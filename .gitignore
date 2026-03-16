@@ -1,0 +1,25 @@
+# Binary
+clincus
+
+# Build
+webui/dist/assets/
+webui/dist/index.html
+
+# Dependencies
+web/node_modules/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+
+# Test
+*.coverprofile
+__pycache__/
+.pytest_cache/
+
+# Worktrees
+.worktrees/
