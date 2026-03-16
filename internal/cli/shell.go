@@ -12,7 +12,6 @@ import (
 
 	"github.com/mensfeld/code-on-incus/internal/config"
 	"github.com/mensfeld/code-on-incus/internal/container"
-	"github.com/mensfeld/code-on-incus/internal/monitor"
 	"github.com/mensfeld/code-on-incus/internal/session"
 	"github.com/mensfeld/code-on-incus/internal/terminal"
 	"github.com/mensfeld/code-on-incus/internal/tool"
@@ -94,7 +93,7 @@ func shellCommand(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return fmt.Errorf("failed to get home directory: %w", err)
 	}
-	baseDir := filepath.Join(homeDir, ".coi")
+	baseDir := filepath.Join(homeDir, ".clincus")
 	sessionsDir := session.GetSessionsDir(baseDir, toolInstance)
 	if err := os.MkdirAll(sessionsDir, 0o755); err != nil {
 		return fmt.Errorf("failed to create sessions directory: %w", err)
@@ -113,7 +112,7 @@ func shellCommand(cmd *cobra.Command, args []string) error {
 	// These tools don't need COI session tracking - their data is in the workspace
 	isWorkspaceSessionTool := false
 	if _, ok := toolInstance.(tool.ToolWithHomeConfigFile); ok {
-		// File-based tools like opencode store sessions in workspace, not ~/.coi/sessions-*
+		// File-based tools like opencode store sessions in workspace, not ~/.clincus/sessions-*
 		// Check for .opencode/ or similar in workspace
 		workspaceSessionDir := filepath.Join(absWorkspace, ".opencode")
 		if info, err := os.Stat(workspaceSessionDir); err == nil && info.IsDir() {
@@ -183,13 +182,6 @@ func shellCommand(cmd *cobra.Command, args []string) error {
 		fmt.Fprintf(os.Stderr, "Slot %d is occupied, using slot %d instead\n", slot, slotNum)
 	}
 
-	// Prepare network configuration
-	networkConfig := cfg.Network // Copy from loaded config
-	// Override network mode from flag if specified
-	if networkMode != "" {
-		networkConfig.Mode = config.NetworkMode(networkMode)
-	}
-
 	// Determine CLI config path based on tool
 	// For file-based tools (ToolWithHomeConfigFile), point at the single config file.
 	// For directory-based tools (ConfigDirName != ""), point at the config directory.
@@ -223,7 +215,6 @@ func shellCommand(cmd *cobra.Command, args []string) error {
 		SessionsDir:           sessionsDir,
 		CLIConfigPath:         cliConfigPath,
 		Tool:                  toolInstance,
-		NetworkConfig:         &networkConfig,
 		DisableShift:          cfg.Incus.DisableShift,
 		LimitsConfig:          limitsConfig,
 		IncusProject:          cfg.Incus.Project,
@@ -256,48 +247,24 @@ func shellCommand(cmd *cobra.Command, args []string) error {
 		fmt.Fprintf(os.Stderr, "Warning: Failed to save early metadata: %v\n", err)
 	}
 
-	// Start monitoring daemons if enabled (via config or --monitor flag)
-	var monitorDaemon *monitor.Daemon
-	monitoringEnabled := cfg.Monitoring.Enabled || enableMonitoring
-	if monitoringEnabled {
-		// Override config settings when --monitor flag is used
-		if enableMonitoring {
-			cfg.Monitoring.Enabled = true
-			cfg.Monitoring.AutoKillOnCritical = true
-			cfg.Monitoring.AutoPauseOnHigh = true
-		}
-		// Start traditional monitoring (process/filesystem)
-		if err := startMonitoringDaemon(result.ContainerName, absWorkspace, cfg, &monitorDaemon); err != nil {
-			fmt.Fprintf(os.Stderr, "Warning: Failed to start monitoring daemon: %v\n", err)
-			// Don't fail the session if monitoring fails
-		}
-	}
-
 	// Define cleanup function so it can be called from both defer and signal handler
 	// Note: os.Exit() does NOT run deferred functions, so we must call cleanup explicitly
 	doCleanup := func() {
 		fmt.Fprintf(os.Stderr, "\nCleaning up session...\n")
 
-		// Stop monitoring daemons if they were started
-		if monitorDaemon != nil {
-			if err := monitorDaemon.Stop(); err != nil {
-				fmt.Fprintf(os.Stderr, "Warning: Failed to stop monitoring daemon: %v\n", err)
-			}
-		}
 		// Stop timeout monitor if it was started
 		if result.TimeoutMonitor != nil {
 			result.TimeoutMonitor.Stop()
 		}
 
 		cleanupOpts := session.CleanupOptions{
-			ContainerName:  result.ContainerName,
-			SessionID:      sessionID,
-			Persistent:     persistent,
-			SessionsDir:    sessionsDir,
-			SaveSession:    true, // Always save session data
-			Workspace:      absWorkspace,
-			Tool:           toolInstance,
-			NetworkManager: result.NetworkManager,
+			ContainerName: result.ContainerName,
+			SessionID:     sessionID,
+			Persistent:    persistent,
+			SessionsDir:   sessionsDir,
+			SaveSession:   true, // Always save session data
+			Workspace:     absWorkspace,
+			Tool:          toolInstance,
 		}
 		if err := session.Cleanup(cleanupOpts); err != nil {
 			fmt.Fprintf(os.Stderr, "Cleanup error: %v\n", err)
@@ -661,52 +628,3 @@ func runCLIInTmux(result *session.SetupResult, sessionID string, detached bool, 
 	}
 }
 
-// startMonitoringDaemon starts the background monitoring daemon
-func startMonitoringDaemon(containerName, workspacePath string, cfg *config.Config, daemon **monitor.Daemon) error {
-	// Get home directory for audit log
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		return fmt.Errorf("failed to get home directory: %w", err)
-	}
-
-	auditLogPath := filepath.Join(homeDir, ".coi", "audit", containerName+".jsonl")
-
-	// Get allowed CIDRs from network config
-	allowedCIDRs := []string{}
-	// TODO: Convert allowed domains to CIDRs if in allowlist mode
-
-	// Create daemon config
-	daemonCfg := monitor.DaemonConfig{
-		ContainerName:        containerName,
-		WorkspacePath:        workspacePath,
-		PollInterval:         time.Duration(cfg.Monitoring.PollIntervalSec) * time.Second,
-		AuditLogPath:         auditLogPath,
-		AllowedCIDRs:         allowedCIDRs,
-		AllowedDomains:       cfg.Network.AllowedDomains,
-		FileReadThresholdMB:  cfg.Monitoring.FileReadThresholdMB,
-		FileReadRateMBPerSec: cfg.Monitoring.FileReadRateMBPerSec,
-		AutoPauseOnHigh:      cfg.Monitoring.AutoPauseOnHigh,
-		AutoKillOnCritical:   cfg.Monitoring.AutoKillOnCritical,
-		OnThreat: func(threat monitor.ThreatEvent) {
-			// Threats are logged to audit file - no terminal output to avoid corrupting TUI
-		},
-		OnError: func(err error) {
-			// Errors are logged to audit file - no terminal output to avoid corrupting TUI
-		},
-		OnAction: func(action, message string) {
-			// Critical actions (pause/kill) should notify the user
-			fmt.Fprintf(os.Stderr, "\n\n*** SECURITY: %s ***\n\n", message)
-		},
-	}
-
-	// Start daemon
-	ctx := context.Background()
-	d, err := monitor.StartDaemon(ctx, daemonCfg)
-	if err != nil {
-		return err
-	}
-
-	*daemon = d
-	fmt.Fprintf(os.Stderr, "[security] Process/filesystem monitoring started (audit log: %s)\n", auditLogPath)
-	return nil
-}

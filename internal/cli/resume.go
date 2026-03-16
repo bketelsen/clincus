@@ -12,14 +12,13 @@ import (
 var resumeCmd = &cobra.Command{
 	Use:   "resume [container-name]",
 	Short: "Resume a frozen (paused) container",
-	Long: `Resume a container that was paused/frozen by the security monitoring system.
+	Long: `Resume a container that was paused/frozen.
 
-When the security monitor detects a threat, it may pause (freeze) the container.
-Use this command to resume the container after investigating the threat.
+Use this command to resume a frozen container.
 
 Examples:
-  coi resume coi-abc123-1    # Resume a specific frozen container
-  coi resume                  # Resume all frozen COI containers`,
+  coi resume clincus-abc123-1  # Resume a specific frozen container
+  coi resume                    # Resume all frozen clincus containers`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: runResume,
 }
@@ -78,8 +77,8 @@ func resumeAllFrozen() error {
 		name := parts[0]
 		status := parts[1]
 
-		// Only resume frozen COI containers
-		if !strings.HasPrefix(name, "coi-") {
+		// Only resume frozen clincus containers
+		if !strings.HasPrefix(name, "clincus-") {
 			continue
 		}
 
@@ -93,7 +92,7 @@ func resumeAllFrozen() error {
 	}
 
 	if resumedCount == 0 {
-		fmt.Fprintln(os.Stderr, "No frozen COI containers found")
+		fmt.Fprintln(os.Stderr, "No frozen clincus containers found")
 	} else {
 		fmt.Fprintf(os.Stderr, "Resumed %d container(s)\n", resumedCount)
 	}

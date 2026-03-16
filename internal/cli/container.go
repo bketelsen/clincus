@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/mensfeld/code-on-incus/internal/container"
-	"github.com/mensfeld/code-on-incus/internal/network"
 	"github.com/spf13/cobra"
 )
 
@@ -86,20 +85,6 @@ var containerDeleteCmd = &cobra.Command{
 		force, _ := cmd.Flags().GetBool("force")
 
 		mgr := container.NewManager(name)
-
-		// Get container IP BEFORE deleting (needed for firewall cleanup)
-		var containerIP string
-		if network.FirewallAvailable() {
-			containerIP, _ = network.GetContainerIPFast(name)
-		}
-
-		// Clean up firewall rules BEFORE deleting container
-		if containerIP != "" {
-			fm := network.NewFirewallManager(containerIP, "")
-			if err := fm.RemoveRules(); err != nil {
-				fmt.Fprintf(os.Stderr, "Warning: Failed to cleanup firewall rules: %v\n", err)
-			}
-		}
 
 		if err := mgr.Delete(force); err != nil {
 			return exitError(1, fmt.Sprintf("failed to delete container: %v", err))

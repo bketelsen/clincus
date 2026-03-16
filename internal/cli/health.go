@@ -90,16 +90,14 @@ func outputHealthText(result *health.HealthResult) error {
 	categories := map[string][]string{
 		"SYSTEM":        {"os"},
 		"CRITICAL":      {"incus", "permissions", "image", "image_age"},
-		"NETWORKING":    {"network_bridge", "ip_forwarding", "firewall"},
-		"MONITORING":    {"nftables", "systemd_journal", "libsystemd"},
-		"STORAGE":       {"coi_directory", "sessions_directory", "disk_space", "incus_storage_pool"},
-		"CONFIGURATION": {"config", "network_mode", "tool"},
+		"STORAGE":       {"clincus_directory", "sessions_directory", "disk_space", "incus_storage_pool"},
+		"CONFIGURATION": {"config", "tool"},
 		"STATUS":        {"active_containers", "saved_sessions", "orphaned_resources"},
 		"OPTIONAL":      {"dns_resolution", "passwordless_sudo"},
 	}
 
 	// Category order
-	categoryOrder := []string{"SYSTEM", "CRITICAL", "NETWORKING", "MONITORING", "STORAGE", "CONFIGURATION", "STATUS", "OPTIONAL"}
+	categoryOrder := []string{"SYSTEM", "CRITICAL", "STORAGE", "CONFIGURATION", "STATUS", "OPTIONAL"}
 
 	for _, category := range categoryOrder {
 		checkNames := categories[category]
@@ -208,18 +206,11 @@ func formatCheckName(name string) string {
 		"permissions":        "Permissions",
 		"image":              "Default image",
 		"image_age":          "Image age",
-		"network_bridge":     "Network bridge",
-		"ip_forwarding":      "IP forwarding",
-		"firewall":           "Firewalld",
-		"nftables":           "nftables",
-		"systemd_journal":    "systemd journal",
-		"libsystemd":         "libsystemd-dev",
-		"coi_directory":      "COI directory",
+		"clincus_directory":  "Clincus directory",
 		"sessions_directory": "Sessions dir",
 		"disk_space":         "Disk space",
 		"incus_storage_pool": "Incus storage pool",
 		"config":             "Config loaded",
-		"network_mode":       "Network mode",
 		"tool":               "Tool",
 		"active_containers":  "Containers",
 		"saved_sessions":     "Saved sessions",

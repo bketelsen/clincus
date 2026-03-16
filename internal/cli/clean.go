@@ -5,7 +5,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/mensfeld/code-on-incus/internal/cleanup"
 	"github.com/mensfeld/code-on-incus/internal/config"
 	"github.com/mensfeld/code-on-incus/internal/container"
 	"github.com/mensfeld/code-on-incus/internal/session"
@@ -27,15 +26,10 @@ var cleanCmd = &cobra.Command{
 
 By default, cleans only stopped containers. Use flags to control what gets cleaned.
 
-Orphaned resources include:
-- Orphaned veth interfaces (network pairs with no master bridge)
-- Orphaned firewall rules (rules for container IPs that no longer exist)
-- Orphaned firewalld zone bindings (stale veth entries in firewalld zones)
-
 Examples:
   coi clean                    # Clean stopped containers
   coi clean --sessions         # Clean saved session data
-  coi clean --orphans          # Clean orphaned veths and firewall rules
+  coi clean --orphans          # Clean orphaned stopped containers
   coi clean --all              # Clean everything
   coi clean --all --force      # Clean without confirmation
   coi clean --orphans --dry-run # Show what orphans would be cleaned
@@ -47,7 +41,7 @@ func init() {
 	cleanCmd.Flags().BoolVar(&cleanAll, "all", false, "Clean all containers, sessions, and orphaned resources")
 	cleanCmd.Flags().BoolVar(&cleanForce, "force", false, "Skip confirmation prompts")
 	cleanCmd.Flags().BoolVar(&cleanSessions, "sessions", false, "Clean saved session data")
-	cleanCmd.Flags().BoolVar(&cleanOrphans, "orphans", false, "Clean orphaned veths and firewall rules")
+	cleanCmd.Flags().BoolVar(&cleanOrphans, "orphans", false, "Clean orphaned stopped containers")
 	cleanCmd.Flags().BoolVar(&cleanDryRun, "dry-run", false, "Show what would be cleaned without making changes")
 }
 
@@ -68,7 +62,7 @@ func cleanCommand(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return fmt.Errorf("failed to get home directory: %w", err)
 	}
-	baseDir := filepath.Join(homeDir, ".coi")
+	baseDir := filepath.Join(homeDir, ".clincus")
 	sessionsDir := session.GetSessionsDir(baseDir, toolInstance)
 
 	cleaned := 0
@@ -230,32 +224,40 @@ func cleanSavedSessions(sessionsDir string) (int, bool, error) {
 	return cleaned, false, nil
 }
 
-// cleanOrphanedResources finds and removes orphaned veths and firewall rules.
+// cleanOrphanedResources finds and removes orphaned stopped containers.
 // Returns (count cleaned, was cancelled).
 func cleanOrphanedResources() (int, bool) {
-	fmt.Println("\nScanning for orphaned resources...")
+	fmt.Println("\nScanning for orphaned stopped containers...")
 
-	orphans, err := cleanup.DetectAll()
+	containers, err := listActiveContainers()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Warning: Failed to detect orphans: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Warning: Failed to list containers: %v\n", err)
 		return 0, false
 	}
 
-	totalOrphans := len(orphans.Veths) + len(orphans.FirewallRules) + len(orphans.FirewalldZoneBindings)
+	stoppedContainers := []string{}
+	for _, c := range containers {
+		if c.Status == "Stopped" || c.Status == "STOPPED" {
+			stoppedContainers = append(stoppedContainers, c.Name)
+		}
+	}
 
-	if totalOrphans == 0 {
+	if len(stoppedContainers) == 0 {
 		fmt.Println("  (no orphaned resources found)")
 		return 0, false
 	}
 
-	printOrphanedResources(orphans)
+	fmt.Printf("Found %d orphaned stopped container(s):\n", len(stoppedContainers))
+	for _, name := range stoppedContainers {
+		fmt.Printf("  - %s\n", name)
+	}
 
 	if cleanDryRun {
 		return 0, false
 	}
 
 	if !cleanForce {
-		fmt.Print("\nClean up orphaned resources? [y/N]: ")
+		fmt.Print("\nClean up orphaned containers? [y/N]: ")
 		var response string
 		_, _ = fmt.Scanln(&response)
 		if response != "y" && response != "Y" {
@@ -264,64 +266,16 @@ func cleanOrphanedResources() (int, bool) {
 		}
 	}
 
-	return doCleanOrphanedResources(orphans), false
-}
-
-// printOrphanedResources prints the list of orphaned resources found.
-func printOrphanedResources(orphans *cleanup.OrphanedResources) {
-	totalOrphans := len(orphans.Veths) + len(orphans.FirewallRules) + len(orphans.FirewalldZoneBindings)
-	fmt.Printf("Found %d orphaned resource(s):\n", totalOrphans)
-
-	if len(orphans.Veths) > 0 {
-		fmt.Printf("  Orphaned veth interfaces (%d):\n", len(orphans.Veths))
-		for _, veth := range orphans.Veths {
-			fmt.Printf("    - %s\n", veth)
-		}
-	}
-
-	if len(orphans.FirewallRules) > 0 {
-		fmt.Printf("  Orphaned firewall rules (%d):\n", len(orphans.FirewallRules))
-		for _, rule := range orphans.FirewallRules {
-			fmt.Printf("    - %s\n", rule)
-		}
-	}
-
-	if len(orphans.FirewalldZoneBindings) > 0 {
-		fmt.Printf("  Orphaned firewalld zone bindings (%d):\n", len(orphans.FirewalldZoneBindings))
-		shown := 0
-		for _, veth := range orphans.FirewalldZoneBindings {
-			if shown < 10 {
-				fmt.Printf("    - %s\n", veth)
-				shown++
-			}
-		}
-		if len(orphans.FirewalldZoneBindings) > 10 {
-			fmt.Printf("    ... and %d more\n", len(orphans.FirewalldZoneBindings)-10)
-		}
-	}
-}
-
-// doCleanOrphanedResources performs the actual cleanup of orphaned resources.
-func doCleanOrphanedResources(orphans *cleanup.OrphanedResources) int {
 	cleaned := 0
-	logger := func(msg string) {
-		fmt.Println(msg)
+	for _, name := range stoppedContainers {
+		fmt.Printf("Deleting container %s...\n", name)
+		mgr := container.NewManager(name)
+		if err := mgr.Delete(true); err != nil {
+			fmt.Fprintf(os.Stderr, "Warning: Failed to delete %s: %v\n", name, err)
+		} else {
+			cleaned++
+		}
 	}
 
-	if len(orphans.Veths) > 0 {
-		vethsCleaned, _ := cleanup.CleanupOrphanedVeths(orphans.Veths, logger)
-		cleaned += vethsCleaned
-	}
-
-	if len(orphans.FirewallRules) > 0 {
-		rulesCleaned, _ := cleanup.CleanupOrphanedFirewallRules(orphans.FirewallRules, logger)
-		cleaned += rulesCleaned
-	}
-
-	if len(orphans.FirewalldZoneBindings) > 0 {
-		zoneBindingsCleaned, _ := cleanup.CleanupOrphanedFirewalldZoneBindings(orphans.FirewalldZoneBindings, logger)
-		cleaned += zoneBindingsCleaned
-	}
-
-	return cleaned
+	return cleaned, false
 }
