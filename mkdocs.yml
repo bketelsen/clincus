@@ -1,0 +1,60 @@
+site_name: Clincus
+site_url: https://bketelsen.github.io/clincus
+site_description: Secure container runtime for AI coding tools on Incus
+repo_url: https://github.com/bketelsen/clincus
+repo_name: bketelsen/clincus
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.expand
+    - content.code.copy
+    - search.suggest
+    - search.highlight
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Prerequisites: getting-started/prerequisites.md
+      - Installation: getting-started/install.md
+      - Quick Start: getting-started/quickstart.md
+  - Guides:
+      - Sessions: guides/sessions.md
+      - Workspaces: guides/workspaces.md
+      - Web Dashboard: guides/web-dashboard.md
+      - Tools: guides/tools.md
+      - Images: guides/images.md
+      - Snapshots: guides/snapshots.md
+      - Resource Limits: guides/resource-limits.md
+  - Reference:
+      - CLI: reference/cli.md
+      - Configuration: reference/config.md
+      - API: reference/api.md
+  - Architecture:
+      - Overview: architecture/overview.md
+      - Contributing: architecture/contributing.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.tabbed:
+      alternate_style: true
+  - toc:
+      permalink: true
