@@ -28,7 +28,7 @@
     <span class="error">{error}</span>
   {:else}
     {#if workspace.has_config}
-      <span class="badge">coi.toml</span>
+      <span class="badge">.clincus.toml</span>
     {/if}
     {#if workspace.active_sessions > 0}
       <span class="active">{workspace.active_sessions} active</span>
