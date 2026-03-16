@@ -66,7 +66,15 @@ def test_push_binary_file(clincus_binary, cleanup_containers, workspace_dir):
     # === Phase 4: Verify file content via md5sum ===
 
     result = subprocess.run(
-        [clincus_binary, "container", "exec", container_name, "--", "md5sum", "/tmp/binary-test.bin"],
+        [
+            clincus_binary,
+            "container",
+            "exec",
+            container_name,
+            "--",
+            "md5sum",
+            "/tmp/binary-test.bin",
+        ],
         capture_output=True,
         text=True,
         timeout=30,

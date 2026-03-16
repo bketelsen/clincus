@@ -35,7 +35,9 @@ echo "Custom build completed" > /tmp/build_marker.txt
         return
 
     # Cleanup any existing image from previous run
-    subprocess.run([clincus_binary, "image", "delete", image_name], check=False, capture_output=True)
+    subprocess.run(
+        [clincus_binary, "image", "delete", image_name], check=False, capture_output=True
+    )
 
     # Build custom image
     result = subprocess.run(

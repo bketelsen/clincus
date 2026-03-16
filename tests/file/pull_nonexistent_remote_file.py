@@ -42,7 +42,13 @@ def test_pull_nonexistent_remote_file(clincus_binary, cleanup_containers, worksp
 
     local_file = os.path.join(workspace_dir, "should-not-exist.txt")
     result = subprocess.run(
-        [clincus_binary, "file", "pull", f"{container_name}:/nonexistent/path/file.txt", local_file],
+        [
+            clincus_binary,
+            "file",
+            "pull",
+            f"{container_name}:/nonexistent/path/file.txt",
+            local_file,
+        ],
         capture_output=True,
         text=True,
         timeout=30,

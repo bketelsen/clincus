@@ -67,7 +67,16 @@ def test_docker_works_in_container(clincus_binary, cleanup_containers, workspace
         """
 
         result = subprocess.run(
-            [clincus_binary, "container", "exec", container_name, "--", "bash", "-c", install_commands],
+            [
+                clincus_binary,
+                "container",
+                "exec",
+                container_name,
+                "--",
+                "bash",
+                "-c",
+                install_commands,
+            ],
             capture_output=True,
             text=True,
             timeout=300,
@@ -91,7 +100,16 @@ def test_docker_works_in_container(clincus_binary, cleanup_containers, workspace
 
     # Verify Docker daemon is running
     result = subprocess.run(
-        [clincus_binary, "container", "exec", container_name, "--", "systemctl", "is-active", "docker"],
+        [
+            clincus_binary,
+            "container",
+            "exec",
+            container_name,
+            "--",
+            "systemctl",
+            "is-active",
+            "docker",
+        ],
         capture_output=True,
         text=True,
         timeout=30,

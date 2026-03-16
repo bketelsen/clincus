@@ -90,11 +90,14 @@ def test_snapshot_no_container_for_workspace(clincus_binary, cleanup_containers,
     )
     assert result.returncode != 0, "Should fail when no containers exist for workspace"
     assert (
-        "no clincus containers found" in result.stderr.lower() or "not found" in result.stderr.lower()
+        "no clincus containers found" in result.stderr.lower()
+        or "not found" in result.stderr.lower()
     ), "Should mention no containers found"
 
 
-def test_snapshot_multiple_containers_requires_flag(clincus_binary, cleanup_containers, workspace_dir):
+def test_snapshot_multiple_containers_requires_flag(
+    clincus_binary, cleanup_containers, workspace_dir
+):
     """
     Test that snapshot fails when multiple containers exist for workspace.
 
@@ -137,7 +140,16 @@ def test_snapshot_multiple_containers_requires_flag(clincus_binary, cleanup_cont
 
     # === Phase 3: Create snapshot with explicit --container ===
     result = subprocess.run(
-        [clincus_binary, "snapshot", "create", snapshot_name, "-c", container1, "-w", workspace_dir],
+        [
+            clincus_binary,
+            "snapshot",
+            "create",
+            snapshot_name,
+            "-c",
+            container1,
+            "-w",
+            workspace_dir,
+        ],
         capture_output=True,
         text=True,
         timeout=60,

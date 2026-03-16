@@ -28,7 +28,15 @@ def test_mount_nonexistent_container(clincus_binary, cleanup_containers):
         # Syntax: clincus container mount <name> <device-name> <source> <path>
 
         result = subprocess.run(
-            [clincus_binary, "container", "mount", nonexistent_name, "test-mount", tmpdir, "/mnt/test"],
+            [
+                clincus_binary,
+                "container",
+                "mount",
+                nonexistent_name,
+                "test-mount",
+                tmpdir,
+                "/mnt/test",
+            ],
             capture_output=True,
             text=True,
             timeout=30,

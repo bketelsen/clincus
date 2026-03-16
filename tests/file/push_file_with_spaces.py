@@ -61,7 +61,15 @@ def test_push_file_with_spaces(clincus_binary, cleanup_containers, workspace_dir
     # === Phase 4: Verify file exists in container ===
 
     result = subprocess.run(
-        [clincus_binary, "container", "exec", container_name, "--", "cat", "/tmp/file with spaces.txt"],
+        [
+            clincus_binary,
+            "container",
+            "exec",
+            container_name,
+            "--",
+            "cat",
+            "/tmp/file with spaces.txt",
+        ],
         capture_output=True,
         text=True,
         timeout=30,

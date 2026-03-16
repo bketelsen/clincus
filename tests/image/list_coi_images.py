@@ -38,4 +38,6 @@ def test_list_coi_images(clincus_binary, cleanup_containers):
     )
 
     # Should mention the clincus image (either built or not)
-    assert "clincus" in combined_output.lower(), f"Should mention clincus image. Got:\n{combined_output}"
+    assert "clincus" in combined_output.lower(), (
+        f"Should mention clincus image. Got:\n{combined_output}"
+    )

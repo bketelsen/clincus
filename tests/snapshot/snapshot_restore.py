@@ -16,7 +16,9 @@ import time
 from support.helpers import calculate_container_name
 
 
-def test_snapshot_restore_requires_stopped_container(clincus_binary, cleanup_containers, workspace_dir):
+def test_snapshot_restore_requires_stopped_container(
+    clincus_binary, cleanup_containers, workspace_dir
+):
     """
     Test that restore fails when container is running.
 
@@ -104,7 +106,15 @@ def test_snapshot_restore_with_force(clincus_binary, cleanup_containers, workspa
 
     # === Phase 3: Create a file after snapshot ===
     result = subprocess.run(
-        [clincus_binary, "container", "exec", container_name, "--", "touch", "/tmp/after-snapshot.txt"],
+        [
+            clincus_binary,
+            "container",
+            "exec",
+            container_name,
+            "--",
+            "touch",
+            "/tmp/after-snapshot.txt",
+        ],
         capture_output=True,
         text=True,
         timeout=30,
@@ -113,7 +123,15 @@ def test_snapshot_restore_with_force(clincus_binary, cleanup_containers, workspa
 
     # Verify file exists
     result = subprocess.run(
-        [clincus_binary, "container", "exec", container_name, "--", "ls", "/tmp/after-snapshot.txt"],
+        [
+            clincus_binary,
+            "container",
+            "exec",
+            container_name,
+            "--",
+            "ls",
+            "/tmp/after-snapshot.txt",
+        ],
         capture_output=True,
         text=True,
         timeout=30,
@@ -151,7 +169,15 @@ def test_snapshot_restore_with_force(clincus_binary, cleanup_containers, workspa
 
     # File should not exist after restore (was created after snapshot)
     result = subprocess.run(
-        [clincus_binary, "container", "exec", container_name, "--", "ls", "/tmp/after-snapshot.txt"],
+        [
+            clincus_binary,
+            "container",
+            "exec",
+            container_name,
+            "--",
+            "ls",
+            "/tmp/after-snapshot.txt",
+        ],
         capture_output=True,
         text=True,
         timeout=30,
@@ -221,7 +247,15 @@ def test_snapshot_restore_nonexistent_container(clincus_binary):
     Test that restore fails for nonexistent container.
     """
     result = subprocess.run(
-        [clincus_binary, "snapshot", "restore", "test-snap", "-c", "nonexistent-container-xyz", "-f"],
+        [
+            clincus_binary,
+            "snapshot",
+            "restore",
+            "test-snap",
+            "-c",
+            "nonexistent-container-xyz",
+            "-f",
+        ],
         capture_output=True,
         text=True,
         timeout=30,

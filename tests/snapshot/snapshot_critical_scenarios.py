@@ -86,7 +86,16 @@ def test_workspace_files_not_in_snapshot(clincus_binary, cleanup_containers, wor
 
     # Verify file exists in workspace
     result = subprocess.run(
-        [clincus_binary, "container", "exec", container_name, "--capture", "--", "cat", workspace_file],
+        [
+            clincus_binary,
+            "container",
+            "exec",
+            container_name,
+            "--capture",
+            "--",
+            "cat",
+            workspace_file,
+        ],
         capture_output=True,
         text=True,
         timeout=30,
@@ -219,7 +228,16 @@ def test_session_data_restoration(clincus_binary, cleanup_containers, workspace_
 
     # Verify session file exists with correct data
     result = subprocess.run(
-        [clincus_binary, "container", "exec", container_name, "--capture", "--", "cat", session_file],
+        [
+            clincus_binary,
+            "container",
+            "exec",
+            container_name,
+            "--capture",
+            "--",
+            "cat",
+            session_file,
+        ],
         capture_output=True,
         text=True,
         timeout=30,
@@ -283,7 +301,16 @@ def test_session_data_restoration(clincus_binary, cleanup_containers, workspace_
 
     # === Phase 6: Verify session data is fully restored ===
     result = subprocess.run(
-        [clincus_binary, "container", "exec", container_name, "--capture", "--", "cat", session_file],
+        [
+            clincus_binary,
+            "container",
+            "exec",
+            container_name,
+            "--capture",
+            "--",
+            "cat",
+            session_file,
+        ],
         capture_output=True,
         text=True,
         timeout=30,

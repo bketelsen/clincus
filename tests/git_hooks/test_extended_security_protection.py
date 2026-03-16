@@ -20,7 +20,9 @@ from pathlib import Path
 class TestGitConfigProtection:
     """Tests for .git/config protection (prevents core.hooksPath bypass)."""
 
-    def test_git_config_readonly_by_default(self, clincus_binary, workspace_dir, cleanup_containers):
+    def test_git_config_readonly_by_default(
+        self, clincus_binary, workspace_dir, cleanup_containers
+    ):
         """Test that .git/config is mounted read-only by default."""
         # Initialize a git repository
         subprocess.run(["git", "init"], cwd=workspace_dir, check=True, capture_output=True)
@@ -274,7 +276,9 @@ class TestVscodeProtection:
             or "permission denied" in combined.lower()
         ), f"Expected read-only error, got: {combined}"
 
-    def test_vscode_settings_json_protected(self, clincus_binary, workspace_dir, cleanup_containers):
+    def test_vscode_settings_json_protected(
+        self, clincus_binary, workspace_dir, cleanup_containers
+    ):
         """Test that .vscode/settings.json cannot be modified."""
         vscode_dir = Path(workspace_dir) / ".vscode"
         vscode_dir.mkdir(parents=True, exist_ok=True)
@@ -332,7 +336,9 @@ class TestVscodeProtection:
 class TestSecurityConfigAdditionalPaths:
     """Tests for additional_protected_paths configuration."""
 
-    def test_additional_paths_are_protected(self, clincus_binary, workspace_dir, cleanup_containers):
+    def test_additional_paths_are_protected(
+        self, clincus_binary, workspace_dir, cleanup_containers
+    ):
         """Test that additional_protected_paths adds to defaults."""
         # Create config that adds .idea to protected paths
         config_content = """
@@ -541,7 +547,9 @@ class TestSecurityLogging:
 class TestSymlinkSecurity:
     """Tests for symlink security (preventing mount of arbitrary host paths)."""
 
-    def test_symlinked_protected_path_rejected(self, clincus_binary, workspace_dir, cleanup_containers):
+    def test_symlinked_protected_path_rejected(
+        self, clincus_binary, workspace_dir, cleanup_containers
+    ):
         """Test that symlinked protected paths are rejected."""
         # Create a target directory
         target_dir = Path(workspace_dir) / "target"

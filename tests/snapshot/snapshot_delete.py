@@ -257,7 +257,9 @@ def test_snapshot_delete_nonexistent_container(clincus_binary):
     assert "not found" in result.stderr, "Should mention container not found"
 
 
-def test_snapshot_delete_missing_name_without_all(clincus_binary, cleanup_containers, workspace_dir):
+def test_snapshot_delete_missing_name_without_all(
+    clincus_binary, cleanup_containers, workspace_dir
+):
     """
     Test that delete requires snapshot name or --all flag.
     """

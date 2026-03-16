@@ -28,7 +28,9 @@ from support.helpers import (
 )
 
 
-def test_persistent_container_kept_after_poweroff(clincus_binary, cleanup_containers, workspace_dir):
+def test_persistent_container_kept_after_poweroff(
+    clincus_binary, cleanup_containers, workspace_dir
+):
     """
     Test persistent session keeps container after poweroff.
 

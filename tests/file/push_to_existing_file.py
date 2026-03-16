@@ -79,7 +79,15 @@ def test_push_to_existing_file(clincus_binary, cleanup_containers, workspace_dir
     # === Phase 4: Verify content was replaced ===
 
     result = subprocess.run(
-        [clincus_binary, "container", "exec", container_name, "--", "cat", "/tmp/overwrite-test.txt"],
+        [
+            clincus_binary,
+            "container",
+            "exec",
+            container_name,
+            "--",
+            "cat",
+            "/tmp/overwrite-test.txt",
+        ],
         capture_output=True,
         text=True,
         timeout=30,

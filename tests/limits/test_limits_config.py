@@ -105,7 +105,16 @@ limit = "512MiB"
 
     # Launch with profile
     result = subprocess.run(
-        [clincus_binary, "run", "--workspace", workspace_dir, "--profile", "limited", "echo", "test"],
+        [
+            clincus_binary,
+            "run",
+            "--workspace",
+            workspace_dir,
+            "--profile",
+            "limited",
+            "echo",
+            "test",
+        ],
         capture_output=True,
         text=True,
         timeout=120,

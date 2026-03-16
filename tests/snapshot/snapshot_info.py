@@ -106,7 +106,16 @@ def test_snapshot_info_json_format(clincus_binary, cleanup_containers, workspace
 
     # === Phase 3: Show info in JSON format ===
     result = subprocess.run(
-        [clincus_binary, "snapshot", "info", snapshot_name, "-c", container_name, "--format", "json"],
+        [
+            clincus_binary,
+            "snapshot",
+            "info",
+            snapshot_name,
+            "-c",
+            container_name,
+            "--format",
+            "json",
+        ],
         capture_output=True,
         text=True,
         timeout=30,

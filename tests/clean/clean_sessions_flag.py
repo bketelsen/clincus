@@ -96,7 +96,9 @@ def test_clean_sessions_flag(clincus_binary, cleanup_containers, workspace_dir):
         timeout=60,
     )
 
-    assert result.returncode == 0, f"clincus clean --sessions should succeed. stderr: {result.stderr}"
+    assert result.returncode == 0, (
+        f"clincus clean --sessions should succeed. stderr: {result.stderr}"
+    )
 
     time.sleep(2)
 

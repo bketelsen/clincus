@@ -39,7 +39,9 @@ def test_version_format_validation(clincus_binary):
     # - vX.Y.Z-N-gHASH (commits after tag)
     # - vX.Y.Z-dirty (uncommitted changes)
     # - short commit hash (development build without tags)
-    version_pattern = r"^clincus (v\d+\.\d+\.\d+(-\d+-g[0-9a-f]+)?(-dirty)?|[0-9a-f]+) \(commit: .+, built: .+\)$"
+    version_pattern = (
+        r"^clincus (v\d+\.\d+\.\d+(-\d+-g[0-9a-f]+)?(-dirty)?|[0-9a-f]+) \(commit: .+, built: .+\)$"
+    )
     assert re.match(version_pattern, lines[0]), (
         f"First line should match pattern '{version_pattern}'. Got: {lines[0]}"
     )

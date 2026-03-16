@@ -18,7 +18,16 @@ def test_run_with_slot(clincus_binary, cleanup_containers, workspace_dir):
     2. Verify command succeeds
     """
     result = subprocess.run(
-        [clincus_binary, "run", "--workspace", workspace_dir, "--slot", "5", "echo", "slot-test-123"],
+        [
+            clincus_binary,
+            "run",
+            "--workspace",
+            workspace_dir,
+            "--slot",
+            "5",
+            "echo",
+            "slot-test-123",
+        ],
         capture_output=True,
         text=True,
         timeout=180,

@@ -205,9 +205,7 @@ def test_full_installation_process(meta_container, clincus_binary):
         timeout=30,
     )
     assert result.returncode == 0, f"clincus --help failed: {result.stderr}"
-    assert "clincus is a CLI tool" in result.stdout, (
-        "clincus help output missing expected text"
-    )
+    assert "clincus is a CLI tool" in result.stdout, "clincus help output missing expected text"
     assert "Available Commands:" in result.stdout, "clincus help missing commands section"
 
     # Phase 5: Test clincus basic commands

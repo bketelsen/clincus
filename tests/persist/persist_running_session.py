@@ -45,7 +45,9 @@ def test_persist_running_session(clincus_binary, cleanup_containers, workspace_d
 
     # === Phase 1: Start ephemeral shell and create content ===
 
-    child = spawn_clincus(clincus_binary, ["shell", "--workspace", workspace_dir, "--slot", "1"], env=env)
+    child = spawn_clincus(
+        clincus_binary, ["shell", "--workspace", workspace_dir, "--slot", "1"], env=env
+    )
 
     wait_for_container_ready(child, timeout=90)
     wait_for_prompt(child, timeout=90)

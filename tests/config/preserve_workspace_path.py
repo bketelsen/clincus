@@ -88,7 +88,9 @@ preserve_workspace_path = true
         child.close(force=True)
 
 
-def test_preserve_workspace_path_disabled_default(clincus_binary, cleanup_containers, workspace_dir):
+def test_preserve_workspace_path_disabled_default(
+    clincus_binary, cleanup_containers, workspace_dir
+):
     """
     Test that by default (preserve_workspace_path not set), workspace is mounted at /workspace.
 
