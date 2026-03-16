@@ -92,5 +92,4 @@ changelog:
 
 nightly:
   tag_name: nightly
-  publish: true
   keep_single_release: true
