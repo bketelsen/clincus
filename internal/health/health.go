@@ -64,38 +64,26 @@ func RunAllChecks(cfg *config.Config, verbose bool) *HealthResult {
 	// Networking checks
 	checks["network_bridge"] = CheckNetworkBridge()
 	checks["ip_forwarding"] = CheckIPForwarding()
-	checks["firewall"] = CheckFirewall(cfg.Network.Mode)
 
 	// Storage checks
-	checks["coi_directory"] = CheckCOIDirectory()
+	checks["clincus_directory"] = CheckClincusDirectory()
 	checks["sessions_directory"] = CheckSessionsDirectory(cfg)
 	checks["disk_space"] = CheckDiskSpace()
 	checks["incus_storage_pool"] = CheckIncusStoragePool()
 
 	// Configuration checks
 	checks["config"] = CheckConfiguration(cfg)
-	checks["network_mode"] = CheckNetworkMode(cfg.Network.Mode)
 	checks["tool"] = CheckTool(cfg.Tool.Name)
 
 	// Status checks
 	checks["active_containers"] = CheckActiveContainers()
 	checks["saved_sessions"] = CheckSavedSessions(cfg)
 	checks["orphaned_resources"] = CheckOrphanedResources()
-
-	// Container networking checks (critical for detecting real networking issues)
-	checks["container_connectivity"] = CheckContainerConnectivity(cfg.Defaults.Image)
-	checks["network_restriction"] = CheckNetworkRestriction(cfg.Defaults.Image)
-
-	// Process/Filesystem monitoring checks (always run)
-	checks["monitoring_configuration"] = CheckMonitoringConfiguration(cfg)
-	checks["audit_log_directory"] = CheckAuditLogDirectory()
 	checks["cgroup_availability"] = CheckCgroupAvailability()
 
 	// Optional checks (only if verbose)
 	if verbose {
 		checks["dns_resolution"] = CheckDNS()
-		checks["passwordless_sudo"] = CheckPasswordlessSudo()
-		checks["process_monitoring"] = CheckProcessMonitoringCapability(cfg.Defaults.Image)
 	}
 
 	// Calculate summary
