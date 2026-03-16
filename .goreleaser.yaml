@@ -1,0 +1,96 @@
+version: 2
+pro: true
+
+before:
+  hooks:
+    - go mod tidy
+    - make completions
+    - make manpages
+    - make web
+
+builds:
+  - id: clincus
+    main: ./cmd/clincus
+    binary: clincus
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X github.com/bketelsen/clincus/internal/cli.Version={{.Version}}
+      - -X github.com/bketelsen/clincus/internal/cli.Commit={{.Commit}}
+      - -X github.com/bketelsen/clincus/internal/cli.Date={{.Date}}
+    flags:
+      - -trimpath
+
+archives:
+  - id: clincus
+    builds:
+      - clincus
+    files:
+      - README.md
+      - LICENSE
+      - completions/*
+      - manpages/*
+
+signs:
+  - cmd: cosign
+    artifacts: all
+    output: true
+    args:
+      - "sign-blob"
+      - "--yes"
+      - "${artifact}"
+      - "--output-signature=${signature}"
+
+nfpms:
+  - id: clincus
+    package_name: clincus
+    builds:
+      - clincus
+    vendor: Brian Ketelsen
+    homepage: https://github.com/bketelsen/clincus
+    maintainer: Brian Ketelsen
+    description: Secure container runtime for AI coding tools on Incus
+    license: MIT
+    formats:
+      - deb
+      - rpm
+      - apk
+    contents:
+      - src: completions/clincus.bash
+        dst: /usr/share/bash-completion/completions/clincus
+      - src: completions/clincus.zsh
+        dst: /usr/share/zsh/vendor-completions/_clincus
+      - src: completions/clincus.fish
+        dst: /usr/share/fish/vendor_completions.d/clincus.fish
+      - src: manpages/clincus.1.gz
+        dst: /usr/share/man/man1/clincus.1.gz
+
+changelog:
+  use: github
+  groups:
+    - title: Features
+      regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
+      order: 0
+    - title: Bug Fixes
+      regexp: '^.*?fix(\([[:word:]]+\))??!?:.+$'
+      order: 1
+    - title: Documentation
+      regexp: '^.*?docs(\([[:word:]]+\))??!?:.+$'
+      order: 2
+    - title: Dependencies
+      regexp: '^.*?(deps|chore\(deps\))(\([[:word:]]+\))??!?:.+$'
+      order: 3
+    - title: Others
+      order: 999
+
+nightly:
+  tag_name: nightly
+  publish: true
+  keep_single_release: true
