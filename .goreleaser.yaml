@@ -4,9 +4,9 @@ pro: true
 before:
   hooks:
     - go mod tidy
+    - make web
     - make completions
     - make manpages
-    - make web
 
 builds:
   - id: clincus
@@ -30,8 +30,6 @@ builds:
 
 archives:
   - id: clincus
-    builds:
-      - clincus
     files:
       - README.md
       - LICENSE
@@ -51,8 +49,6 @@ signs:
 nfpms:
   - id: clincus
     package_name: clincus
-    builds:
-      - clincus
     vendor: Brian Ketelsen
     homepage: https://github.com/bketelsen/clincus
     maintainer: Brian Ketelsen
