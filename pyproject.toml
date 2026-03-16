@@ -1,0 +1,49 @@
+[tool.ruff]
+# Exclude support directory from import checks since it has special structure
+extend-exclude = ["tests/support/__init__.py"]
+
+# Target Python 3.11+
+target-version = "py311"
+
+# Line length
+line-length = 100
+
+[tool.ruff.lint]
+# Enable these rule sets
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort (import sorting)
+    "N",   # pep8-naming
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "SIM", # flake8-simplify
+    "TCH", # flake8-type-checking
+]
+
+# Ignore specific rules
+ignore = [
+    "E501",   # Line too long (handled by formatter)
+    "N802",   # Function name should be lowercase (pytest fixtures can be CamelCase)
+]
+
+[tool.ruff.format]
+# Use double quotes for strings
+quote-style = "double"
+
+# Indent with 4 spaces
+indent-style = "space"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+norecursedirs = ["tests/support"]
+# Add tests dir to pythonpath so imports work without __init__.py
+pythonpath = ["tests"]
+# Disable cache to avoid __pycache__ directories
+# Enable random test order to catch ordering dependencies
+addopts = "-p no:cacheprovider -p randomly"

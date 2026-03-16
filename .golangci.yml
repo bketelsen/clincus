@@ -1,0 +1,179 @@
+version: "2"
+run:
+  modules-download-mode: readonly
+linters:
+  enable:
+    - bodyclose
+    - copyloopvar
+    - dupl
+    - errname
+    - gocyclo
+    - gosec
+    - misspell
+    - predeclared
+    - unconvert
+    - wastedassign
+    - whitespace
+  settings:
+    cyclop:
+      max-complexity: 50
+      package-average: 20
+    dogsled:
+      max-blank-identifiers: 2
+    dupl:
+      threshold: 200
+    errcheck:
+      check-type-assertions: true
+      check-blank: false
+    gocognit:
+      min-complexity: 90
+    gocritic:
+      disabled-checks:
+        - whyNoLint
+        - commentedOutCode
+      enabled-tags:
+        - diagnostic
+        - style
+        - performance
+        - experimental
+        - opinionated
+    gocyclo:
+      min-complexity: 50
+    godot:
+      scope: all
+      capital: true
+      period: true
+    godox:
+      keywords:
+        - TODO
+        - FIXME
+        - BUG
+        - HACK
+        - OPTIMIZE
+        - XXX
+    gosec:
+      excludes:
+        - G204
+        - G306
+    govet:
+      enable:
+        - printf
+        - errorsas
+        - atomic
+        - bools
+        - buildtag
+        - nilfunc
+        - tests
+    maintidx:
+      under: 40
+    nestif:
+      min-complexity: 8
+    revive:
+      rules:
+        - name: exported
+          arguments:
+            - checkPrivateReceivers
+            - disableStutteringCheck
+        - name: package-comments
+        - name: unexported-return
+        - name: comment-spacings
+        - name: blank-imports
+        - name: context-as-argument
+        - name: dot-imports
+        - name: error-return
+        - name: error-strings
+        - name: error-naming
+        - name: if-return
+        - name: increment-decrement
+        - name: var-declaration
+        - name: package-comments
+        - name: range
+        - name: receiver-naming
+        - name: time-naming
+        - name: unexported-return
+        - name: errorf
+        - name: empty-block
+        - name: superfluous-else
+        - name: unreachable-code
+        - name: redefines-builtin-id
+    staticcheck:
+      checks:
+        - all
+        - -ST1000
+        - -ST1003
+      initialisms:
+        - ACL
+        - API
+        - ASCII
+        - CPU
+        - CSS
+        - DNS
+        - EOF
+        - GUID
+        - HTML
+        - HTTP
+        - HTTPS
+        - ID
+        - IP
+        - JSON
+        - QPS
+        - RAM
+        - RPC
+        - SLA
+        - SMTP
+        - SQL
+        - SSH
+        - TCP
+        - TLS
+        - TTL
+        - UDP
+        - UI
+        - GID
+        - UID
+        - UUID
+        - URI
+        - URL
+        - UTF8
+        - VM
+        - XML
+        - XMPP
+        - XSRF
+        - XSS
+      dot-import-whitelist:
+        - fmt
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - linters:
+          - dupl
+          - errcheck
+          - gocyclo
+          - gosec
+        path: _test\.go
+      - linters:
+          - revive
+        text: line-length-limit
+        source: 'Long:'
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+formatters:
+  enable:
+    - gofmt
+    - gofumpt
+    - goimports
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$

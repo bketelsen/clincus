@@ -1,0 +1,238 @@
+#!/bin/bash
+# Dummy CLI for testing - simulates interactive CLI tool behavior
+# This allows tests to run without requiring actual software licenses
+# Creates proper state directory structure for resume testing
+
+set -euo pipefail
+
+# Configuration
+STATE_DIR="${HOME}/.claude"
+PROJECTS_DIR="${STATE_DIR}/projects/-workspace"
+
+# Parse arguments
+RESUME_MODE=false
+SESSION_ID=""
+NEW_SESSION_ID=""
+BYPASS_PERMISSIONS=false
+VERBOSE=false
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --version)
+            echo "Dummy CLI 1.0.0 (test stub)"
+            exit 0
+            ;;
+        --help)
+            cat << 'HELP'
+Dummy CLI for testing
+
+Usage: dummy [options]
+
+Options:
+  --version              Show version
+  --help                 Show help
+  --resume               Resume latest session (auto-detect)
+  --session-id <id>      Start new session with specific ID
+  --permission-mode      Permission mode (bypassPermissions skips setup)
+  --verbose              Verbose output
+
+This is a test stub that simulates interactive CLI tool behavior.
+HELP
+            exit 0
+            ;;
+        --resume)
+            RESUME_MODE=true
+            # Check if next arg is a session ID (not another flag)
+            if [[ $# -gt 1 && ! "${2:-}" =~ ^-- ]]; then
+                SESSION_ID="$2"
+                shift
+            fi
+            shift
+            ;;
+        --session-id)
+            if [[ $# -gt 1 ]]; then
+                NEW_SESSION_ID="$2"
+                shift 2
+            else
+                shift
+            fi
+            ;;
+        --permission-mode)
+            if [[ $# -gt 1 && "${2:-}" == "bypassPermissions" ]]; then
+                BYPASS_PERMISSIONS=true
+                shift 2
+            else
+                shift
+            fi
+            ;;
+        --verbose)
+            VERBOSE=true
+            shift
+            ;;
+        *)
+            shift
+            ;;
+    esac
+done
+
+# Generate UUID-like session ID
+generate_uuid() {
+    # Generate a UUID-like string using available tools
+    if command -v uuidgen &> /dev/null; then
+        uuidgen | tr '[:upper:]' '[:lower:]'
+    else
+        # Fallback: generate pseudo-UUID from /dev/urandom
+        cat /proc/sys/kernel/random/uuid 2>/dev/null || \
+        printf '%04x%04x-%04x-%04x-%04x-%04x%04x%04x' \
+            $RANDOM $RANDOM $RANDOM $RANDOM $RANDOM $RANDOM $RANDOM $RANDOM
+    fi
+}
+
+# Create proper state directory structure
+setup_state_dir() {
+    mkdir -p "$STATE_DIR"
+    mkdir -p "$PROJECTS_DIR"
+    mkdir -p "$STATE_DIR/cache"
+    mkdir -p "$STATE_DIR/debug"
+    mkdir -p "$STATE_DIR/todos"
+    mkdir -p "$STATE_DIR/statsig"
+    mkdir -p "$STATE_DIR/telemetry"
+    mkdir -p "$STATE_DIR/shell-snapshots"
+
+    # Create settings.json if not exists
+    if [ ! -f "$STATE_DIR/settings.json" ]; then
+        echo '{"theme": "dark", "verbose": false}' > "$STATE_DIR/settings.json"
+    fi
+
+    # Create history.jsonl if not exists
+    if [ ! -f "$STATE_DIR/history.jsonl" ]; then
+        touch "$STATE_DIR/history.jsonl"
+    fi
+}
+
+# Find latest session from projects directory
+find_latest_session() {
+    if [ -d "$PROJECTS_DIR" ]; then
+        # Find the most recently modified .jsonl file
+        local latest=$(ls -t "$PROJECTS_DIR"/*.jsonl 2>/dev/null | head -1)
+        if [ -n "$latest" ]; then
+            # Extract session ID from filename (remove path and .jsonl)
+            basename "$latest" .jsonl
+        fi
+    fi
+}
+
+# Initialize or resume session
+init_session() {
+    local session_id="$1"
+    local session_file="$PROJECTS_DIR/${session_id}.jsonl"
+    local session_dir="$PROJECTS_DIR/${session_id}"
+
+    # Create session directory for subagents
+    mkdir -p "$session_dir/subagents"
+
+    # Create debug file
+    echo "Debug log for session $session_id" > "$STATE_DIR/debug/${session_id}.txt"
+    ln -sf "${session_id}.txt" "$STATE_DIR/debug/latest" 2>/dev/null || true
+
+    echo "$session_file"
+}
+
+# Main execution
+setup_state_dir
+
+# Determine session ID
+if [ "$RESUME_MODE" = true ]; then
+    if [ -n "$SESSION_ID" ]; then
+        # Resume specific session by ID
+        CURRENT_SESSION="$SESSION_ID"
+    else
+        # Auto-detect latest session
+        CURRENT_SESSION=$(find_latest_session)
+    fi
+
+    if [ -z "$CURRENT_SESSION" ]; then
+        echo "Error: No previous session found to resume"
+        exit 1
+    fi
+
+    SESSION_FILE="$PROJECTS_DIR/${CURRENT_SESSION}.jsonl"
+    if [ ! -f "$SESSION_FILE" ]; then
+        echo "Error: Session file not found: $SESSION_FILE"
+        exit 1
+    fi
+
+    echo "Resuming session: $CURRENT_SESSION"
+
+    # Show previous conversation
+    if [ -s "$SESSION_FILE" ]; then
+        echo "Previous conversation:"
+        cat "$SESSION_FILE" | while read -r line; do
+            # Parse and display conversation (simplified)
+            echo "$line" | grep -o '"content":"[^"]*"' | sed 's/"content":"//;s/"$//' || true
+        done
+        echo ""
+    fi
+else
+    # New session
+    if [ -n "$NEW_SESSION_ID" ]; then
+        CURRENT_SESSION="$NEW_SESSION_ID"
+    else
+        CURRENT_SESSION=$(generate_uuid)
+    fi
+
+    # Skip setup prompts if bypass permissions mode
+    if [ "$BYPASS_PERMISSIONS" != true ]; then
+        if [ ! -f "$STATE_DIR/.setup_complete" ]; then
+            echo ""
+            echo "Welcome to Dummy CLI (test stub for testing)"
+            touch "$STATE_DIR/.setup_complete"
+        fi
+    fi
+fi
+
+# Initialize session file
+SESSION_FILE=$(init_session "$CURRENT_SESSION")
+
+echo ""
+echo "Session: $CURRENT_SESSION"
+echo "Tips: Type your message, 'exit' to quit"
+echo ""
+echo "You: "
+
+# Message counter for conversation
+MSG_NUM=1
+
+# Simple interactive loop
+while true; do
+    read -r input || break
+
+    # Exit commands
+    if [[ "$input" == "exit" || "$input" == "quit" || "$input" == "/exit" ]]; then
+        # Save final state
+        echo "{\"type\":\"system\",\"content\":\"Session ended\",\"timestamp\":\"$(date -Iseconds)\"}" >> "$SESSION_FILE"
+        echo "Goodbye!"
+        exit 0
+    fi
+
+    # Save user message to session
+    echo "{\"type\":\"user\",\"content\":\"$input\",\"msgNum\":$MSG_NUM,\"timestamp\":\"$(date -Iseconds)\"}" >> "$SESSION_FILE"
+
+    # Check if input is a network command and execute it
+    if [[ "$input" =~ ^(curl|dig|nslookup|ping|wget|nc|host)([[:space:]]|$) ]]; then
+        # Execute actual command and capture output
+        eval "$input" 2>&1 || true
+        RESPONSE="$input [executed]"
+    else
+        # Echo back input with -BACK suffix for easy test matching
+        RESPONSE="${input}-BACK"
+        echo "$RESPONSE"
+    fi
+
+    # Save assistant response to session
+    echo "{\"type\":\"assistant\",\"content\":\"$RESPONSE\",\"msgNum\":$MSG_NUM,\"timestamp\":\"$(date -Iseconds)\"}" >> "$SESSION_FILE"
+
+    ((MSG_NUM++))
+
+    echo "You: "
+done
