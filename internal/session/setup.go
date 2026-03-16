@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mensfeld/code-on-incus/internal/config"
-	"github.com/mensfeld/code-on-incus/internal/container"
-	"github.com/mensfeld/code-on-incus/internal/limits"
-	"github.com/mensfeld/code-on-incus/internal/tool"
+	"github.com/bketelsen/clincus/internal/config"
+	"github.com/bketelsen/clincus/internal/container"
+	"github.com/bketelsen/clincus/internal/limits"
+	"github.com/bketelsen/clincus/internal/tool"
 )
 
 const (

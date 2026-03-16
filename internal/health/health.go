@@ -3,7 +3,7 @@ package health
 import (
 	"time"
 
-	"github.com/mensfeld/code-on-incus/internal/config"
+	"github.com/bketelsen/clincus/internal/config"
 )
 
 // CheckStatus represents the status of a health check

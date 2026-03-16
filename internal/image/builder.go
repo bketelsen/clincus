@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mensfeld/code-on-incus/internal/container"
+	"github.com/bketelsen/clincus/internal/container"
 )
 
 const (

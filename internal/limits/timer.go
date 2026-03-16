@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/mensfeld/code-on-incus/internal/container"
+	"github.com/bketelsen/clincus/internal/container"
 )
 
 // TimeoutMonitor monitors a container's runtime and stops it when max duration is reached

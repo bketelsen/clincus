@@ -10,11 +10,11 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/mensfeld/code-on-incus/internal/config"
-	"github.com/mensfeld/code-on-incus/internal/container"
-	"github.com/mensfeld/code-on-incus/internal/session"
-	"github.com/mensfeld/code-on-incus/internal/terminal"
-	"github.com/mensfeld/code-on-incus/internal/tool"
+	"github.com/bketelsen/clincus/internal/config"
+	"github.com/bketelsen/clincus/internal/container"
+	"github.com/bketelsen/clincus/internal/session"
+	"github.com/bketelsen/clincus/internal/terminal"
+	"github.com/bketelsen/clincus/internal/tool"
 	"github.com/spf13/cobra"
 )
 

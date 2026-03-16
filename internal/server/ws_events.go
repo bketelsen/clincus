@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	"github.com/mensfeld/code-on-incus/internal/session"
+	"github.com/bketelsen/clincus/internal/session"
 )
 
 type EventHub struct {

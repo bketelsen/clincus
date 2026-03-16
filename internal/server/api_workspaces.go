@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/mensfeld/code-on-incus/internal/config"
+	"github.com/bketelsen/clincus/internal/config"
 )
 
 type WorkspaceInfo struct {

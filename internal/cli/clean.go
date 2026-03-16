@@ -5,9 +5,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/mensfeld/code-on-incus/internal/config"
-	"github.com/mensfeld/code-on-incus/internal/container"
-	"github.com/mensfeld/code-on-incus/internal/session"
+	"github.com/bketelsen/clincus/internal/config"
+	"github.com/bketelsen/clincus/internal/container"
+	"github.com/bketelsen/clincus/internal/session"
 	"github.com/spf13/cobra"
 )
 

@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/mensfeld/code-on-incus/internal/container"
+	"github.com/bketelsen/clincus/internal/container"
 )
 
 // SetupSecurityMounts mounts protected paths as read-only for security.

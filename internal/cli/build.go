@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/mensfeld/code-on-incus/internal/container"
-	"github.com/mensfeld/code-on-incus/internal/image"
+	"github.com/bketelsen/clincus/internal/container"
+	"github.com/bketelsen/clincus/internal/image"
 	"github.com/spf13/cobra"
 )
 
@@ -72,10 +72,10 @@ func buildCommand(cmd *cobra.Command, args []string) error {
 	// Configure build options
 	opts := image.BuildOptions{
 		Force:       buildForce,
-		ImageType:   "coi",
+		ImageType:   "clincus",
 		BaseImage:   image.BaseImage,
-		AliasName:   image.CoiAlias,
-		Description: "coi image (Docker + build tools + Claude CLI + GitHub CLI)",
+		AliasName:   image.ClincusAlias,
+		Description: "clincus image (Docker + build tools + Claude CLI + GitHub CLI)",
 		Logger: func(msg string) {
 			fmt.Println(msg)
 		},
@@ -116,9 +116,9 @@ func buildCustomCommand(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("build script not found: %s", scriptPath)
 	}
 
-	// Default to coi base image
+	// Default to clincus base image
 	if baseImage == "" {
-		baseImage = image.CoiAlias
+		baseImage = image.ClincusAlias
 	}
 
 	// Configure build options

@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"os/exec"
 
-	"github.com/mensfeld/code-on-incus/internal/server"
-	"github.com/mensfeld/code-on-incus/webui"
+	"github.com/bketelsen/clincus/internal/server"
+	"github.com/bketelsen/clincus/webui"
 	"github.com/spf13/cobra"
 )
 

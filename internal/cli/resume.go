@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/mensfeld/code-on-incus/internal/container"
+	"github.com/bketelsen/clincus/internal/container"
 	"github.com/spf13/cobra"
 )
 

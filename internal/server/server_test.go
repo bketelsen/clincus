@@ -6,7 +6,7 @@ import (
 	"testing"
 	"testing/fstest"
 
-	"github.com/mensfeld/code-on-incus/internal/config"
+	"github.com/bketelsen/clincus/internal/config"
 )
 
 func testConfig() *config.Config {

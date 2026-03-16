@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/mensfeld/code-on-incus/internal/config"
-	"github.com/mensfeld/code-on-incus/internal/session"
+	"github.com/bketelsen/clincus/internal/config"
+	"github.com/bketelsen/clincus/internal/session"
 )
 
 // ParseMountConfig creates MountConfig from config file and CLI flags

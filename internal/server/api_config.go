@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/mensfeld/code-on-incus/internal/tool"
+	"github.com/bketelsen/clincus/internal/tool"
 )
 
 func (s *Server) handleGetConfig(w http.ResponseWriter, r *http.Request) {

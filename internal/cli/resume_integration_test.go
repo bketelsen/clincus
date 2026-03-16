@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/mensfeld/code-on-incus/internal/container"
+	"github.com/bketelsen/clincus/internal/container"
 )
 
 // TestResumeCommand_FrozenContainer tests resuming a frozen container

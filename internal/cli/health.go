@@ -7,8 +7,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/mensfeld/code-on-incus/internal/config"
-	"github.com/mensfeld/code-on-incus/internal/health"
+	"github.com/bketelsen/clincus/internal/config"
+	"github.com/bketelsen/clincus/internal/health"
 	"github.com/spf13/cobra"
 )
 

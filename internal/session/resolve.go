@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/mensfeld/code-on-incus/internal/tool"
+	"github.com/bketelsen/clincus/internal/tool"
 )
 
 // ResolveOpts configures session resolution.

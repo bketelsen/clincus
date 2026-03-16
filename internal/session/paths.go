@@ -3,7 +3,7 @@ package session
 import (
 	"path/filepath"
 
-	"github.com/mensfeld/code-on-incus/internal/tool"
+	"github.com/bketelsen/clincus/internal/tool"
 )
 
 // GetSessionsDir returns the sessions directory path for a given tool.
