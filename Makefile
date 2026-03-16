@@ -49,7 +49,7 @@ docs-serve:
 	mkdocs serve
 
 install: build
-	install -m 755 $(BINARY_NAME) $(GOPATH)/bin/$(BINARY_NAME)
+	install -m 755 $(BINARY_NAME) ~/.local/bin/$(BINARY_NAME)
 
 clean:
 	rm -f $(BINARY_NAME)
