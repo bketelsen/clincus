@@ -1,9 +1,14 @@
 # Binary
 clincus
 
-# Build
-webui/dist/assets/
-webui/dist/index.html
+# Build artifacts (keep .gitkeep for go:embed)
+webui/dist/*
+!webui/dist/.gitkeep
+
+# Generated artifacts
+completions/
+manpages/
+site/
 
 # Dependencies
 web/node_modules/
@@ -18,6 +23,7 @@ web/node_modules/
 
 # Test
 *.coverprofile
+*.out
 __pycache__/
 .pytest_cache/
 
