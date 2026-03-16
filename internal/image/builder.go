@@ -8,18 +8,17 @@ import (
 	"time"
 
 	"github.com/mensfeld/code-on-incus/internal/container"
-	"github.com/mensfeld/code-on-incus/internal/network"
 )
 
 const (
 	BaseImage      = "images:ubuntu/24.04"
-	CoiAlias       = "coi"
-	BuildContainer = "coi-build"
+	ClincusAlias   = "clincus"
+	BuildContainer = "clincus-build"
 )
 
 // BuildOptions contains options for building an image
 type BuildOptions struct {
-	ImageType   string // "coi" or "custom"
+	ImageType   string // "clincus" or "custom"
 	AliasName   string
 	Description string
 	BaseImage   string
@@ -132,21 +131,6 @@ func (b *Builder) launchBuildContainer() error {
 
 	// Wait for container to start
 	time.Sleep(3 * time.Second)
-
-	// Setup open mode firewall rules for build container
-	// This is needed when FORWARD chain policy is DROP (common with Docker/firewalld)
-	if network.FirewallAvailable() {
-		containerIP, err := network.GetContainerIP(b.mgr.ContainerName)
-		if err != nil {
-			b.opts.Logger(fmt.Sprintf("Warning: could not get container IP for firewall rules: %v", err))
-		} else {
-			if err := network.EnsureOpenModeRules(containerIP); err != nil {
-				b.opts.Logger(fmt.Sprintf("Warning: could not add firewall rules: %v", err))
-			} else {
-				b.opts.Logger(fmt.Sprintf("Firewall rules added for build container (%s)", containerIP))
-			}
-		}
-	}
 
 	return nil
 }
@@ -269,7 +253,7 @@ func (b *Builder) tryFixDNS() bool {
 
 		// Write a working resolv.conf with public DNS servers
 		_, err := b.mgr.ExecCommand(`cat > /etc/resolv.conf << 'EOF'
-# Auto-configured by coi build due to DNS misconfiguration
+# Auto-configured by clincus build due to DNS misconfiguration
 nameserver 8.8.8.8
 nameserver 8.8.4.4
 nameserver 1.1.1.1
@@ -299,8 +283,8 @@ func (b *Builder) logDNSFixWarning() {
 // runBuildSteps executes the build steps based on image type
 func (b *Builder) runBuildSteps() error {
 	switch b.opts.ImageType {
-	case "coi":
-		return b.buildCoi()
+	case "clincus":
+		return b.buildClincus()
 	case "custom":
 		return b.buildCustom()
 	default:
@@ -308,9 +292,9 @@ func (b *Builder) runBuildSteps() error {
 	}
 }
 
-// buildCoi implements coi image build steps using external script
-func (b *Builder) buildCoi() error {
-	return b.runBuildScript("scripts/build/coi.sh")
+// buildClincus implements clincus image build steps using external script
+func (b *Builder) buildClincus() error {
+	return b.runBuildScript("scripts/build/clincus.sh")
 }
 
 // runBuildScript executes a build script from the scripts directory
