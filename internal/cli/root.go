@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"charm.land/fang/v2"
 	"github.com/bketelsen/clincus/internal/config"
 	"github.com/bketelsen/clincus/internal/container"
-	"charm.land/fang/v2"
 	"github.com/spf13/cobra"
 )
 
