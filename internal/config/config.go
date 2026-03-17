@@ -94,7 +94,7 @@ type ProfileConfig struct {
 type ToolConfig struct {
 	Name   string           `toml:"name" json:"name"`     // Tool name: "claude", "aider", "cursor", etc.
 	Binary string           `toml:"binary" json:"binary"` // Binary name to execute (if empty, uses tool name)
-	Claude ClaudeToolConfig `toml:"claude" json:"claude"`  // Claude-specific settings
+	Claude ClaudeToolConfig `toml:"claude" json:"claude"` // Claude-specific settings
 }
 
 // ClaudeToolConfig contains Claude Code-specific settings
@@ -148,7 +148,7 @@ type DiskLimits struct {
 type RuntimeLimits struct {
 	MaxDuration  string `toml:"max_duration" json:"max_duration"`   // "2h", "30m", "1h30m", "" (unlimited)
 	MaxProcesses int    `toml:"max_processes" json:"max_processes"` // 0 = unlimited
-	AutoStop     bool   `toml:"auto_stop" json:"auto_stop"`        // auto-stop when limit reached
+	AutoStop     bool   `toml:"auto_stop" json:"auto_stop"`         // auto-stop when limit reached
 	StopGraceful bool   `toml:"stop_graceful" json:"stop_graceful"` // graceful vs force stop
 }
 
