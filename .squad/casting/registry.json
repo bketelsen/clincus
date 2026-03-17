@@ -1,0 +1,46 @@
+{
+  "agents": {
+    "deckard": {
+      "created_at": "2026-03-17T13:17:30.229Z",
+      "persistent_name": "Deckard",
+      "universe": "Blade Runner",
+      "status": "active"
+    },
+    "batty": {
+      "created_at": "2026-03-17T13:17:30.229Z",
+      "persistent_name": "Batty",
+      "universe": "Blade Runner",
+      "status": "active"
+    },
+    "rachael": {
+      "created_at": "2026-03-17T13:17:30.229Z",
+      "persistent_name": "Rachael",
+      "universe": "Blade Runner",
+      "status": "active"
+    },
+    "pris": {
+      "created_at": "2026-03-17T13:17:30.229Z",
+      "persistent_name": "Pris",
+      "universe": "Blade Runner",
+      "status": "active"
+    },
+    "gaff": {
+      "created_at": "2026-03-17T13:17:30.229Z",
+      "persistent_name": "Gaff",
+      "universe": "Blade Runner",
+      "status": "active"
+    },
+    "scribe": {
+      "created_at": "2026-03-17T13:17:30.229Z",
+      "persistent_name": "Scribe",
+      "universe": "Blade Runner",
+      "status": "active"
+    },
+    "ralph": {
+      "created_at": "2026-03-17T13:17:30.229Z",
+      "persistent_name": "Ralph",
+      "universe": "Blade Runner",
+      "status": "active"
+    }
+  }
+}
