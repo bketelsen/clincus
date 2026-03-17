@@ -37,6 +37,8 @@ manpages:
 	go run ./cmd/clincus man > manpages/clincus.1
 	gzip -f manpages/*.1
 
+check: build test fmt lint
+
 bump: build test fmt lint
 	@test -z "$$(git status --porcelain)" || (echo "Working directory not clean" && exit 1)
 	@VERSION=$$(svu next) && \
