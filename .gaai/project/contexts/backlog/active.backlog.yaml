@@ -11,8 +11,9 @@ items:
     epic: E01
     title: "Expose full read-only configuration via API"
     priority: high
-    status: in_progress
+    status: done
     started_at: "2026-03-17T17:15:09Z"
+    completed_at: "2026-03-17T17:19:51Z"
     artefact: contexts/artefacts/stories/E01S01.story.md
     dependencies: []
     notes: "Discovery session 2026-03-17. Foundation for E01S02 frontend."
