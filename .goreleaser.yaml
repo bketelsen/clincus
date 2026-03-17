@@ -69,7 +69,7 @@ nfpms:
         dst: /usr/share/man/man1/clincus.1.gz
 
 changelog:
-  use: github
+  use: git
   groups:
     - title: Features
       regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
