@@ -47,7 +47,8 @@ items:
     epic: E01
     title: "Display configuration in the web dashboard"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-17T17:55:52Z"
     artefact: contexts/artefacts/stories/E01S02.story.md
     dependencies: [E01S01, E01S04]
     notes: "Discovery session 2026-03-17. Final frontend story — depends on API + events."
