@@ -1,10 +1,5 @@
 package tool
 
-import (
-	"os"
-	"os/exec"
-	"strings"
-)
 
 // CopilotTool implements Tool for GitHub Copilot CLI (https://gh.io/copilot)
 type CopilotTool struct{}
@@ -46,29 +41,11 @@ func (c *CopilotTool) EssentialDirs() []string {
 }
 
 // AutoEnv implements ToolWithAutoEnv.
-// Resolves GH_TOKEN for copilot authentication by checking environment
-// variables first, then falling back to `gh auth token`.
+// Injects GH_TOKEN for copilot authentication using the shared resolver.
 func (c *CopilotTool) AutoEnv() map[string]string {
 	env := map[string]string{}
-
-	// Check if GH_TOKEN or GITHUB_TOKEN is already in the environment
-	if token := os.Getenv("GH_TOKEN"); token != "" {
+	if token := ResolveGHToken(); token != "" {
 		env["GH_TOKEN"] = token
-		return env
 	}
-	if token := os.Getenv("GITHUB_TOKEN"); token != "" {
-		env["GH_TOKEN"] = token
-		return env
-	}
-
-	// Fall back to gh CLI auth
-	out, err := exec.Command("gh", "auth", "token").Output()
-	if err == nil {
-		token := strings.TrimSpace(string(out))
-		if token != "" {
-			env["GH_TOKEN"] = token
-		}
-	}
-
 	return env
 }
