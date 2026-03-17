@@ -56,3 +56,13 @@ items:
     artefact: contexts/artefacts/stories/E01S02.story.md
     dependencies: [E01S01, E01S04]
     notes: "Discovery session 2026-03-17. Final frontend story — depends on API + events."
+
+  - id: E01S05
+    epic: E01
+    title: "Add Settings navigation link to dashboard sidebar"
+    priority: high
+    status: in_progress
+    started_at: "2026-03-17T18:45:45Z"
+    artefact: contexts/artefacts/stories/E01S05.story.md
+    dependencies: [E01S02]
+    notes: "Discovery session 2026-03-17. Settings page exists but has no nav link — usability gap."
