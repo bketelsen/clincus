@@ -15,6 +15,7 @@ build: web
 
 web:
 	cd web && npm install && npm run build
+	@touch webui/dist/.gitkeep
 
 test:
 	go test -race -v ./...
