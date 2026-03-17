@@ -106,23 +106,34 @@ func (m *Manager) MountDisk(name, source, path string, shift, readonly bool) err
 	return IncusExec(args...)
 }
 
-// SetTmpfsSize configures the tmpfs size for /tmp in the container
-// size should be a string like "2GiB", "1024MiB", etc.
+// SetTmpfsSize configures the tmpfs size for /tmp in the container.
+// size should be a string like "2GiB", "1024MiB", etc. (Incus-style units).
 func (m *Manager) SetTmpfsSize(size string) error {
-	args := []string{
-		"config", "device", "override", m.ContainerName, "tmp", "disk",
-		"source=tmpfs",
-		"path=/tmp",
-		fmt.Sprintf("size=%s", size),
+	// Mount a size-limited tmpfs on /tmp from inside the container.
+	// Incus device-based tmpfs is unreliable across versions, so we use
+	// a direct mount which works consistently.
+	// Convert Incus-style units (GiB/MiB/KiB) to mount-compatible (G/M/K).
+	mountSize := toMountSize(size)
+	cmd := fmt.Sprintf("mount -t tmpfs -o size=%s tmpfs /tmp", mountSize)
+	_, err := m.ExecCommand(cmd, ExecCommandOptions{Capture: true})
+	return err
+}
+
+// toMountSize converts Incus-style size strings (e.g., "2GiB", "512MiB")
+// to mount-compatible format (e.g., "2G", "512M").
+func toMountSize(size string) string {
+	replacements := []struct{ from, to string }{
+		{"GiB", "G"},
+		{"MiB", "M"},
+		{"KiB", "K"},
+		{"TiB", "T"},
 	}
-	if err := IncusExec(args...); err != nil {
-		// If override fails, try adding (container might not have tmp device)
-		args[2] = "add"
-		if err := IncusExec(args...); err != nil {
-			return err
+	for _, r := range replacements {
+		if strings.HasSuffix(size, r.from) {
+			return strings.TrimSuffix(size, r.from) + r.to
 		}
 	}
-	return nil
+	return size
 }
 
 // GetWorkspacePath returns the container path where the "workspace" device is mounted.
