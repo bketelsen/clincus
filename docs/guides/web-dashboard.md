@@ -111,6 +111,18 @@ start, stop, or change state without requiring a page refresh.
 
 ---
 
+## Config Hot-Reload
+
+The dashboard server watches config files for changes and reloads automatically. If you edit
+`~/.config/clincus/config.toml` or `/etc/clincus/config.toml` while the dashboard is running,
+changes take effect within a few seconds without restarting the server.
+
+If you change the `[dashboard] port` in the config, the listener is restarted on the new port.
+Active WebSocket terminal connections will be dropped but tmux sessions inside containers
+continue running and clients can reconnect on the new port.
+
+---
+
 ## Stopping the Dashboard
 
 Press `Ctrl+C` in the terminal where `clincus serve` is running.

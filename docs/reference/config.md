@@ -261,6 +261,20 @@ clincus shell --profile heavy ~/ml-project
 
 ---
 
+## Config Hot-Reload
+
+When running `clincus serve`, the server automatically watches the system config (`/etc/clincus/config.toml`) and user config (`~/.config/clincus/config.toml`) for changes. When a file is modified:
+
+- The config is reloaded automatically (debounced with a 1-second window to handle editors that write files in multiple steps).
+- If the new config is valid, it takes effect immediately for new sessions and API responses.
+- If the new config has errors (invalid TOML, missing fields), the error is logged and the previous valid config is retained.
+- If the `[dashboard] port` changes, the HTTP listener is gracefully restarted on the new port. Active WebSocket connections will be dropped during the restart but tmux sessions in containers are unaffected.
+- Active Incus container sessions are never affected by a config reload.
+
+Project config (`.clincus.toml`) and `CLINCUS_CONFIG` paths are **not** watched.
+
+---
+
 ## Per-Project Config: `.clincus.toml`
 
 Place `.clincus.toml` in your project root to configure Clincus for that project only. Any

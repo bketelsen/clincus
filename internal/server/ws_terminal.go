@@ -37,8 +37,9 @@ func (s *Server) handleTerminalWS(w http.ResponseWriter, r *http.Request) {
 	tmuxSession := fmt.Sprintf("clincus-%s", containerID)
 
 	codeUID := 1000
-	if s.cfg.AppConfig != nil && s.cfg.AppConfig.Incus.CodeUID != 0 {
-		codeUID = s.cfg.AppConfig.Incus.CodeUID
+	appCfg := s.GetConfig()
+	if appCfg != nil && appCfg.Incus.CodeUID != 0 {
+		codeUID = appCfg.Incus.CodeUID
 	}
 
 	bridge, err := NewBridge(ws, containerID, tmuxSession, codeUID)

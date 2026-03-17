@@ -29,7 +29,7 @@ var projectMarkers = []string{
 }
 
 func (s *Server) handleListWorkspaces(w http.ResponseWriter, r *http.Request) {
-	roots := s.cfg.AppConfig.Dashboard.WorkspaceRoots
+	roots := s.GetConfig().Dashboard.WorkspaceRoots
 	var workspaces []WorkspaceInfo
 
 	for _, root := range roots {
@@ -80,15 +80,18 @@ func (s *Server) handleAddWorkspace(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	s.cfgMu.Lock()
 	roots := s.cfg.AppConfig.Dashboard.WorkspaceRoots
 	for _, r := range roots {
 		if config.ExpandPath(r) == expanded {
+			s.cfgMu.Unlock()
 			s.writeError(w, "already registered", 409)
 			return
 		}
 	}
 
 	s.cfg.AppConfig.Dashboard.WorkspaceRoots = append(roots, req.Path)
+	s.cfgMu.Unlock()
 	w.WriteHeader(201)
 	s.writeJSON(w, map[string]string{"status": "added"})
 }
@@ -99,6 +102,7 @@ func (s *Server) handleRemoveWorkspace(w http.ResponseWriter, r *http.Request) {
 		s.writeError(w, "path query parameter required", 400)
 		return
 	}
+	s.cfgMu.Lock()
 	roots := s.cfg.AppConfig.Dashboard.WorkspaceRoots
 	var newRoots []string
 	found := false
@@ -110,10 +114,12 @@ func (s *Server) handleRemoveWorkspace(w http.ResponseWriter, r *http.Request) {
 		newRoots = append(newRoots, root)
 	}
 	if !found {
+		s.cfgMu.Unlock()
 		s.writeError(w, "workspace root not found", 404)
 		return
 	}
 	s.cfg.AppConfig.Dashboard.WorkspaceRoots = newRoots
+	s.cfgMu.Unlock()
 	w.WriteHeader(204)
 }
 
