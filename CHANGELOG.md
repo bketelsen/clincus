@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.0] - 2026-03-17
+
+### Added
+
+- Set up squad team for clincus project
+- **cli:** Add charmbracelet/fang for styled CLI output
+- **cli:** Upgrade to fang v2, use built-in completions and manpages
+
+### CI
+
+- Add workflow_dispatch trigger to docs workflow
+
+### Documentation
+
+- Document architectural decisions in squad decisions log
+
+### Other
+
+- Add a squad
+- Makefile add check
+
+### Styling
+
+- Fix import ordering in root.go
+
 ## [0.3.0] - 2026-03-17
 
 ### Added
@@ -97,6 +122,7 @@ All notable changes to this project will be documented in this file.
 - Delete monitor CLI subcommand
 - Update .gitignore for completions, manpages, site, and webui dist
 
+[0.4.0]: https://github.com/bketelsen/clincus/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/bketelsen/clincus/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/bketelsen/clincus/compare/v0.1.0...v0.2.0
 
