@@ -108,8 +108,9 @@ func listenLoop(handler http.Handler, initialPort int, restartCh <-chan int) err
 	startServer := func(port int) *http.Server {
 		addr := fmt.Sprintf("127.0.0.1:%d", port)
 		httpSrv := &http.Server{
-			Addr:    addr,
-			Handler: handler,
+			Addr:              addr,
+			Handler:           handler,
+			ReadHeaderTimeout: 10 * time.Second,
 		}
 
 		mu.Lock()

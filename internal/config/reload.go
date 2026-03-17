@@ -12,13 +12,13 @@ type ConfigManager struct {
 	mu       sync.RWMutex
 	cfg      *Config
 	watcher  *Watcher
-	onChange func(old, new *Config) // optional callback for config changes
+	onChange func(old, updated *Config) // optional callback for config changes
 }
 
 // NewConfigManager creates a ConfigManager, loads the initial config, and
 // starts watching the system and user config files for changes.
 // onChange is called (in a separate goroutine) after a successful reload.
-func NewConfigManager(onChange func(old, new *Config)) (*ConfigManager, error) {
+func NewConfigManager(onChange func(old, updated *Config)) (*ConfigManager, error) {
 	cfg, err := Load()
 	if err != nil {
 		return nil, err
