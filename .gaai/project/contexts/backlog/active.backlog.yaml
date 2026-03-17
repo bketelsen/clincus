@@ -22,7 +22,8 @@ items:
     epic: E01
     title: "Watch config files and hot-reload on change"
     priority: high
-    status: refined
+    status: in_progress
+    started_at: "2026-03-17T17:29:23Z"
     artefact: contexts/artefacts/stories/E01S03.story.md
     dependencies: []
     notes: "Discovery session 2026-03-17. Independent of API story — can be parallelized."
