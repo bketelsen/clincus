@@ -94,7 +94,7 @@ Do not consider a feature complete until docs are updated. Include doc updates i
 - `.github/workflows/ci.yml` — Build, test, lint on push/PR to main
 - `.github/workflows/release.yml` — GoReleaser on `v*` tags
 - `.github/workflows/docs.yml` — MkDocs deploy to GitHub Pages on docs changes
-- golangci-lint uses v2 config format — requires `golangci-lint-action@v7` with `version: v2`
+- golangci-lint uses v2 config format — requires `golangci-lint-action@v7` with a specific version (e.g. `version: v2.11`), not just `v2`
 
 ## Release Process
 

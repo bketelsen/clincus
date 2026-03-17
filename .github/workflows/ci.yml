@@ -20,7 +20,7 @@ jobs:
       - name: Lint
         uses: golangci/golangci-lint-action@v7
         with:
-          version: v2
+          version: v2.11
       - name: Build frontend
         run: make web
       - name: Build
