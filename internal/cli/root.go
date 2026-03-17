@@ -1,10 +1,12 @@
 package cli
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/bketelsen/clincus/internal/config"
 	"github.com/bketelsen/clincus/internal/container"
+	"github.com/charmbracelet/fang"
 	"github.com/spf13/cobra"
 )
 
@@ -65,7 +67,7 @@ Examples:
   clincus images                   # List available images
   clincus list                     # List active sessions
 `,
-	Version: Version,
+	// Version is handled by fang via WithVersion/WithCommit options.
 	// When called without subcommand, run shell command
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Execute shell command with the same args
@@ -98,9 +100,13 @@ Examples:
 	},
 }
 
-// Execute runs the root command
-func Execute() error {
-	return rootCmd.Execute()
+// Execute runs the root command with fang styling and options.
+func Execute(ctx context.Context) error {
+	return fang.Execute(ctx, rootCmd,
+		fang.WithVersion(Version),
+		fang.WithCommit(Commit),
+		fang.WithoutManpage(), // We have our own man command using cobra/doc
+	)
 }
 
 func init() {
