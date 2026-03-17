@@ -47,8 +47,12 @@ items:
     epic: E01
     title: "Display configuration in the web dashboard"
     priority: medium
-    status: in_progress
+    status: done
     started_at: "2026-03-17T17:55:52Z"
+    pr_url: "https://github.com/bketelsen/clincus/pull/9"
+    pr_number: 9
+    pr_status: "open"
+    completed_at: "2026-03-17T18:01:51Z"
     artefact: contexts/artefacts/stories/E01S02.story.md
     dependencies: [E01S01, E01S04]
     notes: "Discovery session 2026-03-17. Final frontend story — depends on API + events."
