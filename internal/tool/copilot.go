@@ -1,6 +1,5 @@
 package tool
 
-
 // CopilotTool implements Tool for GitHub Copilot CLI (https://gh.io/copilot)
 type CopilotTool struct{}
 
