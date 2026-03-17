@@ -8,11 +8,7 @@ import (
 )
 
 func (s *Server) handleGetConfig(w http.ResponseWriter, r *http.Request) {
-	appCfg := s.GetConfig()
-	s.writeJSON(w, map[string]any{
-		"port":            appCfg.Dashboard.Port,
-		"workspace_roots": appCfg.Dashboard.WorkspaceRoots,
-	})
+	s.writeJSON(w, s.GetConfig())
 }
 
 func (s *Server) handleUpdateConfig(w http.ResponseWriter, r *http.Request) {
