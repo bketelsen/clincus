@@ -81,10 +81,11 @@ func TestBroadcastConfigReloaded(t *testing.T) {
 
 	// Connect a WebSocket client to /ws/events.
 	wsURL := "ws" + ts.URL[len("http"):] + "/ws/events"
-	ws, _, err := websocket.DefaultDialer.Dial(wsURL, nil)
+	ws, resp, err := websocket.DefaultDialer.Dial(wsURL, nil)
 	if err != nil {
 		t.Fatalf("failed to connect ws: %v", err)
 	}
+	defer resp.Body.Close()
 	defer ws.Close()
 
 	// Broadcast a config.reloaded event.

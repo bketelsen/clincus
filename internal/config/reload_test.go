@@ -48,7 +48,7 @@ func TestConfigManagerReloadRetainsOnError(t *testing.T) {
 
 func TestConfigManagerOnChangeCallback(t *testing.T) {
 	callbackCalled := false
-	cm, err := NewConfigManager(func(old, new *Config) {
+	cm, err := NewConfigManager(func(old, updated *Config) {
 		callbackCalled = true
 	})
 	if err != nil {
