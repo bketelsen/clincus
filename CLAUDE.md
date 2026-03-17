@@ -66,6 +66,17 @@ make clean       # Remove build artifacts
 
 Do not consider a feature complete until docs are updated. Include doc updates in the same commit or PR as the code change.
 
+## Git Workflow
+
+**Never commit directly to `main`.** All changes must go through a feature branch and pull request:
+
+1. Create a feature branch: `git checkout -b <type>/<short-description>` (e.g., `feat/copilot-support`, `fix/session-cleanup`)
+2. Make commits using [conventional commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:`, `ci:`, `refactor:`, `test:`, etc.)
+3. Push the branch and create a pull request against `main`
+4. Ensure CI passes before merging
+
+Branch naming convention: `<type>/<short-description>` where type matches the conventional commit type.
+
 ## Configuration
 
 - User config: `~/.config/clincus/config.toml`
