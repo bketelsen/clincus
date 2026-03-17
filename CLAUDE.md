@@ -61,8 +61,8 @@ make clean       # Remove build artifacts
   - API changes → `docs/reference/api.md`
   - New features → appropriate guide in `docs/guides/`
   - Install/setup changes → `docs/getting-started/`
-- **CHANGELOG.md** — Add entries for all user-visible changes
 - **TODO.md** — Check off completed items, add new items as discovered
+- **CHANGELOG.md** is auto-generated from conventional commits by git-cliff during releases — do NOT edit manually
 
 Do not consider a feature complete until docs are updated. Include doc updates in the same commit or PR as the code change.
 
