@@ -33,8 +33,12 @@ items:
     epic: E01
     title: "Notify frontend of config reload events"
     priority: medium
-    status: in_progress
+    status: done
     started_at: "2026-03-17T18:00:00Z"
+    completed_at: "2026-03-17T18:15:00Z"
+    pr_url: "https://github.com/bketelsen/clincus/pull/8"
+    pr_number: 8
+    pr_status: open
     artefact: contexts/artefacts/stories/E01S04.story.md
     dependencies: [E01S03, E01S01]
     notes: "Discovery session 2026-03-17. Depends on watcher and API."
