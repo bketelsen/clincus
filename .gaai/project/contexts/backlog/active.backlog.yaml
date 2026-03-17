@@ -1,0 +1,44 @@
+# GAAI Active Backlog
+# Execution queue — contains only Stories that are validated and ready for Delivery.
+# Rules:
+#   - One item = one Story
+#   - Must have a corresponding artefact with acceptance criteria
+#   - Keep under ~20 items; archive completed items to done/
+#   - Only Discovery may add items; only Delivery may update status
+
+items:
+  - id: E01S01
+    epic: E01
+    title: "Expose full read-only configuration via API"
+    priority: high
+    status: refined
+    artefact: contexts/artefacts/stories/E01S01.story.md
+    dependencies: []
+    notes: "Discovery session 2026-03-17. Foundation for E01S02 frontend."
+
+  - id: E01S03
+    epic: E01
+    title: "Watch config files and hot-reload on change"
+    priority: high
+    status: refined
+    artefact: contexts/artefacts/stories/E01S03.story.md
+    dependencies: []
+    notes: "Discovery session 2026-03-17. Independent of API story — can be parallelized."
+
+  - id: E01S04
+    epic: E01
+    title: "Notify frontend of config reload events"
+    priority: medium
+    status: refined
+    artefact: contexts/artefacts/stories/E01S04.story.md
+    dependencies: [E01S03, E01S01]
+    notes: "Discovery session 2026-03-17. Depends on watcher and API."
+
+  - id: E01S02
+    epic: E01
+    title: "Display configuration in the web dashboard"
+    priority: medium
+    status: refined
+    artefact: contexts/artefacts/stories/E01S02.story.md
+    dependencies: [E01S01, E01S04]
+    notes: "Discovery session 2026-03-17. Final frontend story — depends on API + events."
