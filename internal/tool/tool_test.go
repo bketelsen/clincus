@@ -273,6 +273,41 @@ func TestRegistryGetDefault(t *testing.T) {
 	}
 }
 
+func TestClaudeTool_ImplementsAutoEnv(t *testing.T) {
+	tool := NewClaude()
+	_, ok := tool.(ToolWithAutoEnv)
+	if !ok {
+		t.Fatal("ClaudeTool should implement ToolWithAutoEnv")
+	}
+}
+
+func TestClaudeTool_AutoEnv_InjectsGHToken(t *testing.T) {
+	t.Setenv("GH_TOKEN", "test-gh-token")
+
+	tool := NewClaude()
+	tae := tool.(ToolWithAutoEnv)
+	env := tae.AutoEnv()
+
+	if env["GH_TOKEN"] != "test-gh-token" {
+		t.Errorf("AutoEnv()[GH_TOKEN] = %q, want %q", env["GH_TOKEN"], "test-gh-token")
+	}
+}
+
+func TestClaudeTool_AutoEnv_NoToken(t *testing.T) {
+	t.Setenv("GH_TOKEN", "")
+	t.Setenv("GITHUB_TOKEN", "")
+
+	tool := NewClaude()
+	tae := tool.(ToolWithAutoEnv)
+	env := tae.AutoEnv()
+
+	// Should return empty map (or map without GH_TOKEN) when no token available
+	// gh CLI may or may not be installed, so just check it doesn't panic
+	if env == nil {
+		t.Fatal("AutoEnv() returned nil, want non-nil map")
+	}
+}
+
 // Helper functions
 
 func contains(slice []string, item string) bool {
