@@ -6,7 +6,7 @@ import (
 
 	"github.com/bketelsen/clincus/internal/config"
 	"github.com/bketelsen/clincus/internal/container"
-	"github.com/charmbracelet/fang"
+	"charm.land/fang/v2"
 	"github.com/spf13/cobra"
 )
 
@@ -105,7 +105,6 @@ func Execute(ctx context.Context) error {
 	return fang.Execute(ctx, rootCmd,
 		fang.WithVersion(Version),
 		fang.WithCommit(Commit),
-		fang.WithoutManpage(), // We have our own man command using cobra/doc
 	)
 }
 
