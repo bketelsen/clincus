@@ -8,6 +8,8 @@ Run [Claude Code](https://docs.anthropic.com/en/docs/claude-code),
 [Incus](https://linuxcontainers.org/incus/) containers with session
 persistence, a web dashboard, and resource limits.
 
+![Web Dashboard](assets/images/dashboard.png)
+
 ---
 
 ## Features
@@ -43,6 +45,8 @@ clincus list
 # Open the web dashboard
 clincus serve --open
 ```
+
+![Terminal Session](assets/images/session.png)
 
 ---
 

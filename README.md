@@ -8,6 +8,8 @@ Run [Claude Code](https://docs.anthropic.com/en/docs/claude-code),
 in isolated [Incus](https://linuxcontainers.org/incus/) containers
 with session persistence, a web dashboard, and resource limits.
 
+![Web Dashboard](docs/assets/images/dashboard.png)
+
 ## Features
 
 - **Container isolation** — each session runs in its own Incus container
@@ -41,6 +43,8 @@ clincus build
 # Start a Claude Code session
 clincus shell --tool claude ~/my-project
 ```
+
+![Terminal Session](docs/assets/images/session.png)
 
 ## Documentation
 
