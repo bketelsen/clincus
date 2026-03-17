@@ -61,8 +61,12 @@ items:
     epic: E01
     title: "Add Settings navigation link to dashboard sidebar"
     priority: high
-    status: in_progress
+    status: done
     started_at: "2026-03-17T18:45:45Z"
+    completed_at: "2026-03-17T18:47:55Z"
+    pr_url: "https://github.com/bketelsen/clincus/pull/11"
+    pr_number: 11
+    pr_status: "open"
     artefact: contexts/artefacts/stories/E01S05.story.md
     dependencies: [E01S02]
     notes: "Discovery session 2026-03-17. Settings page exists but has no nav link — usability gap."
