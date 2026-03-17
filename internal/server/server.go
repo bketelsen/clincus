@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"github.com/bketelsen/clincus/internal/config"
 )
@@ -19,6 +20,7 @@ type Options struct {
 
 type Server struct {
 	cfg    Options
+	cfgMu  sync.RWMutex // protects cfg.AppConfig during hot-reload
 	mux    *http.ServeMux
 	events *EventHub
 }
@@ -31,6 +33,23 @@ func New(cfg Options) *Server {
 
 func (s *Server) Handler() http.Handler {
 	return s.mux
+}
+
+// GetConfig returns the current AppConfig, safe for concurrent use.
+func (s *Server) GetConfig() *config.Config {
+	s.cfgMu.RLock()
+	defer s.cfgMu.RUnlock()
+	return s.cfg.AppConfig
+}
+
+// UpdateConfig swaps the server's config reference. Returns the old port so
+// the caller can detect whether an HTTP listener restart is needed (AC4).
+func (s *Server) UpdateConfig(newCfg *config.Config) (oldPort int) {
+	s.cfgMu.Lock()
+	defer s.cfgMu.Unlock()
+	oldPort = s.cfg.AppConfig.Dashboard.Port
+	s.cfg.AppConfig = newCfg
+	return oldPort
 }
 
 func (s *Server) Start() {
