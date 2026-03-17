@@ -117,9 +117,14 @@ The dashboard server watches config files for changes and reloads automatically.
 `~/.config/clincus/config.toml` or `/etc/clincus/config.toml` while the dashboard is running,
 changes take effect within a few seconds without restarting the server.
 
+When a config reload succeeds, the server broadcasts a `config.reloaded` event over the
+`/ws/events` WebSocket. The frontend listens for this event and re-fetches the configuration
+from `GET /api/config`, ensuring the dashboard always displays the current active settings.
+
 If you change the `[dashboard] port` in the config, the listener is restarted on the new port.
-Active WebSocket terminal connections will be dropped but tmux sessions inside containers
-continue running and clients can reconnect on the new port.
+The frontend WebSocket connection includes automatic reconnection — if the connection drops
+during a port change, the client reconnects and fetches the latest state. Active tmux sessions
+inside containers continue running and clients can reconnect on the new port.
 
 ---
 

@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/bketelsen/clincus/internal/config"
 )
@@ -54,6 +55,16 @@ func (s *Server) UpdateConfig(newCfg *config.Config) (oldPort int) {
 
 func (s *Server) Start() {
 	s.StartIncusEventWatcher()
+}
+
+// BroadcastConfigReloaded sends a config.reloaded event to all connected
+// WebSocket clients. Called by the config watcher onChange callback after a
+// successful reload. Only successful reloads trigger this (AC5).
+func (s *Server) BroadcastConfigReloaded() {
+	s.events.Broadcast(map[string]any{
+		"type":      "config.reloaded",
+		"timestamp": time.Now().UTC().Format(time.RFC3339),
+	})
 }
 
 func (s *Server) routes() {

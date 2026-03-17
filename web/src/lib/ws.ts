@@ -36,11 +36,48 @@ export function connectTerminal(
   };
 }
 
+/**
+ * Connect to the /ws/events WebSocket endpoint with automatic reconnection.
+ * When the connection drops and is re-established, onReconnect is called so
+ * the caller can re-fetch current state (AC4).
+ */
 export function connectEvents(
-  onEvent: (event: { type: string; id?: string; workspace?: string }) => void,
+  onEvent: (event: { type: string; id?: string; timestamp?: string }) => void,
+  onReconnect?: () => void,
 ): { close: () => void } {
-  const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
-  const ws = new WebSocket(`${proto}//${location.host}/ws/events`);
-  ws.onmessage = (evt) => onEvent(JSON.parse(evt.data));
-  return { close: () => ws.close() };
+  let ws: WebSocket | null = null;
+  let closed = false;
+  let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+
+  function connect() {
+    if (closed) return;
+
+    const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    ws = new WebSocket(`${proto}//${location.host}/ws/events`);
+
+    ws.onmessage = (evt) => onEvent(JSON.parse(evt.data));
+
+    ws.onclose = () => {
+      if (closed) return;
+      // AC4: reconnect after a brief delay, then re-fetch current state.
+      reconnectTimer = setTimeout(() => {
+        connect();
+        if (onReconnect) onReconnect();
+      }, 2000);
+    };
+
+    ws.onerror = () => {
+      // onerror is always followed by onclose — reconnect handled there.
+    };
+  }
+
+  connect();
+
+  return {
+    close: () => {
+      closed = true;
+      if (reconnectTimer !== null) clearTimeout(reconnectTimer);
+      if (ws) ws.close();
+    },
+  };
 }

@@ -59,6 +59,12 @@ func serveCommand(cmd *cobra.Command, args []string) error {
 	// Set up config hot-reload via ConfigManager.
 	configMgr, err := cfgpkg.NewConfigManager(func(oldCfg, newCfg *cfgpkg.Config) {
 		oldPort := srv.UpdateConfig(newCfg)
+
+		// AC1/AC5: Broadcast config.reloaded event to all connected WebSocket
+		// clients. This only fires on successful reloads — failed reloads never
+		// reach the onChange callback (see ConfigManager.reload).
+		srv.BroadcastConfigReloaded()
+
 		newPort := newCfg.Dashboard.Port
 		if newPort == 0 {
 			newPort = 3000

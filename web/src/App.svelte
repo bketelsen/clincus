@@ -24,6 +24,13 @@
     loadSessions();
     loadWorkspaces();
 
+    // AC4: on reconnect, re-fetch all state so the UI is current even if
+    // events were missed while the WebSocket was disconnected.
+    function refreshAll() {
+      loadSessions();
+      loadWorkspaces();
+    }
+
     const events = connectEvents((evt) => {
       if (evt.type === 'session.started') {
         loadSessions();
@@ -31,8 +38,11 @@
       } else if (evt.type === 'session.stopped' && evt.id) {
         removeSession(evt.id);
         loadWorkspaces();
+      } else if (evt.type === 'config.reloaded') {
+        // AC3: config changed on disk — re-fetch config-dependent data.
+        loadWorkspaces();
       }
-    });
+    }, refreshAll);
 
     return () => {
       window.removeEventListener('hashchange', parseRoute);
