@@ -11,6 +11,7 @@ the project config (`.clincus.toml`), or the user config (`~/.config/clincus/con
 |-----------|-------------|-----------------|
 | `claude` | [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | `~/.claude/` directory |
 | `opencode` | [opencode](https://github.com/nicholasgasior/opencode) | `~/.opencode.json` file |
+| `copilot` | [GitHub Copilot CLI](https://gh.io/copilot) | `~/.copilot/` directory |
 | `aider` | [Aider](https://aider.chat) | `ANTHROPIC_API_KEY` env var |
 
 ---
@@ -22,6 +23,7 @@ the project config (`.clincus.toml`), or the user config (`~/.config/clincus/con
 ```bash
 clincus shell --tool claude ~/my-project
 clincus shell --tool opencode ~/my-project
+clincus shell --tool copilot ~/my-project
 clincus shell --tool aider ~/my-project
 ```
 
@@ -91,6 +93,44 @@ name = "opencode"
 
 When resuming an opencode session, Clincus detects the `.opencode/` directory in your
 workspace and passes it through automatically.
+
+---
+
+## GitHub Copilot CLI
+
+GitHub Copilot CLI stores its credentials and configuration in `~/.copilot/`. Clincus copies
+this directory into the container at session start, preserving your authentication and settings.
+
+```toml
+[tool]
+name = "copilot"
+```
+
+### Authentication
+
+Clincus auto-detects your GitHub token from `gh auth token` and injects it as `GH_TOKEN`
+into the container. If you have `gh` CLI authenticated on the host, copilot sessions
+authenticate automatically — no extra flags needed.
+
+You can also provide a token explicitly via `--env` (overrides auto-detection):
+
+```bash
+clincus shell --tool copilot --env GH_TOKEN=$GH_TOKEN ~/my-project
+```
+
+Token resolution order:
+1. `--env GH_TOKEN=...` (explicit, highest priority)
+2. `GH_TOKEN` environment variable
+3. `GITHUB_TOKEN` environment variable
+4. `gh auth token` output (automatic)
+
+### Configuration Files
+
+Clincus copies these files from `~/.copilot/` into the container:
+
+- `config.json` — main configuration
+- `mcp-config.json` — MCP server configuration
+- `agents/` — custom agent definitions
 
 ---
 

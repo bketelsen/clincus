@@ -9,6 +9,7 @@ import (
 // registry maps tool names to their factory functions
 var registry = map[string]func() Tool{
 	"claude":   NewClaude,
+	"copilot":  NewCopilot,
 	"opencode": NewOpencode,
 }
 

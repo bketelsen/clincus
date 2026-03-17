@@ -191,6 +191,27 @@ install_opencode() {
 }
 
 #######################################
+# Install GitHub Copilot CLI
+# See: https://gh.io/copilot
+#######################################
+install_copilot() {
+    log "Installing GitHub Copilot CLI..."
+
+    su - "$CODE_USER" -c 'curl -fsSL https://gh.io/copilot-install | bash'
+
+    local COPILOT_PATH="/home/$CODE_USER/.local/bin/copilot"
+    if [[ ! -x "$COPILOT_PATH" ]]; then
+        log "ERROR: copilot binary not found at $COPILOT_PATH after installation."
+        log "Installation may have failed or installed to an unexpected location."
+        exit 1
+    fi
+
+    ln -sf "$COPILOT_PATH" /usr/local/bin/copilot
+
+    log "copilot $(copilot --version 2>/dev/null || echo 'installed')"
+}
+
+#######################################
 # Install dummy (test stub for testing)
 #######################################
 install_dummy() {
@@ -383,6 +404,7 @@ main() {
     configure_tmp_cleanup
     install_claude_cli
     install_opencode
+    install_copilot
     install_dummy
     install_docker
     install_github_cli

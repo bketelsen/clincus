@@ -13,7 +13,7 @@ All notable changes to this project will be documented in this file.
 - Workspace mounting and file transfer
 - Container snapshots and rollback
 - Resource limits (CPU, memory, time)
-- Multi-tool support (Claude Code, opencode, Aider)
+- Multi-tool support (Claude Code, GitHub Copilot CLI, opencode, Aider)
 - MkDocs Material documentation site
 - GoReleaser Pro packaging (deb, rpm, apk)
 - Shell completions (bash, zsh, fish)

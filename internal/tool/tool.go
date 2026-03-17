@@ -151,6 +151,27 @@ type ToolWithHomeConfigFile interface {
 	HomeConfigFileName() string
 }
 
+// ToolWithAutoEnv is an optional interface for tools that need environment
+// variables auto-injected into the container. Values are resolved on the
+// host before container execution. User-provided --env flags take precedence.
+type ToolWithAutoEnv interface {
+	Tool
+	// AutoEnv returns environment variables to inject into the container.
+	AutoEnv() map[string]string
+}
+
+// ToolWithEssentialFiles is an optional interface for tools that declare
+// which files and directories to copy from their config directory.
+// Tools that don't implement this get Claude's defaults
+// (.credentials.json, config.yml, settings.json, plugins/, hooks/).
+type ToolWithEssentialFiles interface {
+	Tool
+	// EssentialFiles returns filenames to copy (e.g., ["config.json", "mcp-config.json"]).
+	EssentialFiles() []string
+	// EssentialDirs returns directory names to copy (e.g., ["agents"]).
+	EssentialDirs() []string
+}
+
 // ToolWithEffortLevel is an optional interface for tools that support
 // configurable effort levels (e.g., Claude's low/medium/high effort).
 type ToolWithEffortLevel interface {

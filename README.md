@@ -3,6 +3,7 @@
 Secure and fast container runtime for AI coding tools on Linux.
 
 Run [Claude Code](https://docs.anthropic.com/en/docs/claude-code),
+[GitHub Copilot CLI](https://gh.io/copilot),
 [opencode](https://github.com/nicholasgasior/opencode),
 [Aider](https://aider.chat), and other AI assistants
 in isolated [Incus](https://linuxcontainers.org/incus/) containers
@@ -15,7 +16,7 @@ with session persistence, a web dashboard, and resource limits.
 - **Container isolation** — each session runs in its own Incus container
 - **Session persistence** — save and resume AI conversations with full history
 - **Web dashboard** — launch and manage sessions from your browser
-- **Multi-tool support** — Claude Code, opencode, Aider, and custom tools
+- **Multi-tool support** — Claude Code, GitHub Copilot CLI, opencode, Aider, and custom tools
 - **Workspace mounting** — project files mounted in isolated containers
 - **Snapshots** — checkpoint and rollback container state
 - **Resource limits** — CPU, memory, and time limits per session

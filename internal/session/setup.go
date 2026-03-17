@@ -615,11 +615,16 @@ func setupCLIConfig(mgr *container.Manager, hostCLIConfigPath, homeDir string, t
 		return fmt.Errorf("failed to create %s directory: %w", configDirName, err)
 	}
 
-	// Copy only essential files from config directory (skip debug logs with permission issues)
-	essentialFiles := []string{
-		".credentials.json",
-		"config.yml",
-		"settings.json",
+	// Determine which files/dirs to copy — tool can override via ToolWithEssentialFiles
+	var essentialFiles []string
+	var essentialDirs []string
+	if tef, ok := t.(tool.ToolWithEssentialFiles); ok {
+		essentialFiles = tef.EssentialFiles()
+		essentialDirs = tef.EssentialDirs()
+	} else {
+		// Default: Claude's files (backward compatible)
+		essentialFiles = []string{".credentials.json", "config.yml", "settings.json"}
+		essentialDirs = []string{"plugins", "hooks"}
 	}
 
 	logger(fmt.Sprintf("Copying essential CLI config files from %s", hostCLIConfigPath))
@@ -636,11 +641,7 @@ func setupCLIConfig(mgr *container.Manager, hostCLIConfigPath, homeDir string, t
 		}
 	}
 
-	// Copy essential subdirectories (e.g., plugins/ for Claude Code global plugins)
-	essentialDirs := []string{
-		"plugins",
-		"hooks",
-	}
+	// Copy essential subdirectories
 	for _, dirname := range essentialDirs {
 		srcDir := filepath.Join(hostCLIConfigPath, dirname)
 		destDir := filepath.Join(stateDir, dirname)

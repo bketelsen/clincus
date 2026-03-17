@@ -422,9 +422,10 @@ func buildCLICommand(sessionID string, useResumeFlag, restoreOnly bool, sessions
 }
 
 // buildContainerEnv constructs the environment variables map and user pointer for container execution.
-// It sets HOME, TERM (sanitized), IS_SANDBOX, merges user-provided --env vars, and re-sanitizes TERM
+// It sets HOME, TERM (sanitized), IS_SANDBOX, auto-injects tool-specific env vars, merges
+// user-provided --env vars (which take precedence over auto-injected), and re-sanitizes TERM
 // if overridden.
-func buildContainerEnv(result *session.SetupResult) (map[string]string, *int) {
+func buildContainerEnv(result *session.SetupResult, t tool.Tool) (map[string]string, *int) {
 	user := container.CodeUID
 	if result.RunAsRoot {
 		user = 0
@@ -437,7 +438,14 @@ func buildContainerEnv(result *session.SetupResult) (map[string]string, *int) {
 		"IS_SANDBOX": "1",
 	}
 
-	// Merge user-provided --env vars
+	// Auto-inject tool-specific env vars (before user --env so user can override)
+	if tae, ok := t.(tool.ToolWithAutoEnv); ok {
+		for k, v := range tae.AutoEnv() {
+			containerEnv[k] = v
+		}
+	}
+
+	// Merge user-provided --env vars (takes precedence over auto-injected)
 	for _, e := range envVars {
 		parts := strings.SplitN(e, "=", 2)
 		if len(parts) == 2 {
@@ -477,7 +485,7 @@ func ensureTmuxServer(mgr *container.Manager, userPtr *int) {
 // runCLI executes the CLI tool in the container interactively
 func runCLI(result *session.SetupResult, sessionID string, useResumeFlag, restoreOnly bool, sessionsDir, resumeID string, t tool.Tool) error {
 	cmdToRun := buildCLICommand(sessionID, useResumeFlag, restoreOnly, sessionsDir, resumeID, t)
-	containerEnv, userPtr := buildContainerEnv(result)
+	containerEnv, userPtr := buildContainerEnv(result, t)
 
 	workspacePath := result.ContainerWorkspacePath
 	if workspacePath == "" {
@@ -505,7 +513,7 @@ func runCLIInTmux(result *session.SetupResult, sessionID string, detached bool, 
 	}
 
 	cliCmd := buildCLICommand(sessionID, useResumeFlag, restoreOnly, sessionsDir, resumeID, t)
-	containerEnv, userPtr := buildContainerEnv(result)
+	containerEnv, userPtr := buildContainerEnv(result, t)
 
 	// Build environment export commands for tmux
 	envExports := ""
