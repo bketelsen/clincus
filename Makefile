@@ -34,7 +34,7 @@ completions:
 
 manpages:
 	mkdir -p manpages
-	go run ./cmd/clincus man --dir manpages
+	go run ./cmd/clincus man > manpages/clincus.1
 	gzip -f manpages/*.1
 
 bump: build test fmt lint
