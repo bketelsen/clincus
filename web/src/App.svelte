@@ -27,8 +27,10 @@
     const events = connectEvents((evt) => {
       if (evt.type === 'session.started') {
         loadSessions();
+        loadWorkspaces();
       } else if (evt.type === 'session.stopped' && evt.id) {
         removeSession(evt.id);
+        loadWorkspaces();
       }
     });
 

@@ -46,12 +46,9 @@
 
 <div class="card">
   <a class="info" href="#/terminal/{session.id}">
-    <div class="name">{session.id}</div>
+    <div class="name">{session.workspace ? session.workspace.split('/').pop() : session.id}</div>
     <div class="meta">
-      {session.tool || 'unknown'} &middot; {session.status}
-      {#if session.workspace}
-        &middot; {session.workspace.split('/').pop()}
-      {/if}
+      {session.tool || 'unknown'} &middot; {session.status} &middot; {session.id}
     </div>
   </a>
   <div class="actions">

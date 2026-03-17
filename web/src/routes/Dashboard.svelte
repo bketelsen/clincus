@@ -3,7 +3,7 @@
 </script>
 
 <div class="dashboard">
-  <h2>Workspaces</h2>
+  <h2>Projects</h2>
   <WorkspaceGrid />
 </div>
 
