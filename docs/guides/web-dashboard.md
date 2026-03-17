@@ -85,6 +85,18 @@ includes the workspace, tool, start time, and session ID.
 The **Workspaces** tab shows configured workspace roots. Add directories here to make them
 available in the New Session dialog without typing full paths.
 
+### Settings / Configuration View
+
+The **Settings** page displays the full Clincus configuration in a structured, read-only layout.
+All config sections are shown: defaults, paths, incus, tool, mounts, limits, git, security,
+profiles, and dashboard. Values are rendered with clear labels grouped by section.
+
+- **Workspace Roots** at the top remains editable (add/remove paths)
+- All other config values are read-only — edit your TOML config files to change them
+- The **Mounts** and **Profiles** sections are collapsible for large configurations
+- Empty or default values display a dash to indicate no override is set
+- The display updates automatically when config files change on disk (via `config.reloaded` events)
+
 ---
 
 ## Workspace Roots

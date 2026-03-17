@@ -1,4 +1,4 @@
-import type { Session, Workspace, HistoryEntry } from './types';
+import type { Session, Workspace, HistoryEntry, ClincusConfig } from './types';
 
 const BASE = '';
 
@@ -39,5 +39,5 @@ export const api = {
   removeWorkspace: (path: string) =>
     del(`/api/workspaces?path=${encodeURIComponent(path)}`),
   getTools: () => get<string[]>('/api/tools'),
-  getConfig: () => get<{ port: number; workspace_roots: string[] }>('/api/config'),
+  getConfig: () => get<ClincusConfig>('/api/config'),
 };

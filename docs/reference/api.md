@@ -16,19 +16,49 @@ All REST endpoints return `application/json`. Error responses use the shape:
 
 ### `GET /api/config`
 
-Return the current Clincus configuration.
+Return the full merged Clincus configuration (system + user defaults applied).
 
-**Response:** the merged config object (same shape as `config.toml` translated to JSON).
+**Response:** a JSON object containing all top-level config sections. Keys use `snake_case`
+to match `config.toml` field names.
+
+```json
+{
+  "defaults": { "image": "clincus", "persistent": false, "model": "claude-sonnet-4-5" },
+  "paths": { "sessions_dir": "...", "storage_dir": "...", "logs_dir": "...", "preserve_workspace_path": false },
+  "incus": { "project": "default", "group": "incus-admin", "code_uid": 1000, "code_user": "code", "disable_shift": false },
+  "tool": { "name": "claude", "binary": "", "claude": { "effort_level": "" } },
+  "mounts": { "default": [] },
+  "limits": {
+    "cpu": { "count": "", "allowance": "", "priority": 0 },
+    "memory": { "limit": "", "enforce": "soft", "swap": "true" },
+    "disk": { "read": "", "write": "", "max": "", "priority": 0, "tmpfs_size": "" },
+    "runtime": { "max_duration": "", "max_processes": 0, "auto_stop": true, "stop_graceful": true }
+  },
+  "git": { "writable_hooks": false },
+  "security": { "protected_paths": [".git/hooks", ".git/config", ".husky", ".vscode"], "additional_protected_paths": [], "disable_protection": false },
+  "profiles": {},
+  "dashboard": { "port": 3000, "workspace_roots": [] }
+}
+```
 
 ---
 
 ### `PUT /api/config`
 
-Update the current configuration at runtime.
+Update runtime dashboard settings (port and workspace roots).
 
-**Request body:** partial or full config object.
+**Request body:**
 
-**Response:** `200 OK` with the updated config, or `400 Bad Request`.
+```json
+{
+  "port": 3001,
+  "workspace_roots": ["/home/user/projects"]
+}
+```
+
+Both fields are optional. Only provided fields are updated.
+
+**Response:** `200 OK` with `{"status": "updated"}`, or `400 Bad Request`.
 
 ---
 

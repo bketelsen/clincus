@@ -7,21 +7,21 @@ import (
 
 // Config represents the complete configuration
 type Config struct {
-	Defaults  DefaultsConfig           `toml:"defaults"`
-	Paths     PathsConfig              `toml:"paths"`
-	Incus     IncusConfig              `toml:"incus"`
-	Tool      ToolConfig               `toml:"tool"`
-	Mounts    MountsConfig             `toml:"mounts"`
-	Limits    LimitsConfig             `toml:"limits"`
-	Git       GitConfig                `toml:"git"`
-	Security  SecurityConfig           `toml:"security"`
-	Profiles  map[string]ProfileConfig `toml:"profiles"`
-	Dashboard DashboardConfig          `toml:"dashboard"`
+	Defaults  DefaultsConfig           `toml:"defaults" json:"defaults"`
+	Paths     PathsConfig              `toml:"paths" json:"paths"`
+	Incus     IncusConfig              `toml:"incus" json:"incus"`
+	Tool      ToolConfig               `toml:"tool" json:"tool"`
+	Mounts    MountsConfig             `toml:"mounts" json:"mounts"`
+	Limits    LimitsConfig             `toml:"limits" json:"limits"`
+	Git       GitConfig                `toml:"git" json:"git"`
+	Security  SecurityConfig           `toml:"security" json:"security"`
+	Profiles  map[string]ProfileConfig `toml:"profiles" json:"profiles"`
+	Dashboard DashboardConfig          `toml:"dashboard" json:"dashboard"`
 }
 
 // GitConfig contains git-related security settings
 type GitConfig struct {
-	WritableHooks *bool `toml:"writable_hooks"` // Allow container to write to .git/hooks (default: false)
+	WritableHooks *bool `toml:"writable_hooks" json:"writable_hooks"` // Allow container to write to .git/hooks (default: false)
 }
 
 // SecurityConfig contains security-related settings for workspace protection
@@ -30,11 +30,11 @@ type SecurityConfig struct {
 	// These paths are protected to prevent containers from modifying files that could
 	// execute automatically on the host (e.g., git hooks, IDE configs, etc.)
 	// Defaults: [".git/hooks", ".git/config", ".husky", ".vscode"]
-	ProtectedPaths []string `toml:"protected_paths"`
+	ProtectedPaths []string `toml:"protected_paths" json:"protected_paths"`
 	// AdditionalProtectedPaths allows adding more paths without replacing defaults
-	AdditionalProtectedPaths []string `toml:"additional_protected_paths"`
+	AdditionalProtectedPaths []string `toml:"additional_protected_paths" json:"additional_protected_paths"`
 	// DisableProtection completely disables read-only mounting of protected paths
-	DisableProtection bool `toml:"disable_protection"`
+	DisableProtection bool `toml:"disable_protection" json:"disable_protection"`
 }
 
 // GetEffectiveProtectedPaths returns the combined list of protected paths
@@ -60,102 +60,102 @@ func DefaultProtectedPaths() []string {
 
 // DefaultsConfig contains default settings
 type DefaultsConfig struct {
-	Image      string `toml:"image"`
-	Persistent bool   `toml:"persistent"`
-	Model      string `toml:"model"`
+	Image      string `toml:"image" json:"image"`
+	Persistent bool   `toml:"persistent" json:"persistent"`
+	Model      string `toml:"model" json:"model"`
 }
 
 // PathsConfig contains path settings
 type PathsConfig struct {
-	SessionsDir           string `toml:"sessions_dir"`
-	StorageDir            string `toml:"storage_dir"`
-	LogsDir               string `toml:"logs_dir"`
-	PreserveWorkspacePath bool   `toml:"preserve_workspace_path"` // Mount workspace at same path as host (e.g., /home/user/project instead of /workspace)
+	SessionsDir           string `toml:"sessions_dir" json:"sessions_dir"`
+	StorageDir            string `toml:"storage_dir" json:"storage_dir"`
+	LogsDir               string `toml:"logs_dir" json:"logs_dir"`
+	PreserveWorkspacePath bool   `toml:"preserve_workspace_path" json:"preserve_workspace_path"` // Mount workspace at same path as host (e.g., /home/user/project instead of /workspace)
 }
 
 // IncusConfig contains Incus-specific settings
 type IncusConfig struct {
-	Project      string `toml:"project"`
-	Group        string `toml:"group"`
-	CodeUID      int    `toml:"code_uid"`
-	CodeUser     string `toml:"code_user"`
-	DisableShift bool   `toml:"disable_shift"` // Disable UID shifting (for Colima/Lima environments)
+	Project      string `toml:"project" json:"project"`
+	Group        string `toml:"group" json:"group"`
+	CodeUID      int    `toml:"code_uid" json:"code_uid"`
+	CodeUser     string `toml:"code_user" json:"code_user"`
+	DisableShift bool   `toml:"disable_shift" json:"disable_shift"` // Disable UID shifting (for Colima/Lima environments)
 }
 
 // ProfileConfig represents a named profile
 type ProfileConfig struct {
-	Image       string            `toml:"image"`
-	Environment map[string]string `toml:"environment"`
-	Persistent  bool              `toml:"persistent"`
-	Limits      *LimitsConfig     `toml:"limits"`
+	Image       string            `toml:"image" json:"image"`
+	Environment map[string]string `toml:"environment" json:"environment"`
+	Persistent  bool              `toml:"persistent" json:"persistent"`
+	Limits      *LimitsConfig     `toml:"limits" json:"limits,omitempty"`
 }
 
 // ToolConfig represents AI coding tool configuration
 type ToolConfig struct {
-	Name   string           `toml:"name"`   // Tool name: "claude", "aider", "cursor", etc.
-	Binary string           `toml:"binary"` // Binary name to execute (if empty, uses tool name)
-	Claude ClaudeToolConfig `toml:"claude"` // Claude-specific settings
+	Name   string           `toml:"name" json:"name"`     // Tool name: "claude", "aider", "cursor", etc.
+	Binary string           `toml:"binary" json:"binary"` // Binary name to execute (if empty, uses tool name)
+	Claude ClaudeToolConfig `toml:"claude" json:"claude"`  // Claude-specific settings
 }
 
 // ClaudeToolConfig contains Claude Code-specific settings
 type ClaudeToolConfig struct {
-	EffortLevel string `toml:"effort_level"` // Effort level: "low", "medium", "high" (default: "medium")
+	EffortLevel string `toml:"effort_level" json:"effort_level"` // Effort level: "low", "medium", "high" (default: "medium")
 }
 
 // MountEntry represents a single directory mount configuration
 type MountEntry struct {
-	Host      string `toml:"host"`      // Host path (supports ~ expansion)
-	Container string `toml:"container"` // Container path (must be absolute)
+	Host      string `toml:"host" json:"host"`           // Host path (supports ~ expansion)
+	Container string `toml:"container" json:"container"` // Container path (must be absolute)
 }
 
 // MountsConfig contains mount-related configuration
 type MountsConfig struct {
-	Default []MountEntry `toml:"default"` // Default mounts for all sessions
+	Default []MountEntry `toml:"default" json:"default"` // Default mounts for all sessions
 }
 
 // LimitsConfig contains resource and time limits for containers
 type LimitsConfig struct {
-	CPU     CPULimits     `toml:"cpu"`
-	Memory  MemoryLimits  `toml:"memory"`
-	Disk    DiskLimits    `toml:"disk"`
-	Runtime RuntimeLimits `toml:"runtime"`
+	CPU     CPULimits     `toml:"cpu" json:"cpu"`
+	Memory  MemoryLimits  `toml:"memory" json:"memory"`
+	Disk    DiskLimits    `toml:"disk" json:"disk"`
+	Runtime RuntimeLimits `toml:"runtime" json:"runtime"`
 }
 
 // CPULimits contains CPU resource limits
 type CPULimits struct {
-	Count     string `toml:"count"`     // "2", "0-3", "" (unlimited)
-	Allowance string `toml:"allowance"` // "50%", "25ms/100ms"
-	Priority  int    `toml:"priority"`  // 0-10
+	Count     string `toml:"count" json:"count"`         // "2", "0-3", "" (unlimited)
+	Allowance string `toml:"allowance" json:"allowance"` // "50%", "25ms/100ms"
+	Priority  int    `toml:"priority" json:"priority"`   // 0-10
 }
 
 // MemoryLimits contains memory resource limits
 type MemoryLimits struct {
-	Limit   string `toml:"limit"`   // "512MiB", "2GiB", "50%", "" (unlimited)
-	Enforce string `toml:"enforce"` // "hard" or "soft"
-	Swap    string `toml:"swap"`    // "true", "false", or size
+	Limit   string `toml:"limit" json:"limit"`     // "512MiB", "2GiB", "50%", "" (unlimited)
+	Enforce string `toml:"enforce" json:"enforce"` // "hard" or "soft"
+	Swap    string `toml:"swap" json:"swap"`       // "true", "false", or size
 }
 
 // DiskLimits contains disk I/O resource limits
 type DiskLimits struct {
-	Read      string `toml:"read"`       // "10MiB/s", "1000iops", "" (unlimited)
-	Write     string `toml:"write"`      // "5MiB/s", "1000iops", "" (unlimited)
-	Max       string `toml:"max"`        // combined read+write limit
-	Priority  int    `toml:"priority"`   // 0-10
-	TmpfsSize string `toml:"tmpfs_size"` // /tmp size: "2GiB", "1024MiB" (default: "2GiB")
+	Read      string `toml:"read" json:"read"`             // "10MiB/s", "1000iops", "" (unlimited)
+	Write     string `toml:"write" json:"write"`           // "5MiB/s", "1000iops", "" (unlimited)
+	Max       string `toml:"max" json:"max"`               // combined read+write limit
+	Priority  int    `toml:"priority" json:"priority"`     // 0-10
+	TmpfsSize string `toml:"tmpfs_size" json:"tmpfs_size"` // /tmp size: "2GiB", "1024MiB" (default: "2GiB")
 }
 
 // RuntimeLimits contains time-based and process limits
 type RuntimeLimits struct {
-	MaxDuration  string `toml:"max_duration"`  // "2h", "30m", "1h30m", "" (unlimited)
-	MaxProcesses int    `toml:"max_processes"` // 0 = unlimited
-	AutoStop     bool   `toml:"auto_stop"`     // auto-stop when limit reached
-	StopGraceful bool   `toml:"stop_graceful"` // graceful vs force stop
+	MaxDuration  string `toml:"max_duration" json:"max_duration"`   // "2h", "30m", "1h30m", "" (unlimited)
+	MaxProcesses int    `toml:"max_processes" json:"max_processes"` // 0 = unlimited
+	AutoStop     bool   `toml:"auto_stop" json:"auto_stop"`        // auto-stop when limit reached
+	StopGraceful bool   `toml:"stop_graceful" json:"stop_graceful"` // graceful vs force stop
 }
 
 // DashboardConfig contains web dashboard settings
 type DashboardConfig struct {
-	Port           int      `toml:"port"`
-	WorkspaceRoots []string `toml:"workspace_roots"`
+	Port           int      `toml:"port" json:"port"`
+	WorkspaceRoots []string `toml:"workspace_roots" json:"workspace_roots"`
 }
 
 // GetDefaultConfig returns the default configuration
