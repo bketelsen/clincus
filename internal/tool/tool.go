@@ -141,6 +141,16 @@ func (c *ClaudeTool) SetEffortLevel(level string) {
 	c.effortLevel = level
 }
 
+// AutoEnv implements ToolWithAutoEnv.
+// Injects GH_TOKEN so the gh CLI works inside Claude containers.
+func (c *ClaudeTool) AutoEnv() map[string]string {
+	env := map[string]string{}
+	if token := ResolveGHToken(); token != "" {
+		env["GH_TOKEN"] = token
+	}
+	return env
+}
+
 // ToolWithHomeConfigFile is an optional interface for tools that store their
 // configuration in a single JSON file in the user's home directory
 // (e.g., ~/.opencode.json), rather than a subdirectory.
