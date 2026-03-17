@@ -7,6 +7,7 @@
   import { connectEvents } from './lib/ws';
   import { loadSessions, removeSession } from './stores/sessions.svelte';
   import { loadWorkspaces } from './stores/workspaces.svelte';
+  import { loadConfig } from './stores/config.svelte';
 
   let route = $state(location.hash || '#/');
   let routeParam = $state('');
@@ -23,12 +24,14 @@
     window.addEventListener('hashchange', parseRoute);
     loadSessions();
     loadWorkspaces();
+    loadConfig();
 
     // AC4: on reconnect, re-fetch all state so the UI is current even if
     // events were missed while the WebSocket was disconnected.
     function refreshAll() {
       loadSessions();
       loadWorkspaces();
+      loadConfig();
     }
 
     const events = connectEvents((evt) => {
@@ -39,7 +42,8 @@
         removeSession(evt.id);
         loadWorkspaces();
       } else if (evt.type === 'config.reloaded') {
-        // AC3: config changed on disk — re-fetch config-dependent data.
+        // AC3 (E01S02): config changed on disk — re-fetch config + workspaces.
+        loadConfig();
         loadWorkspaces();
       }
     }, refreshAll);
