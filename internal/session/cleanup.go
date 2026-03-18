@@ -1,6 +1,7 @@
 package session
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -75,14 +76,27 @@ func Cleanup(opts CleanupOptions) error {
 		// - If container is running (user typed 'exit' or detached): keep it running
 		// - If container is stopped (user did 'sudo shutdown 0'): delete it
 		if exists {
-			// Check if container is stopped, with retries to handle shutdown delay
+			// Check if container is stopped, with exponential backoff to handle shutdown delay
 			// Poweroff/shutdown can take several seconds to complete
+			ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+			defer cancel()
+
 			running := true
-			for i := 0; i < 10; i++ {
-				time.Sleep(500 * time.Millisecond)
-				running, _ = mgr.Running()
-				if !running {
-					break
+			backoff := 500 * time.Millisecond
+			maxBackoff := 4 * time.Second
+
+		loop:
+			for running {
+				select {
+				case <-ctx.Done():
+					// Timeout -- keep container running (non-destructive)
+					opts.Logger("Container still running after timeout, keeping it alive")
+					break loop
+				case <-time.After(backoff):
+					running, _ = mgr.Running()
+					if backoff < maxBackoff {
+						backoff *= 2
+					}
 				}
 			}
 
