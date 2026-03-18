@@ -26,10 +26,10 @@ Requirements for this milestone. Each maps to roadmap phases.
 
 ### Bug Fixes
 
-- [ ] **BUG-01**: Cleanup race condition in internal/session/cleanup.go fixed — replace fixed 500ms x 10 polling with context-based timeout and exponential backoff
+- [x] **BUG-01**: Cleanup race condition in internal/session/cleanup.go fixed — replace fixed 500ms x 10 polling with context-based timeout and exponential backoff
 - [x] **BUG-02**: WebSocket reconnection memory leak in web/src/lib/ws.ts fixed — onReconnect moved into new WebSocket's onopen handler, old connections properly closed
-- [ ] **BUG-03**: Config watcher in internal/config/watcher.go fixed — newly-created config files detected when parent directory is watched
-- [ ] **BUG-04**: Reproduction test written for each bug fix before the fix is applied
+- [x] **BUG-03**: Config watcher in internal/config/watcher.go fixed — newly-created config files detected when parent directory is watched
+- [x] **BUG-04**: Reproduction test written for each bug fix before the fix is applied
 - [x] **BUG-05**: Frontend WebSocket reconnection test validating the memory leak fix doesn't regress
 
 ## v2 Requirements
@@ -81,10 +81,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | REFAC-04 | Phase 2 | Complete |
 | REFAC-05 | Phase 2 | Complete |
 | REFAC-06 | Phase 4 | Complete |
-| BUG-01 | Phase 4 | Pending |
+| BUG-01 | Phase 4 | Complete |
 | BUG-02 | Phase 4 | Complete |
-| BUG-03 | Phase 4 | Pending |
-| BUG-04 | Phase 4 | Pending |
+| BUG-03 | Phase 4 | Complete |
+| BUG-04 | Phase 4 | Complete |
 | BUG-05 | Phase 4 | Complete |
 
 **Coverage:**
