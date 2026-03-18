@@ -4,6 +4,7 @@
   import Dashboard from './routes/Dashboard.svelte';
   import Terminal from './routes/Terminal.svelte';
   import Settings from './routes/Settings.svelte';
+  import { Toaster } from 'svelte-sonner';
   import { connectEvents } from './lib/ws';
   import { loadSessions, removeSession } from './stores/sessions.svelte';
   import { loadWorkspaces } from './stores/workspaces.svelte';
@@ -71,3 +72,11 @@
     {/if}
   {/snippet}
 </Layout>
+<Toaster
+  position="bottom-right"
+  visibleToasts={3}
+  theme="dark"
+  toastOptions={{
+    style: 'background: #1e1e30; border-color: #333; color: #ccc; font-family: inherit;',
+  }}
+/>
