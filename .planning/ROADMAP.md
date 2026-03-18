@@ -13,7 +13,7 @@ This milestone strengthens the Clincus codebase by introducing test infrastructu
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [ ] **Phase 1: Test Infrastructure** - Extract CommandRunner interface, add container package tests, enable race detector in CI
-- [ ] **Phase 2: Health Check Refactoring** - Migrate health checks from string parsing to JSON output with defensive fallbacks
+- [ ] **Phase 2: Health Check Refactoring** - Migrate health checks from string parsing to YAML/structured output with defensive fallbacks
 - [ ] **Phase 3: Setup Decomposition** - Break 886-line Setup() into composable functions with characterization tests
 - [ ] **Phase 4: Bug Fixes & Frontend** - Fix 3 known bugs with reproduction tests, add frontend error handling and coverage gate
 
@@ -38,13 +38,14 @@ Plans:
 **Depends on**: Phase 1
 **Requirements**: REFAC-04, REFAC-05
 **Success Criteria** (what must be TRUE):
-  1. CheckNetworkBridge and CheckIncusStoragePool use --format=json output where the Incus command supports it
-  2. A defensive fallback parser handles commands that do not support --format=json, returning a warning status instead of crashing
-  3. Unit tests verify both JSON parsing and fallback paths using mock CommandRunner output
-**Plans**: TBD
+  1. CheckNetworkBridge and CheckIncusStoragePool use YAML output (from `incus profile show` and `incus network show`) and --bytes flag (for `incus storage info`) instead of brittle string parsing
+  2. A defensive fallback parser handles parse failures gracefully, returning a warning status instead of crashing
+  3. Unit tests verify both structured parsing and fallback paths using mock CommandRunner output
+**Plans:** 2 plans
 
 Plans:
-- [ ] 02-01: TBD
+- [ ] 02-01-PLAN.md — YAML parsing infrastructure, refactor CheckNetworkBridge with tests
+- [ ] 02-02-PLAN.md — Refactor CheckIncusStoragePool with --bytes parsing and tests
 
 ### Phase 3: Setup Decomposition
 **Goal**: Session setup logic is decomposed into independently testable functions so developers can verify setup behavior without running full container lifecycle
@@ -86,6 +87,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Test Infrastructure | 0/2 | Not started | - |
-| 2. Health Check Refactoring | 0/1 | Not started | - |
+| 2. Health Check Refactoring | 0/2 | Not started | - |
 | 3. Setup Decomposition | 0/2 | Not started | - |
 | 4. Bug Fixes & Frontend | 0/3 | Not started | - |
