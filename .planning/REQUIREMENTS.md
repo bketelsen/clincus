@@ -11,7 +11,7 @@ Requirements for this milestone. Each maps to roadmap phases.
 
 - [x] **TEST-01**: CommandRunner interface extracted in container package, replacing direct exec.Command calls in execIncusCommand/execIncusCommandContext
 - [x] **TEST-02**: Unit tests for container/commands.go covering IncusExec, IncusOutput, Manager.Exists, Manager.Launch, Manager.Stop, and error scenarios
-- [ ] **TEST-03**: Unit tests for session setup error scenarios (partial mount failure, permission errors, invalid workspace path)
+- [x] **TEST-03**: Unit tests for session setup error scenarios (partial mount failure, permission errors, invalid workspace path)
 - [x] **TEST-04**: `go test -race` added to CI pipeline for concurrent packages (session, config, server)
 - [ ] **TEST-05**: Overall test coverage reaches 50%+ across packages that receive changes
 
@@ -19,7 +19,7 @@ Requirements for this milestone. Each maps to roadmap phases.
 
 - [ ] **REFAC-01**: Setup() in internal/session/setup.go decomposed into 4-5 composable unexported functions across setup_container.go, setup_mounts.go, setup_postlaunch.go, setup_toolconfig.go
 - [ ] **REFAC-02**: Setup() orchestrator function reduced to ~80 lines calling extracted step functions
-- [ ] **REFAC-03**: Characterization tests written before each extraction to pin current behavior
+- [x] **REFAC-03**: Characterization tests written before each extraction to pin current behavior
 - [x] **REFAC-04**: Health check functions CheckNetworkBridge and CheckIncusStoragePool migrated from string parsing to --format=json where supported
 - [x] **REFAC-05**: Defensive fallback parser for health check commands that don't support --format=json
 - [ ] **REFAC-06**: Frontend ApiError class in web/src/lib/ with status code, Content-Type aware parsing, and typed error categories (auth, server, network)
@@ -72,12 +72,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|
 | TEST-01 | Phase 1 | Complete |
 | TEST-02 | Phase 1 | Complete |
-| TEST-03 | Phase 3 | Pending |
+| TEST-03 | Phase 3 | Complete |
 | TEST-04 | Phase 1 | Complete |
 | TEST-05 | Phase 4 | Pending |
 | REFAC-01 | Phase 3 | Pending |
 | REFAC-02 | Phase 3 | Pending |
-| REFAC-03 | Phase 3 | Pending |
+| REFAC-03 | Phase 3 | Complete |
 | REFAC-04 | Phase 2 | Complete |
 | REFAC-05 | Phase 2 | Complete |
 | REFAC-06 | Phase 4 | Pending |
