@@ -2,6 +2,8 @@ package health
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 
 	"gopkg.in/yaml.v3"
 )
@@ -57,4 +59,74 @@ func networkNameFromProfile(profile *incusProfile) string {
 		}
 	}
 	return ""
+}
+
+// parseStorageInfoBytes parses the output of "incus storage info <pool> --bytes".
+// Returns used and total bytes. The --bytes flag outputs integer byte values
+// instead of human-friendly GiB suffixes, making parsing reliable.
+// Returns (0, 0, error) if either field is not found or not parseable.
+func parseStorageInfoBytes(output string) (usedBytes, totalBytes uint64, err error) {
+	var foundUsed, foundTotal bool
+	for _, line := range strings.Split(output, "\n") {
+		line = strings.TrimSpace(line)
+		switch {
+		case strings.HasPrefix(line, "space used:"):
+			val := strings.TrimSpace(strings.TrimPrefix(line, "space used:"))
+			usedBytes, err = strconv.ParseUint(val, 10, 64)
+			if err != nil {
+				return 0, 0, fmt.Errorf("parsing space used bytes: %w", err)
+			}
+			foundUsed = true
+		case strings.HasPrefix(line, "total space:"):
+			val := strings.TrimSpace(strings.TrimPrefix(line, "total space:"))
+			totalBytes, err = strconv.ParseUint(val, 10, 64)
+			if err != nil {
+				return 0, 0, fmt.Errorf("parsing total space bytes: %w", err)
+			}
+			foundTotal = true
+		}
+	}
+	if !foundUsed || !foundTotal {
+		return 0, 0, fmt.Errorf("storage info output missing space used or total space fields")
+	}
+	return usedBytes, totalBytes, nil
+}
+
+// parseStorageInfoGiB is the fallback parser for "incus storage info <pool>"
+// without --bytes. Parses human-friendly "X.XXGiB" suffix format using fmt.Sscanf.
+// Returns values in GiB as float64. Returns (0, 0, error) if parsing fails.
+func parseStorageInfoGiB(output string) (usedGiB, totalGiB float64, err error) {
+	for _, line := range strings.Split(output, "\n") {
+		line = strings.TrimSpace(line)
+		if strings.HasPrefix(line, "space used:") {
+			_, _ = fmt.Sscanf(strings.TrimPrefix(line, "space used:"), "%f", &usedGiB)
+		} else if strings.HasPrefix(line, "total space:") {
+			_, _ = fmt.Sscanf(strings.TrimPrefix(line, "total space:"), "%f", &totalGiB)
+		}
+	}
+	if totalGiB == 0 {
+		return 0, 0, fmt.Errorf("could not parse GiB values from storage info output")
+	}
+	return usedGiB, totalGiB, nil
+}
+
+// poolNameFromProfile extracts the storage pool name from a parsed profile.
+// Looks for a device with type=disk and returns its "pool" value.
+// Returns "default" if no disk device is found.
+func poolNameFromProfile(profile *incusProfile) string {
+	// Check "root" device first (standard naming)
+	if root, ok := profile.Devices["root"]; ok {
+		if pool, ok := root["pool"]; ok {
+			return pool
+		}
+	}
+	// Fallback: find first disk device
+	for _, dev := range profile.Devices {
+		if dev["type"] == "disk" {
+			if pool, ok := dev["pool"]; ok {
+				return pool
+			}
+		}
+	}
+	return "default"
 }
