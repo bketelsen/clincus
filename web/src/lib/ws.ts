@@ -40,6 +40,11 @@ export function connectTerminal(
  * Connect to the /ws/events WebSocket endpoint with automatic reconnection.
  * When the connection drops and is re-established, onReconnect is called so
  * the caller can re-fetch current state (AC4).
+ *
+ * BUG-02 fix: onReconnect now fires inside onopen (after connection is
+ * established), not immediately after calling connect(). Old WebSocket is
+ * explicitly closed with onclose nulled before creating a new connection.
+ * Reconnection uses exponential backoff: 2s -> 4s -> 8s -> 30s cap.
  */
 export function connectEvents(
   onEvent: (event: { type: string; id?: string; timestamp?: string }) => void,
@@ -48,26 +53,39 @@ export function connectEvents(
   let ws: WebSocket | null = null;
   let closed = false;
   let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+  let delay = 2000;
+  const MAX_DELAY = 30000;
 
   function connect() {
     if (closed) return;
 
+    // Close old connection explicitly (null onclose before close to prevent re-trigger)
+    if (ws) {
+      ws.onclose = null;
+      ws.close();
+      ws = null;
+    }
+
     const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
     ws = new WebSocket(`${proto}//${location.host}/ws/events`);
+
+    ws.onopen = () => {
+      delay = 2000; // reset on success
+      if (onReconnect) onReconnect(); // fires AFTER connection established
+    };
 
     ws.onmessage = (evt) => onEvent(JSON.parse(evt.data));
 
     ws.onclose = () => {
       if (closed) return;
-      // AC4: reconnect after a brief delay, then re-fetch current state.
       reconnectTimer = setTimeout(() => {
         connect();
-        if (onReconnect) onReconnect();
-      }, 2000);
+      }, delay);
+      delay = Math.min(delay * 2, MAX_DELAY);
     };
 
     ws.onerror = () => {
-      // onerror is always followed by onclose — reconnect handled there.
+      // onerror is always followed by onclose -- reconnect handled there.
     };
   }
 
@@ -77,7 +95,10 @@ export function connectEvents(
     close: () => {
       closed = true;
       if (reconnectTimer !== null) clearTimeout(reconnectTimer);
-      if (ws) ws.close();
+      if (ws) {
+        ws.onclose = null;
+        ws.close();
+      }
     },
   };
 }
