@@ -120,8 +120,12 @@ func (w *Watcher) handleEvent(event fsnotify.Event) {
 		}
 		// If the target file was created, start watching it directly and
 		// remove the directory watch.
-		if event.Has(fsnotify.Create) {
-			if err := w.fsw.Add(target); err == nil {
+		if event.Has(fsnotify.Create) || event.Has(fsnotify.Rename) {
+			if err := w.fsw.Add(target); err != nil {
+				log.Printf("[config-watcher] warning: cannot watch %s directly, keeping dir watch: %v", target, err)
+				// Don't remove dir watch -- it's our fallback
+			} else {
+				// Successfully watching file directly; dir watch no longer needed
 				dir := filepath.Dir(target)
 				_ = w.fsw.Remove(dir)
 				delete(w.watchDirs, dir)

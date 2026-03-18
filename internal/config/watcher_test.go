@@ -109,6 +109,41 @@ func TestWatcherHandlesNonExistentPath(t *testing.T) {
 	}
 }
 
+func TestWatcherDetectsCreateThenEdit(t *testing.T) {
+	dir := t.TempDir()
+	cfgFile := filepath.Join(dir, "config.toml")
+
+	var reloadCount atomic.Int32
+	w, err := NewWatcher([]string{cfgFile}, func() error {
+		reloadCount.Add(1)
+		return nil
+	}, 200*time.Millisecond)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer w.Close()
+	w.Start()
+	time.Sleep(100 * time.Millisecond)
+
+	// Create file (should trigger first reload)
+	os.WriteFile(cfgFile, []byte("[defaults]\n"), 0o644)
+	time.Sleep(500 * time.Millisecond)
+
+	countAfterCreate := reloadCount.Load()
+	if countAfterCreate < 1 {
+		t.Fatalf("expected at least 1 reload after create, got %d", countAfterCreate)
+	}
+
+	// Edit file -- this is where BUG-03 manifests
+	// After dir-to-file transition, edits should still trigger reload
+	os.WriteFile(cfgFile, []byte("[defaults]\nimage = \"updated\"\n"), 0o644)
+	time.Sleep(500 * time.Millisecond)
+
+	if reloadCount.Load() <= countAfterCreate {
+		t.Errorf("expected reload after edit, count stayed at %d", countAfterCreate)
+	}
+}
+
 func TestWatcherHandlesNonExistentParentDir(t *testing.T) {
 	// If both file and parent dir don't exist, watcher should not crash (AC8).
 	nonExistent := "/tmp/clincus-test-nonexistent-dir-12345/config.toml"
