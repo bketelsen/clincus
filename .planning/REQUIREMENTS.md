@@ -13,7 +13,7 @@ Requirements for this milestone. Each maps to roadmap phases.
 - [x] **TEST-02**: Unit tests for container/commands.go covering IncusExec, IncusOutput, Manager.Exists, Manager.Launch, Manager.Stop, and error scenarios
 - [x] **TEST-03**: Unit tests for session setup error scenarios (partial mount failure, permission errors, invalid workspace path)
 - [x] **TEST-04**: `go test -race` added to CI pipeline for concurrent packages (session, config, server)
-- [ ] **TEST-05**: Overall test coverage reaches 50%+ across packages that receive changes
+- [x] **TEST-05**: Overall test coverage reaches 50%+ across packages that receive changes
 
 ### Refactoring
 
@@ -74,7 +74,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TEST-02 | Phase 1 | Complete |
 | TEST-03 | Phase 3 | Complete |
 | TEST-04 | Phase 1 | Complete |
-| TEST-05 | Phase 4 | Pending |
+| TEST-05 | Phase 4 | Complete |
 | REFAC-01 | Phase 3 | Complete |
 | REFAC-02 | Phase 3 | Complete |
 | REFAC-03 | Phase 3 | Complete |
