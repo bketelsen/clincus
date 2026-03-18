@@ -72,12 +72,12 @@ Plans:
   3. Config watcher detects newly-created config files by watching the parent directory
   4. Each bug fix has a reproduction test that was written before the fix was applied
   5. Overall test coverage across packages that received changes in this milestone is 50% or higher
-**Plans**: TBD
+**Plans:** 3 plans
 
 Plans:
-- [ ] 04-01: TBD
-- [ ] 04-02: TBD
-- [ ] 04-03: TBD
+- [ ] 04-01-PLAN.md — Go bug fixes: config watcher (BUG-03) and cleanup race (BUG-01) with reproduction tests
+- [ ] 04-02-PLAN.md — Frontend: WebSocket reconnection fix (BUG-02), ApiError class (REFAC-06), frontend tests (BUG-05)
+- [ ] 04-03-PLAN.md — Coverage gate: verify 50%+ coverage (TEST-05) and audit reproduction tests (BUG-04)
 
 ## Progress
 
