@@ -17,8 +17,8 @@ Requirements for this milestone. Each maps to roadmap phases.
 
 ### Refactoring
 
-- [ ] **REFAC-01**: Setup() in internal/session/setup.go decomposed into 4-5 composable unexported functions across setup_container.go, setup_mounts.go, setup_postlaunch.go, setup_toolconfig.go
-- [ ] **REFAC-02**: Setup() orchestrator function reduced to ~80 lines calling extracted step functions
+- [x] **REFAC-01**: Setup() in internal/session/setup.go decomposed into 4-5 composable unexported functions across setup_container.go, setup_mounts.go, setup_postlaunch.go, setup_toolconfig.go
+- [x] **REFAC-02**: Setup() orchestrator function reduced to ~80 lines calling extracted step functions
 - [x] **REFAC-03**: Characterization tests written before each extraction to pin current behavior
 - [x] **REFAC-04**: Health check functions CheckNetworkBridge and CheckIncusStoragePool migrated from string parsing to --format=json where supported
 - [x] **REFAC-05**: Defensive fallback parser for health check commands that don't support --format=json
@@ -75,8 +75,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TEST-03 | Phase 3 | Complete |
 | TEST-04 | Phase 1 | Complete |
 | TEST-05 | Phase 4 | Pending |
-| REFAC-01 | Phase 3 | Pending |
-| REFAC-02 | Phase 3 | Pending |
+| REFAC-01 | Phase 3 | Complete |
+| REFAC-02 | Phase 3 | Complete |
 | REFAC-03 | Phase 3 | Complete |
 | REFAC-04 | Phase 2 | Complete |
 | REFAC-05 | Phase 2 | Complete |
