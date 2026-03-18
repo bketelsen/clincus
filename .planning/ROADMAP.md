@@ -56,11 +56,11 @@ Plans:
   2. Four new files exist (setup_container.go, setup_mounts.go, setup_postlaunch.go, setup_toolconfig.go) with unexported step functions
   3. Characterization tests exist that were written before each extraction, pinning current behavior including error paths
   4. Session setup error scenarios (partial mount failure, permission errors, invalid workspace) have dedicated test coverage
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
+- [ ] 03-01-PLAN.md — Characterization tests and error scenario tests for Setup() code regions
+- [ ] 03-02-PLAN.md — Extract step functions to 4 new files, reduce Setup() to thin orchestrator
 
 ### Phase 4: Bug Fixes & Frontend
 **Goal**: Three known user-facing bugs are fixed with regression tests, frontend error handling is improved, and the coverage target is met
