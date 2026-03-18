@@ -265,10 +265,12 @@ func CheckImage(imageName string) HealthCheck {
 	}
 }
 
-// CheckNetworkBridge verifies the network bridge is configured
+// CheckNetworkBridge verifies the network bridge is configured.
+// It parses YAML output from "incus profile show default" and "incus network show <name>"
+// using structured types. Falls back to StatusWarning on parse failures instead of crashing.
 func CheckNetworkBridge() HealthCheck {
-	// Get default profile to find network device
-	output, err := container.IncusOutput("profile", "device", "show", "default")
+	// Step 1: Get default profile via YAML-outputting command
+	output, err := container.IncusOutput("profile", "show", "default")
 	if err != nil {
 		return HealthCheck{
 			Name:    "network_bridge",
@@ -277,34 +279,27 @@ func CheckNetworkBridge() HealthCheck {
 		}
 	}
 
-	// Parse network name from profile (looking for eth0 device)
-	var networkName string
-	lines := strings.Split(output, "\n")
-	for i, line := range lines {
-		if strings.TrimSpace(line) == "eth0:" {
-			// Look for network: line
-			for j := i + 1; j < len(lines) && j < i+10; j++ {
-				if strings.Contains(lines[j], "network:") {
-					parts := strings.Split(lines[j], ":")
-					if len(parts) >= 2 {
-						networkName = strings.TrimSpace(parts[1])
-						break
-					}
-				}
-			}
-			break
+	// Step 2: Parse YAML; fall back to warning on parse failure
+	profile, err := parseProfileYAML(output)
+	if err != nil {
+		return HealthCheck{
+			Name:    "network_bridge",
+			Status:  StatusWarning,
+			Message: fmt.Sprintf("Could not parse default profile: %v", err),
 		}
 	}
 
+	// Step 3: Extract network name from profile devices
+	networkName := networkNameFromProfile(profile)
 	if networkName == "" {
 		return HealthCheck{
 			Name:    "network_bridge",
 			Status:  StatusFailed,
-			Message: "No eth0 network device in default profile",
+			Message: "No network device (type: nic) in default profile",
 		}
 	}
 
-	// Get network configuration
+	// Step 4: Get network config via YAML
 	networkOutput, err := container.IncusOutput("network", "show", networkName)
 	if err != nil {
 		return HealthCheck{
@@ -314,16 +309,18 @@ func CheckNetworkBridge() HealthCheck {
 		}
 	}
 
-	// Parse IPv4 address
-	var ipv4Address string
-	for _, line := range strings.Split(networkOutput, "\n") {
-		line = strings.TrimSpace(line)
-		if strings.HasPrefix(line, "ipv4.address:") {
-			ipv4Address = strings.TrimSpace(strings.TrimPrefix(line, "ipv4.address:"))
-			break
+	// Step 5: Parse network YAML; fall back to warning on parse failure
+	network, err := parseNetworkYAML(networkOutput)
+	if err != nil {
+		return HealthCheck{
+			Name:    "network_bridge",
+			Status:  StatusWarning,
+			Message: fmt.Sprintf("Could not parse network info for %s: %v", networkName, err),
 		}
 	}
 
+	// Step 6: Extract IPv4 address from config map
+	ipv4Address := network.Config["ipv4.address"]
 	if ipv4Address == "" || ipv4Address == "none" {
 		return HealthCheck{
 			Name:    "network_bridge",
@@ -332,13 +329,16 @@ func CheckNetworkBridge() HealthCheck {
 		}
 	}
 
+	// Step 7: Return success with enriched details
 	return HealthCheck{
 		Name:    "network_bridge",
 		Status:  StatusOK,
 		Message: fmt.Sprintf("%s (%s)", networkName, ipv4Address),
 		Details: map[string]interface{}{
-			"name": networkName,
-			"ipv4": ipv4Address,
+			"name":   networkName,
+			"ipv4":   ipv4Address,
+			"driver": network.Type,
+			"status": network.Status,
 		},
 	}
 }
