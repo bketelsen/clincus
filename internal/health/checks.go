@@ -662,23 +662,21 @@ func CheckDiskSpace() HealthCheck {
 }
 
 // CheckIncusStoragePool checks the Incus storage pool usage.
-// It queries `incus storage info <pool>` for the default pool and warns
-// when free space is critically low (< 3 GiB free or > 90% used).
+// It queries the default profile for pool name, then uses
+// "incus storage info <pool> --bytes" for reliable numeric parsing
+// with a fallback to GiB text parsing if --bytes is not available.
 func CheckIncusStoragePool() HealthCheck {
-	// Find the default storage pool from the default profile
+	// Step 1: Discover pool name from default profile (YAML)
 	poolName := "default"
-	profileOut, err := exec.Command("incus", "profile", "show", "default").Output()
+	profileOut, err := container.IncusOutput("profile", "show", "default")
 	if err == nil {
-		for _, line := range strings.Split(string(profileOut), "\n") {
-			line = strings.TrimSpace(line)
-			if strings.HasPrefix(line, "pool:") {
-				poolName = strings.TrimSpace(strings.TrimPrefix(line, "pool:"))
-				break
-			}
+		if profile, parseErr := parseProfileYAML(profileOut); parseErr == nil {
+			poolName = poolNameFromProfile(profile)
 		}
 	}
 
-	out, err := exec.Command("incus", "storage", "info", poolName).Output()
+	// Step 2: Try storage info with --bytes for reliable numeric parsing
+	out, err := container.IncusOutput("storage", "info", poolName, "--bytes")
 	if err != nil {
 		return HealthCheck{
 			Name:    "incus_storage_pool",
@@ -687,26 +685,29 @@ func CheckIncusStoragePool() HealthCheck {
 		}
 	}
 
-	// Parse "space used: X.XXGiB" and "total space: Y.YYGiB"
-	var usedGiB, totalGiB float64
-	for _, line := range strings.Split(string(out), "\n") {
-		line = strings.TrimSpace(line)
-		if strings.HasPrefix(line, "space used:") {
-			_, _ = fmt.Sscanf(strings.TrimPrefix(line, "space used:"), "%f", &usedGiB)
-		} else if strings.HasPrefix(line, "total space:") {
-			_, _ = fmt.Sscanf(strings.TrimPrefix(line, "total space:"), "%f", &totalGiB)
+	// Step 3: Parse --bytes output; fall back to GiB parsing
+	var usedGiB, totalGiB, freeGiB float64
+
+	usedBytes, totalBytes, bytesErr := parseStorageInfoBytes(out)
+	if bytesErr == nil && totalBytes > 0 {
+		// Convert bytes to GiB for display
+		usedGiB = float64(usedBytes) / (1024 * 1024 * 1024)
+		totalGiB = float64(totalBytes) / (1024 * 1024 * 1024)
+	} else {
+		// Fallback: try GiB text parsing on the same output
+		// (--bytes flag may have been ignored on older Incus versions)
+		var gibErr error
+		usedGiB, totalGiB, gibErr = parseStorageInfoGiB(out)
+		if gibErr != nil {
+			return HealthCheck{
+				Name:    "incus_storage_pool",
+				Status:  StatusWarning,
+				Message: fmt.Sprintf("Could not parse storage pool '%s' usage", poolName),
+			}
 		}
 	}
 
-	if totalGiB == 0 {
-		return HealthCheck{
-			Name:    "incus_storage_pool",
-			Status:  StatusWarning,
-			Message: fmt.Sprintf("Could not parse storage pool '%s' usage", poolName),
-		}
-	}
-
-	freeGiB := totalGiB - usedGiB
+	freeGiB = totalGiB - usedGiB
 	usedPct := (usedGiB / totalGiB) * 100
 
 	details := map[string]interface{}{
