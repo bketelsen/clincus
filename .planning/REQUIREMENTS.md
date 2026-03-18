@@ -22,15 +22,15 @@ Requirements for this milestone. Each maps to roadmap phases.
 - [x] **REFAC-03**: Characterization tests written before each extraction to pin current behavior
 - [x] **REFAC-04**: Health check functions CheckNetworkBridge and CheckIncusStoragePool migrated from string parsing to --format=json where supported
 - [x] **REFAC-05**: Defensive fallback parser for health check commands that don't support --format=json
-- [ ] **REFAC-06**: Frontend ApiError class in web/src/lib/ with status code, Content-Type aware parsing, and typed error categories (auth, server, network)
+- [x] **REFAC-06**: Frontend ApiError class in web/src/lib/ with status code, Content-Type aware parsing, and typed error categories (auth, server, network)
 
 ### Bug Fixes
 
 - [ ] **BUG-01**: Cleanup race condition in internal/session/cleanup.go fixed — replace fixed 500ms x 10 polling with context-based timeout and exponential backoff
-- [ ] **BUG-02**: WebSocket reconnection memory leak in web/src/lib/ws.ts fixed — onReconnect moved into new WebSocket's onopen handler, old connections properly closed
+- [x] **BUG-02**: WebSocket reconnection memory leak in web/src/lib/ws.ts fixed — onReconnect moved into new WebSocket's onopen handler, old connections properly closed
 - [ ] **BUG-03**: Config watcher in internal/config/watcher.go fixed — newly-created config files detected when parent directory is watched
 - [ ] **BUG-04**: Reproduction test written for each bug fix before the fix is applied
-- [ ] **BUG-05**: Frontend WebSocket reconnection test validating the memory leak fix doesn't regress
+- [x] **BUG-05**: Frontend WebSocket reconnection test validating the memory leak fix doesn't regress
 
 ## v2 Requirements
 
@@ -80,12 +80,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | REFAC-03 | Phase 3 | Complete |
 | REFAC-04 | Phase 2 | Complete |
 | REFAC-05 | Phase 2 | Complete |
-| REFAC-06 | Phase 4 | Pending |
+| REFAC-06 | Phase 4 | Complete |
 | BUG-01 | Phase 4 | Pending |
-| BUG-02 | Phase 4 | Pending |
+| BUG-02 | Phase 4 | Complete |
 | BUG-03 | Phase 4 | Pending |
 | BUG-04 | Phase 4 | Pending |
-| BUG-05 | Phase 4 | Pending |
+| BUG-05 | Phase 4 | Complete |
 
 **Coverage:**
 - v1 requirements: 16 total
