@@ -10,7 +10,7 @@ Requirements for this milestone. Each maps to roadmap phases.
 ### Test Infrastructure
 
 - [x] **TEST-01**: CommandRunner interface extracted in container package, replacing direct exec.Command calls in execIncusCommand/execIncusCommandContext
-- [ ] **TEST-02**: Unit tests for container/commands.go covering IncusExec, IncusOutput, Manager.Exists, Manager.Launch, Manager.Stop, and error scenarios
+- [x] **TEST-02**: Unit tests for container/commands.go covering IncusExec, IncusOutput, Manager.Exists, Manager.Launch, Manager.Stop, and error scenarios
 - [ ] **TEST-03**: Unit tests for session setup error scenarios (partial mount failure, permission errors, invalid workspace path)
 - [x] **TEST-04**: `go test -race` added to CI pipeline for concurrent packages (session, config, server)
 - [ ] **TEST-05**: Overall test coverage reaches 50%+ across packages that receive changes
@@ -71,7 +71,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | TEST-01 | Phase 1 | Complete |
-| TEST-02 | Phase 1 | Pending |
+| TEST-02 | Phase 1 | Complete |
 | TEST-03 | Phase 3 | Pending |
 | TEST-04 | Phase 1 | Complete |
 | TEST-05 | Phase 4 | Pending |
