@@ -13,7 +13,7 @@ This milestone strengthens the Clincus codebase by introducing test infrastructu
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [ ] **Phase 1: Test Infrastructure** - Extract CommandRunner interface, add container package tests, enable race detector in CI
-- [ ] **Phase 2: Health Check Refactoring** - Migrate health checks from string parsing to YAML/structured output with defensive fallbacks
+- [x] **Phase 2: Health Check Refactoring** - Migrate health checks from string parsing to YAML/structured output with defensive fallbacks (completed 2026-03-18)
 - [ ] **Phase 3: Setup Decomposition** - Break 886-line Setup() into composable functions with characterization tests
 - [ ] **Phase 4: Bug Fixes & Frontend** - Fix 3 known bugs with reproduction tests, add frontend error handling and coverage gate
 
@@ -41,7 +41,7 @@ Plans:
   1. CheckNetworkBridge and CheckIncusStoragePool use YAML output (from `incus profile show` and `incus network show`) and --bytes flag (for `incus storage info`) instead of brittle string parsing
   2. A defensive fallback parser handles parse failures gracefully, returning a warning status instead of crashing
   3. Unit tests verify both structured parsing and fallback paths using mock CommandRunner output
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 
 Plans:
 - [ ] 02-01-PLAN.md — YAML parsing infrastructure, refactor CheckNetworkBridge with tests
@@ -87,6 +87,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Test Infrastructure | 0/2 | Not started | - |
-| 2. Health Check Refactoring | 0/2 | Not started | - |
+| 2. Health Check Refactoring | 2/2 | Complete   | 2026-03-18 |
 | 3. Setup Decomposition | 0/2 | Not started | - |
 | 4. Bug Fixes & Frontend | 0/3 | Not started | - |
