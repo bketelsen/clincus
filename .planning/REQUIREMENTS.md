@@ -20,8 +20,8 @@ Requirements for this milestone. Each maps to roadmap phases.
 - [ ] **REFAC-01**: Setup() in internal/session/setup.go decomposed into 4-5 composable unexported functions across setup_container.go, setup_mounts.go, setup_postlaunch.go, setup_toolconfig.go
 - [ ] **REFAC-02**: Setup() orchestrator function reduced to ~80 lines calling extracted step functions
 - [ ] **REFAC-03**: Characterization tests written before each extraction to pin current behavior
-- [ ] **REFAC-04**: Health check functions CheckNetworkBridge and CheckIncusStoragePool migrated from string parsing to --format=json where supported
-- [ ] **REFAC-05**: Defensive fallback parser for health check commands that don't support --format=json
+- [x] **REFAC-04**: Health check functions CheckNetworkBridge and CheckIncusStoragePool migrated from string parsing to --format=json where supported
+- [x] **REFAC-05**: Defensive fallback parser for health check commands that don't support --format=json
 - [ ] **REFAC-06**: Frontend ApiError class in web/src/lib/ with status code, Content-Type aware parsing, and typed error categories (auth, server, network)
 
 ### Bug Fixes
@@ -78,8 +78,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | REFAC-01 | Phase 3 | Pending |
 | REFAC-02 | Phase 3 | Pending |
 | REFAC-03 | Phase 3 | Pending |
-| REFAC-04 | Phase 2 | Pending |
-| REFAC-05 | Phase 2 | Pending |
+| REFAC-04 | Phase 2 | Complete |
+| REFAC-05 | Phase 2 | Complete |
 | REFAC-06 | Phase 4 | Pending |
 | BUG-01 | Phase 4 | Pending |
 | BUG-02 | Phase 4 | Pending |
