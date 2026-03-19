@@ -1,13 +1,13 @@
 import type { WSMessage } from './types';
 
-export function connectTerminal(
-  containerId: string,
+function connectWS(
+  url: string,
   onOutput: (data: string) => void,
   onExit: (code: number) => void,
   onError: (msg: string) => void,
 ): { send: (msg: WSMessage) => void; close: () => void } {
   const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
-  const ws = new WebSocket(`${proto}//${location.host}/ws/terminal/${containerId}`);
+  const ws = new WebSocket(`${proto}//${location.host}${url}`);
 
   ws.onmessage = (evt) => {
     const msg: WSMessage = JSON.parse(evt.data);
@@ -34,6 +34,24 @@ export function connectTerminal(
     },
     close: () => ws.close(),
   };
+}
+
+export function connectTerminal(
+  containerId: string,
+  onOutput: (data: string) => void,
+  onExit: (code: number) => void,
+  onError: (msg: string) => void,
+) {
+  return connectWS(`/ws/terminal/${containerId}`, onOutput, onExit, onError);
+}
+
+export function connectShell(
+  containerId: string,
+  onOutput: (data: string) => void,
+  onExit: (code: number) => void,
+  onError: (msg: string) => void,
+) {
+  return connectWS(`/ws/shell/${containerId}`, onOutput, onExit, onError);
 }
 
 /**

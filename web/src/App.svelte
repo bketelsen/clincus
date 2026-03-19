@@ -2,7 +2,7 @@
   import Layout from './components/Layout.svelte';
   import SessionList from './components/SessionList.svelte';
   import Dashboard from './routes/Dashboard.svelte';
-  import Terminal from './routes/Terminal.svelte';
+  import SessionView from './routes/SessionView.svelte';
   import Settings from './routes/Settings.svelte';
   import { Toaster } from 'svelte-sonner';
   import { connectEvents } from './lib/ws';
@@ -64,7 +64,7 @@
     {#if route === '#/' || route === '#/dashboard'}
       <Dashboard />
     {:else if routeParam}
-      <Terminal containerId={routeParam} />
+      <SessionView containerId={routeParam} />
     {:else if route === '#/settings'}
       <Settings />
     {:else}

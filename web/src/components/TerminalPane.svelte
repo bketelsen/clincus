@@ -4,9 +4,17 @@
   import { connectTerminal } from '../lib/ws';
   import { onMount } from 'svelte';
 
-  let { containerId }: { containerId: string } = $props();
+  let { containerId, visible = true }: { containerId: string; visible?: boolean } = $props();
 
   let termDiv: HTMLDivElement;
+  let fitAddon: FitAddon;
+
+  $effect(() => {
+    if (visible && fitAddon) {
+      // Small delay to allow DOM to update display before measuring
+      setTimeout(() => fitAddon.fit(), 50);
+    }
+  });
 
   onMount(() => {
     const term = new Terminal({
@@ -15,7 +23,7 @@
       fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
       theme: { background: '#1a1a2e', foreground: '#eee' },
     });
-    const fitAddon = new FitAddon();
+    fitAddon = new FitAddon();
     term.loadAddon(fitAddon);
     term.open(termDiv);
     fitAddon.fit();

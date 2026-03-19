@@ -30,15 +30,6 @@ const storageInfoBytes = `info:
   used by: []
   space used: 21474836480`
 
-const storageInfoGiB = `info:
-  description: ""
-  driver: zfs
-  name: mypool
-  status: Created
-  total space: 100.00GiB
-  used by: []
-  space used: 20.00GiB`
-
 const storageInfoBytesLow = `info:
   description: ""
   driver: zfs

@@ -80,7 +80,11 @@ func (s *Server) routes() {
 	s.mux.HandleFunc("POST /api/workspaces", s.handleAddWorkspace)
 	s.mux.HandleFunc("DELETE /api/workspaces", s.handleRemoveWorkspace)
 	s.mux.HandleFunc("GET /ws/terminal/{id}", s.handleTerminalWS)
+	s.mux.HandleFunc("GET /ws/shell/{id}", s.handleShellWS)
 	s.mux.HandleFunc("GET /ws/events", s.handleEventsWS)
+	s.mux.HandleFunc("GET /api/sessions/{id}/files", s.handleListFiles)
+	s.mux.HandleFunc("GET /api/sessions/{id}/files/content", s.handleReadFile)
+	s.mux.HandleFunc("PUT /api/sessions/{id}/files/content", s.handleWriteFile)
 
 	if s.cfg.Assets != nil {
 		fileServer := http.FileServer(http.FS(s.cfg.Assets))

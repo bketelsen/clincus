@@ -1,4 +1,4 @@
-import type { Session, Workspace, HistoryEntry, ClincusConfig } from './types';
+import type { Session, Workspace, HistoryEntry, ClincusConfig, FileListResponse, FileContentResponse } from './types';
 import { ApiError, showToast } from './errors';
 
 const BASE = '';
@@ -84,6 +84,19 @@ async function del(path: string, opts?: RequestOptions): Promise<void> {
     await fetchWithRetry(`${BASE}${path}`, { method: 'DELETE' }, opts);
 }
 
+async function put<T>(path: string, body?: unknown, opts?: RequestOptions): Promise<T> {
+    const res = await fetchWithRetry(
+        `${BASE}${path}`,
+        {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: body ? JSON.stringify(body) : undefined,
+        },
+        opts,
+    );
+    return res.json();
+}
+
 export const api = {
     listSessions: (opts?: RequestOptions) => get<Session[]>('/api/sessions', opts),
     createSession: (workspace: string, tool: string, opts?: RequestOptions) =>
@@ -101,4 +114,10 @@ export const api = {
         del(`/api/workspaces?path=${encodeURIComponent(path)}`, opts),
     getTools: (opts?: RequestOptions) => get<string[]>('/api/tools', opts),
     getConfig: (opts?: RequestOptions) => get<ClincusConfig>('/api/config', opts),
+    listFiles: (sessionId: string, path = '/', opts?: RequestOptions) =>
+        get<FileListResponse>(`/api/sessions/${sessionId}/files?path=${encodeURIComponent(path)}`, opts),
+    readFile: (sessionId: string, path: string, opts?: RequestOptions) =>
+        get<FileContentResponse>(`/api/sessions/${sessionId}/files/content?path=${encodeURIComponent(path)}`, opts),
+    writeFile: (sessionId: string, path: string, content: string, opts?: RequestOptions) =>
+        put<{ status: string; path: string }>(`/api/sessions/${sessionId}/files/content?path=${encodeURIComponent(path)}`, { content }, opts),
 };

@@ -6,14 +6,9 @@ import (
 	"net/http"
 
 	"github.com/bketelsen/clincus/internal/container"
-	"github.com/gorilla/websocket"
 )
 
-var upgrader = websocket.Upgrader{
-	CheckOrigin: func(r *http.Request) bool { return true },
-}
-
-func (s *Server) handleTerminalWS(w http.ResponseWriter, r *http.Request) {
+func (s *Server) handleShellWS(w http.ResponseWriter, r *http.Request) {
 	containerID := r.PathValue("id")
 	if containerID == "" {
 		http.Error(w, "missing container id", 400)
@@ -40,13 +35,18 @@ func (s *Server) handleTerminalWS(w http.ResponseWriter, r *http.Request) {
 		codeUID = appCfg.Incus.CodeUID
 	}
 
-	tmuxSession := fmt.Sprintf("clincus-%s", containerID)
+	codeUser := container.CodeUser
+	homeDir := fmt.Sprintf("/home/%s", codeUser)
+
+	workspacePath := mgr.GetWorkspacePath()
 	execArgs := []string{
 		"exec", "--force-interactive",
 		"--env", "TERM=xterm-256color",
+		"--env", fmt.Sprintf("HOME=%s", homeDir),
 		"--user", fmt.Sprintf("%d", codeUID),
 		"--group", fmt.Sprintf("%d", codeUID),
-		containerID, "--", "tmux", "attach-session", "-t", tmuxSession,
+		containerID, "--", "bash", "--login", "-c",
+		fmt.Sprintf("cd %s && exec bash --login", workspacePath),
 	}
 
 	bridge, err := NewBridge(ws, containerID, execArgs, codeUID)

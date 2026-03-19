@@ -18,9 +18,9 @@ type mockTool struct {
 	sandboxSettings map[string]interface{}
 }
 
-func (m *mockTool) Name() string           { return m.name }
-func (m *mockTool) Binary() string         { return m.binary }
-func (m *mockTool) ConfigDirName() string  { return m.configDirName }
+func (m *mockTool) Name() string            { return m.name }
+func (m *mockTool) Binary() string          { return m.binary }
+func (m *mockTool) ConfigDirName() string   { return m.configDirName }
 func (m *mockTool) SessionsDirName() string { return m.sessionsDirName }
 func (m *mockTool) BuildCommand(sessionID string, resume bool, resumeSessionID string) []string {
 	return []string{m.binary}
