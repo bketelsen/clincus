@@ -2,6 +2,8 @@
   import SessionHeader from '../components/SessionHeader.svelte';
   import TabBar from '../components/TabBar.svelte';
   import TerminalPane from '../components/TerminalPane.svelte';
+  import ShellPane from '../components/ShellPane.svelte';
+  import EditorPane from '../components/EditorPane.svelte';
   import { getSessions } from '../stores/sessions.svelte';
   import type { Session } from '../lib/types';
 
@@ -33,14 +35,12 @@
     </div>
     {#if shellInitialized}
       <div class="pane" class:hidden={activeTab !== 'shell'}>
-        <!-- ShellPane added in Task 8 -->
-        <div style="padding: 20px; color: #888;">Shell pane (coming soon)</div>
+        <ShellPane {containerId} visible={activeTab === 'shell'} />
       </div>
     {/if}
     {#if editorInitialized}
       <div class="pane" class:hidden={activeTab !== 'editor'}>
-        <!-- EditorPane added in Task 11 -->
-        <div style="padding: 20px; color: #888;">Editor pane (coming soon)</div>
+        <EditorPane sessionId={containerId} visible={activeTab === 'editor'} />
       </div>
     {/if}
   </div>
