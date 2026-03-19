@@ -9,6 +9,8 @@
   function onFileSelect(path: string) {
     selectedFile = path;
   }
+
+
 </script>
 
 <div class="editor-pane">
@@ -19,6 +21,7 @@
 <style>
   .editor-pane {
     display: flex;
-    height: 100%;
+    position: absolute;
+    inset: 0;
   }
 </style>

@@ -118,7 +118,15 @@
     const onResize = () => editor.layout();
     window.addEventListener('resize', onResize);
 
+    // Use ResizeObserver to detect when the container gets real dimensions
+    // (e.g., when parent transitions from display:none or visibility:hidden)
+    const resizeObserver = new ResizeObserver(() => {
+      editor.layout();
+    });
+    resizeObserver.observe(editorDiv);
+
     return () => {
+      resizeObserver.disconnect();
       window.removeEventListener('resize', onResize);
       // Dispose all models
       for (const model of models.values()) model.dispose();
@@ -184,5 +192,10 @@
     color: #555;
     font-size: 14px;
   }
-  .editor-container { flex: 1; }
+  .editor-container {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    position: relative;
+  }
 </style>

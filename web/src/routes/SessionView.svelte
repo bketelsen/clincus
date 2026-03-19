@@ -60,8 +60,12 @@
   .pane {
     position: absolute;
     inset: 0;
+    display: flex;
+    flex-direction: column;
   }
   .pane.hidden {
-    display: none;
+    visibility: hidden;
+    pointer-events: none;
+    z-index: -1;
   }
 </style>

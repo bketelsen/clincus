@@ -35,14 +35,18 @@ func (s *Server) handleShellWS(w http.ResponseWriter, r *http.Request) {
 		codeUID = appCfg.Incus.CodeUID
 	}
 
+	codeUser := container.CodeUser
+	homeDir := fmt.Sprintf("/home/%s", codeUser)
+
 	workspacePath := mgr.GetWorkspacePath()
 	execArgs := []string{
 		"exec", "--force-interactive",
 		"--env", "TERM=xterm-256color",
+		"--env", fmt.Sprintf("HOME=%s", homeDir),
 		"--user", fmt.Sprintf("%d", codeUID),
 		"--group", fmt.Sprintf("%d", codeUID),
-		containerID, "--", "bash", "-c",
-		fmt.Sprintf("cd %s && exec bash", workspacePath),
+		containerID, "--", "bash", "--login", "-c",
+		fmt.Sprintf("cd %s && exec bash --login", workspacePath),
 	}
 
 	bridge, err := NewBridge(ws, containerID, execArgs, codeUID)
