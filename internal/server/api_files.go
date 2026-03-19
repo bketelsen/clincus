@@ -83,7 +83,7 @@ func (s *Server) handleListFiles(w http.ResponseWriter, r *http.Request) {
 
 	// Use find to list directory contents with tab-delimited output
 	output, err := mgr.ExecArgsCapture(
-		[]string{"find", fullPath, "-maxdepth", "1", "-not", "-name", ".", "-printf", `%f\t%y\t%s\n`},
+		[]string{"find", fullPath, "-mindepth", "1", "-maxdepth", "1", "-printf", `%f\t%y\t%s\n`},
 		container.ExecCommandOptions{User: &codeUID},
 	)
 	if err != nil {
