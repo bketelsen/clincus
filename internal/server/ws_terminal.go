@@ -34,15 +34,22 @@ func (s *Server) handleTerminalWS(w http.ResponseWriter, r *http.Request) {
 	}
 	defer ws.Close()
 
-	tmuxSession := fmt.Sprintf("clincus-%s", containerID)
-
 	codeUID := 1000
 	appCfg := s.GetConfig()
 	if appCfg != nil && appCfg.Incus.CodeUID != 0 {
 		codeUID = appCfg.Incus.CodeUID
 	}
 
-	bridge, err := NewBridge(ws, containerID, tmuxSession, codeUID)
+	tmuxSession := fmt.Sprintf("clincus-%s", containerID)
+	execArgs := []string{
+		"exec", "--force-interactive",
+		"--env", "TERM=xterm-256color",
+		"--user", fmt.Sprintf("%d", codeUID),
+		"--group", fmt.Sprintf("%d", codeUID),
+		containerID, "--", "tmux", "attach-session", "-t", tmuxSession,
+	}
+
+	bridge, err := NewBridge(ws, containerID, execArgs, codeUID)
 	if err != nil {
 		//nolint:errcheck // best-effort error notification to client
 		_ = ws.WriteJSON(WSMessage{Type: "error", Msg: err.Error()})

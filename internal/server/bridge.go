@@ -2,7 +2,6 @@ package server
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"os/exec"
 	"runtime"
@@ -29,14 +28,8 @@ type Bridge struct {
 	once sync.Once
 }
 
-func NewBridge(ws *websocket.Conn, containerName, tmuxSession string, uid int) (*Bridge, error) {
-	incusArgs := []string{
-		"exec", "--force-interactive",
-		"--env", "TERM=xterm-256color",
-		"--user", fmt.Sprintf("%d", uid),
-		"--group", fmt.Sprintf("%d", uid),
-		containerName, "--", "tmux", "attach-session", "-t", tmuxSession,
-	}
+func NewBridge(ws *websocket.Conn, containerName string, execArgs []string, uid int) (*Bridge, error) {
+	incusArgs := execArgs
 
 	var cmd *exec.Cmd
 	if runtime.GOOS == "linux" {
