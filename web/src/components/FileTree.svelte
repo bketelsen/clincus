@@ -98,7 +98,7 @@
   >
     <span class="tree-icon">
       {#if node.type === 'dir'}
-        {node.loading ? '...' : node.expanded ? '&#x25BC;' : '&#x25B6;'}
+        {node.loading ? '...' : node.expanded ? '▼' : '▶'}
       {:else}
         &#x25A0;
       {/if}
