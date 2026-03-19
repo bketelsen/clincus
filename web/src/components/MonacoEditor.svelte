@@ -31,7 +31,7 @@
   let dirty = $state(false);
   let saving = $state(false);
   let loadError = $state('');
-  let currentPath = '';
+  let currentPath = $state('');
 
   // Map of filePath -> model, so we preserve state per file
   const models = new Map<string, monaco.editor.ITextModel>();
