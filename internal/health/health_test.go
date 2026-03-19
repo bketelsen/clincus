@@ -8,10 +8,10 @@ import (
 
 func TestCalculateSummary(t *testing.T) {
 	checks := map[string]HealthCheck{
-		"ok1":      {Status: StatusOK},
-		"ok2":      {Status: StatusOK},
-		"warn1":    {Status: StatusWarning},
-		"failed1":  {Status: StatusFailed},
+		"ok1":     {Status: StatusOK},
+		"ok2":     {Status: StatusOK},
+		"warn1":   {Status: StatusWarning},
+		"failed1": {Status: StatusFailed},
 	}
 
 	summary := calculateSummary(checks)
