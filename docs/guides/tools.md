@@ -75,6 +75,25 @@ name = "claude"
 binary = "/usr/local/bin/claude-custom"
 ```
 
+### GitHub CLI (`gh`) Authentication
+
+Clincus auto-detects your GitHub token and injects it as `GH_TOKEN` into Claude
+containers, so the `gh` CLI works out of the box. If `gh` is authenticated on
+your host, Claude sessions can create PRs, check issues, and use any `gh` command.
+
+You can also provide a token explicitly via `--env` (overrides auto-detection):
+
+```bash
+clincus shell --env GH_TOKEN=$GH_TOKEN ~/my-project
+```
+
+Token resolution order:
+
+1. `--env GH_TOKEN=...` (explicit, highest priority)
+2. `GH_TOKEN` environment variable
+3. `GITHUB_TOKEN` environment variable
+4. `gh auth token` output (automatic)
+
 ---
 
 ## opencode

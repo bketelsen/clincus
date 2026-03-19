@@ -8,10 +8,7 @@ import (
 )
 
 func (s *Server) handleGetConfig(w http.ResponseWriter, r *http.Request) {
-	s.writeJSON(w, map[string]any{
-		"port":            s.cfg.AppConfig.Dashboard.Port,
-		"workspace_roots": s.cfg.AppConfig.Dashboard.WorkspaceRoots,
-	})
+	s.writeJSON(w, s.GetConfig())
 }
 
 func (s *Server) handleUpdateConfig(w http.ResponseWriter, r *http.Request) {
@@ -23,12 +20,14 @@ func (s *Server) handleUpdateConfig(w http.ResponseWriter, r *http.Request) {
 		s.writeError(w, "invalid request", 400)
 		return
 	}
+	s.cfgMu.Lock()
 	if req.Port != nil {
 		s.cfg.AppConfig.Dashboard.Port = *req.Port
 	}
 	if req.WorkspaceRoots != nil {
 		s.cfg.AppConfig.Dashboard.WorkspaceRoots = *req.WorkspaceRoots
 	}
+	s.cfgMu.Unlock()
 	s.writeJSON(w, map[string]string{"status": "updated"})
 }
 

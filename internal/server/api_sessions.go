@@ -128,12 +128,13 @@ func (s *Server) handleCreateSession(w http.ResponseWriter, r *http.Request) {
 		CLIConfigPath: cliConfigPath,
 	}
 
-	if s.cfg.AppConfig != nil {
-		setupOpts.Image = s.cfg.AppConfig.Defaults.Image
-		setupOpts.IncusProject = s.cfg.AppConfig.Incus.Project
-		setupOpts.ProtectedPaths = s.cfg.AppConfig.Security.GetEffectiveProtectedPaths()
-		setupOpts.LimitsConfig = &s.cfg.AppConfig.Limits
-		setupOpts.PreserveWorkspacePath = s.cfg.AppConfig.Paths.PreserveWorkspacePath
+	appCfg := s.GetConfig()
+	if appCfg != nil {
+		setupOpts.Image = appCfg.Defaults.Image
+		setupOpts.IncusProject = appCfg.Incus.Project
+		setupOpts.ProtectedPaths = appCfg.Security.GetEffectiveProtectedPaths()
+		setupOpts.LimitsConfig = &appCfg.Limits
+		setupOpts.PreserveWorkspacePath = appCfg.Paths.PreserveWorkspacePath
 	}
 
 	result, err := session.Setup(setupOpts)
@@ -146,8 +147,8 @@ func (s *Server) handleCreateSession(w http.ResponseWriter, r *http.Request) {
 	toolCmd := t.BuildCommand(resolved.SessionID, false, "")
 	cmdStr := fmt.Sprintf("tmux new-session -d -s %s %s", tmuxName, strings.Join(toolCmd, " "))
 	codeUID := 1000
-	if s.cfg.AppConfig != nil && s.cfg.AppConfig.Incus.CodeUID != 0 {
-		codeUID = s.cfg.AppConfig.Incus.CodeUID
+	if appCfg != nil && appCfg.Incus.CodeUID != 0 {
+		codeUID = appCfg.Incus.CodeUID
 	}
 	execOpts := container.ExecCommandOptions{
 		User: &codeUID,

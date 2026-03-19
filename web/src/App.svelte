@@ -2,11 +2,13 @@
   import Layout from './components/Layout.svelte';
   import SessionList from './components/SessionList.svelte';
   import Dashboard from './routes/Dashboard.svelte';
-  import Terminal from './routes/Terminal.svelte';
+  import SessionView from './routes/SessionView.svelte';
   import Settings from './routes/Settings.svelte';
+  import { Toaster } from 'svelte-sonner';
   import { connectEvents } from './lib/ws';
   import { loadSessions, removeSession } from './stores/sessions.svelte';
   import { loadWorkspaces } from './stores/workspaces.svelte';
+  import { loadConfig } from './stores/config.svelte';
 
   let route = $state(location.hash || '#/');
   let routeParam = $state('');
@@ -23,6 +25,15 @@
     window.addEventListener('hashchange', parseRoute);
     loadSessions();
     loadWorkspaces();
+    loadConfig();
+
+    // AC4: on reconnect, re-fetch all state so the UI is current even if
+    // events were missed while the WebSocket was disconnected.
+    function refreshAll() {
+      loadSessions();
+      loadWorkspaces();
+      loadConfig();
+    }
 
     const events = connectEvents((evt) => {
       if (evt.type === 'session.started') {
@@ -31,8 +42,12 @@
       } else if (evt.type === 'session.stopped' && evt.id) {
         removeSession(evt.id);
         loadWorkspaces();
+      } else if (evt.type === 'config.reloaded') {
+        // AC3 (E01S02): config changed on disk — re-fetch config + workspaces.
+        loadConfig();
+        loadWorkspaces();
       }
-    });
+    }, refreshAll);
 
     return () => {
       window.removeEventListener('hashchange', parseRoute);
@@ -49,7 +64,7 @@
     {#if route === '#/' || route === '#/dashboard'}
       <Dashboard />
     {:else if routeParam}
-      <Terminal containerId={routeParam} />
+      <SessionView containerId={routeParam} />
     {:else if route === '#/settings'}
       <Settings />
     {:else}
@@ -57,3 +72,11 @@
     {/if}
   {/snippet}
 </Layout>
+<Toaster
+  position="bottom-right"
+  visibleToasts={3}
+  theme="dark"
+  toastOptions={{
+    style: 'background: #1e1e30; border-color: #333; color: #ccc; font-family: inherit;',
+  }}
+/>

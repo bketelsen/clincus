@@ -114,6 +114,7 @@ make bump  # Runs build, test, fmt, lint, then tags with svu and pushes
 ```
 
 Or manually:
+
 ```bash
 git tag -a v0.x.0 -m "v0.x.0 — description"
 git push origin v0.x.0  # Triggers GoReleaser release workflow

@@ -1,13 +1,13 @@
 import type { WSMessage } from './types';
 
-export function connectTerminal(
-  containerId: string,
+function connectWS(
+  url: string,
   onOutput: (data: string) => void,
   onExit: (code: number) => void,
   onError: (msg: string) => void,
 ): { send: (msg: WSMessage) => void; close: () => void } {
   const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
-  const ws = new WebSocket(`${proto}//${location.host}/ws/terminal/${containerId}`);
+  const ws = new WebSocket(`${proto}//${location.host}${url}`);
 
   ws.onmessage = (evt) => {
     const msg: WSMessage = JSON.parse(evt.data);
@@ -36,11 +36,87 @@ export function connectTerminal(
   };
 }
 
+export function connectTerminal(
+  containerId: string,
+  onOutput: (data: string) => void,
+  onExit: (code: number) => void,
+  onError: (msg: string) => void,
+) {
+  return connectWS(`/ws/terminal/${containerId}`, onOutput, onExit, onError);
+}
+
+export function connectShell(
+  containerId: string,
+  onOutput: (data: string) => void,
+  onExit: (code: number) => void,
+  onError: (msg: string) => void,
+) {
+  return connectWS(`/ws/shell/${containerId}`, onOutput, onExit, onError);
+}
+
+/**
+ * Connect to the /ws/events WebSocket endpoint with automatic reconnection.
+ * When the connection drops and is re-established, onReconnect is called so
+ * the caller can re-fetch current state (AC4).
+ *
+ * BUG-02 fix: onReconnect now fires inside onopen (after connection is
+ * established), not immediately after calling connect(). Old WebSocket is
+ * explicitly closed with onclose nulled before creating a new connection.
+ * Reconnection uses exponential backoff: 2s -> 4s -> 8s -> 30s cap.
+ */
 export function connectEvents(
-  onEvent: (event: { type: string; id?: string; workspace?: string }) => void,
+  onEvent: (event: { type: string; id?: string; timestamp?: string }) => void,
+  onReconnect?: () => void,
 ): { close: () => void } {
-  const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
-  const ws = new WebSocket(`${proto}//${location.host}/ws/events`);
-  ws.onmessage = (evt) => onEvent(JSON.parse(evt.data));
-  return { close: () => ws.close() };
+  let ws: WebSocket | null = null;
+  let closed = false;
+  let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+  let delay = 2000;
+  const MAX_DELAY = 30000;
+
+  function connect() {
+    if (closed) return;
+
+    // Close old connection explicitly (null onclose before close to prevent re-trigger)
+    if (ws) {
+      ws.onclose = null;
+      ws.close();
+      ws = null;
+    }
+
+    const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    ws = new WebSocket(`${proto}//${location.host}/ws/events`);
+
+    ws.onopen = () => {
+      delay = 2000; // reset on success
+      if (onReconnect) onReconnect(); // fires AFTER connection established
+    };
+
+    ws.onmessage = (evt) => onEvent(JSON.parse(evt.data));
+
+    ws.onclose = () => {
+      if (closed) return;
+      reconnectTimer = setTimeout(() => {
+        connect();
+      }, delay);
+      delay = Math.min(delay * 2, MAX_DELAY);
+    };
+
+    ws.onerror = () => {
+      // onerror is always followed by onclose -- reconnect handled there.
+    };
+  }
+
+  connect();
+
+  return {
+    close: () => {
+      closed = true;
+      if (reconnectTimer !== null) clearTimeout(reconnectTimer);
+      if (ws) {
+        ws.onclose = null;
+        ws.close();
+      }
+    },
+  };
 }

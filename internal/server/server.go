@@ -7,6 +7,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/bketelsen/clincus/internal/config"
 )
@@ -19,6 +21,7 @@ type Options struct {
 
 type Server struct {
 	cfg    Options
+	cfgMu  sync.RWMutex // protects cfg.AppConfig during hot-reload
 	mux    *http.ServeMux
 	events *EventHub
 }
@@ -33,8 +36,35 @@ func (s *Server) Handler() http.Handler {
 	return s.mux
 }
 
+// GetConfig returns the current AppConfig, safe for concurrent use.
+func (s *Server) GetConfig() *config.Config {
+	s.cfgMu.RLock()
+	defer s.cfgMu.RUnlock()
+	return s.cfg.AppConfig
+}
+
+// UpdateConfig swaps the server's config reference. Returns the old port so
+// the caller can detect whether an HTTP listener restart is needed (AC4).
+func (s *Server) UpdateConfig(newCfg *config.Config) (oldPort int) {
+	s.cfgMu.Lock()
+	defer s.cfgMu.Unlock()
+	oldPort = s.cfg.AppConfig.Dashboard.Port
+	s.cfg.AppConfig = newCfg
+	return oldPort
+}
+
 func (s *Server) Start() {
 	s.StartIncusEventWatcher()
+}
+
+// BroadcastConfigReloaded sends a config.reloaded event to all connected
+// WebSocket clients. Called by the config watcher onChange callback after a
+// successful reload. Only successful reloads trigger this (AC5).
+func (s *Server) BroadcastConfigReloaded() {
+	s.events.Broadcast(map[string]any{
+		"type":      "config.reloaded",
+		"timestamp": time.Now().UTC().Format(time.RFC3339),
+	})
 }
 
 func (s *Server) routes() {
@@ -50,7 +80,11 @@ func (s *Server) routes() {
 	s.mux.HandleFunc("POST /api/workspaces", s.handleAddWorkspace)
 	s.mux.HandleFunc("DELETE /api/workspaces", s.handleRemoveWorkspace)
 	s.mux.HandleFunc("GET /ws/terminal/{id}", s.handleTerminalWS)
+	s.mux.HandleFunc("GET /ws/shell/{id}", s.handleShellWS)
 	s.mux.HandleFunc("GET /ws/events", s.handleEventsWS)
+	s.mux.HandleFunc("GET /api/sessions/{id}/files", s.handleListFiles)
+	s.mux.HandleFunc("GET /api/sessions/{id}/files/content", s.handleReadFile)
+	s.mux.HandleFunc("PUT /api/sessions/{id}/files/content", s.handleWriteFile)
 
 	if s.cfg.Assets != nil {
 		fileServer := http.FileServer(http.FS(s.cfg.Assets))

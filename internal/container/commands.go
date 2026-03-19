@@ -8,7 +8,6 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
-	"runtime"
 	"strings"
 	"time"
 )
@@ -30,34 +29,18 @@ func Configure(project, group, codeUser string, codeUID int) {
 }
 
 // execIncusCommand creates an exec.Cmd for running incus commands.
-// On Linux, it wraps the command with sg for group permissions.
-// On macOS, it runs incus directly (no incus-admin group).
+// Delegates to the package-level defaultRunner for testability.
 func execIncusCommand(cmdArgs []string) *exec.Cmd {
-	if runtime.GOOS == "darwin" {
-		// macOS: run incus directly without sg wrapper
-		// cmdArgs is in format: [IncusGroup, "-c", "incus --project ... command"]
-		// Extract the actual incus command from the third element
-		incusCmd := cmdArgs[2] // "incus --project ... command"
-		return exec.Command("sh", "-c", incusCmd)
-	}
-	// Linux: use sg for group permissions
-	return exec.Command("sg", cmdArgs...)
+	return defaultRunner.Command(cmdArgs)
 }
 
 // execIncusCommandContext creates a context-aware exec.Cmd for running incus commands.
-// On Linux, it wraps the command with sg for group permissions.
-// On macOS, it runs incus directly (no incus-admin group).
+// Delegates to the package-level defaultRunner for testability.
 //
 // WaitDelay is set so that when the context is cancelled, cmd.Wait returns
 // promptly instead of blocking until all child-process pipes are closed.
 func execIncusCommandContext(ctx context.Context, cmdArgs []string) *exec.Cmd {
-	var cmd *exec.Cmd
-	if runtime.GOOS == "darwin" {
-		incusCmd := cmdArgs[2]
-		cmd = exec.CommandContext(ctx, "sh", "-c", incusCmd)
-	} else {
-		cmd = exec.CommandContext(ctx, "sg", cmdArgs...)
-	}
+	cmd := defaultRunner.CommandContext(ctx, cmdArgs)
 	cmd.WaitDelay = time.Second
 	return cmd
 }

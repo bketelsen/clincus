@@ -85,6 +85,18 @@ includes the workspace, tool, start time, and session ID.
 The **Workspaces** tab shows configured workspace roots. Add directories here to make them
 available in the New Session dialog without typing full paths.
 
+### Settings / Configuration View
+
+The **Settings** page displays the full Clincus configuration in a structured, read-only layout.
+All config sections are shown: defaults, paths, incus, tool, mounts, limits, git, security,
+profiles, and dashboard. Values are rendered with clear labels grouped by section.
+
+- **Workspace Roots** at the top remains editable (add/remove paths)
+- All other config values are read-only — edit your TOML config files to change them
+- The **Mounts** and **Profiles** sections are collapsible for large configurations
+- Empty or default values display a dash to indicate no override is set
+- The display updates automatically when config files change on disk (via `config.reloaded` events)
+
 ---
 
 ## Workspace Roots
@@ -108,6 +120,23 @@ workspace_roots = [
 The dashboard subscribes to `GET /ws/events` — a WebSocket event stream that pushes container
 state changes from Incus in real time. Session cards update automatically when containers
 start, stop, or change state without requiring a page refresh.
+
+---
+
+## Config Hot-Reload
+
+The dashboard server watches config files for changes and reloads automatically. If you edit
+`~/.config/clincus/config.toml` or `/etc/clincus/config.toml` while the dashboard is running,
+changes take effect within a few seconds without restarting the server.
+
+When a config reload succeeds, the server broadcasts a `config.reloaded` event over the
+`/ws/events` WebSocket. The frontend listens for this event and re-fetches the configuration
+from `GET /api/config`, ensuring the dashboard always displays the current active settings.
+
+If you change the `[dashboard] port` in the config, the listener is restarted on the new port.
+The frontend WebSocket connection includes automatic reconnection — if the connection drops
+during a port change, the client reconnects and fetches the latest state. Active tmux sessions
+inside containers continue running and clients can reconnect on the new port.
 
 ---
 
