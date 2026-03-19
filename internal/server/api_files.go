@@ -103,13 +103,16 @@ func (s *Server) handleListFiles(w http.ResponseWriter, r *http.Request) {
 		name := parts[0]
 		typeChar := parts[1]
 		var size int64
-		fmt.Sscanf(parts[2], "%d", &size)
+		_, _ = fmt.Sscanf(parts[2], "%d", &size) //nolint:errcheck // best-effort size parsing; defaults to 0
 
-		entryType := "file"
-		if typeChar == "d" {
+		var entryType string
+		switch typeChar {
+		case "d":
 			entryType = "dir"
-		} else if typeChar == "l" {
+		case "l":
 			entryType = "symlink"
+		default:
+			entryType = "file"
 		}
 
 		entries = append(entries, fileEntry{Name: name, Type: entryType, Size: size})
@@ -170,7 +173,7 @@ func (s *Server) handleReadFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var fileSize int64
-	fmt.Sscanf(strings.TrimSpace(sizeOutput), "%d", &fileSize)
+	_, _ = fmt.Sscanf(strings.TrimSpace(sizeOutput), "%d", &fileSize) //nolint:errcheck // best-effort; 0 is safe default
 	if fileSize > maxFileSize {
 		s.writeError(w, "file too large to edit (max 5MB)", 413)
 		return
@@ -278,7 +281,7 @@ func writeTempFile(content string) (string, error) {
 	}
 	defer f.Close()
 	if _, err := f.WriteString(content); err != nil {
-		os.Remove(f.Name())
+		os.Remove(f.Name()) //nolint:gosec // path from os.CreateTemp, not user input
 		return "", err
 	}
 	return f.Name(), nil
