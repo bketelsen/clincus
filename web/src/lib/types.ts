@@ -143,3 +143,20 @@ export interface ClincusConfig {
   profiles: Record<string, ProfileConfig>;
   dashboard: DashboardConfig;
 }
+
+export interface FileEntry {
+  name: string;
+  type: 'file' | 'dir' | 'symlink';
+  size: number;
+}
+
+export interface FileListResponse {
+  path: string;
+  entries: FileEntry[];
+}
+
+export interface FileContentResponse {
+  path: string;
+  content: string;
+  size: number;
+}
