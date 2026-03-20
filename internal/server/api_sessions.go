@@ -135,6 +135,18 @@ func (s *Server) handleCreateSession(w http.ResponseWriter, r *http.Request) {
 		setupOpts.ProtectedPaths = appCfg.Security.GetEffectiveProtectedPaths()
 		setupOpts.LimitsConfig = &appCfg.Limits
 		setupOpts.PreserveWorkspacePath = appCfg.Paths.PreserveWorkspacePath
+
+		// Parse config file default mounts (e.g., ~/.ssh)
+		mountConfig, err := session.MountConfigFromConfig(appCfg)
+		if err != nil {
+			s.writeError(w, fmt.Sprintf("invalid mount configuration: %v", err), 500)
+			return
+		}
+		if err := session.ValidateMounts(mountConfig); err != nil {
+			s.writeError(w, fmt.Sprintf("mount validation failed: %v", err), 500)
+			return
+		}
+		setupOpts.MountConfig = mountConfig
 	}
 
 	result, err := session.Setup(setupOpts)
