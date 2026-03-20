@@ -10,7 +10,7 @@ Three enhancements to the web dashboard's Projects landing page:
 
 ## Approach
 
-Frontend-only for grouping and sorting. One new backend endpoint for folder creation. The existing API shape (`WorkspacesResponse` with `roots` + flat `workspaces`) is preserved — grouping is a display concern handled in the frontend.
+Frontend-only for grouping and sorting. One new backend endpoint for folder creation. One small backend change: add a `root` field to `WorkspaceInfo` so the frontend can reliably group workspaces by root without path-prefix matching (which breaks when config uses `~`). The `WorkspacesResponse` shape is otherwise preserved.
 
 ## Design
 
@@ -32,8 +32,12 @@ Frontend-only for grouping and sorting. One new backend endpoint for folder crea
 **Data flow:**
 
 - `getRoots()` returns roots in config order (no sorting)
-- For each root, filter `getWorkspaces()` by matching path prefix
+- For each root, filter `getWorkspaces()` by matching `workspace.root` field (not path prefix — see backend change below)
 - Pass filtered list to `WorkspaceGrid`
+
+**Backend change — `WorkspaceInfo.root` field:**
+
+The config may store roots with `~` (e.g., `~/projects`) while workspace paths are expanded (e.g., `/home/bjk/projects/my-app`). Path-prefix matching would fail. To solve this, add an expanded `root` field to `WorkspaceInfo` in `api_workspaces.go` — the backend already knows which root each workspace was discovered under. The frontend groups by this field.
 
 ### 2. Alphabetical Sorting
 
@@ -53,15 +57,16 @@ Frontend-only for grouping and sorting. One new backend endpoint for folder crea
 
 - **Title:** "New Project in {root basename}"
 - **Folder name input:** Text field with real-time kebab-case validation
-  - Valid pattern: `^[a-z0-9]+(-[a-z0-9]+)*$`
+  - Valid pattern: `^[a-z0-9]+(-[a-z0-9]+)*$` (minimum 1 character)
   - Inline validation message for invalid input
+- **Keyboard accessibility:** Escape key closes dialog, auto-focus on name input when opened
 - **Tool picker:** Dropdown or radio buttons populated from `GET /api/tools`
   - Pre-selects the default tool from config
 - **Create & Launch button:** Disabled until folder name is valid
 
 **Submit flow:**
 
-1. `POST /api/workspaces/folder` with `{ root: "<root-path>", name: "<folder-name>" }`
+1. `POST /api/workspaces/folder` with `{ root: "<expanded-root-path>", name: "<folder-name>" }` (frontend sends the expanded absolute path from `workspace.root`)
 2. `POST /api/sessions` with `{ workspace: "<created-path>", tool: "<selected-tool>" }`
 3. Navigate to `#/terminal/{session.id}`
 
@@ -73,9 +78,9 @@ Frontend-only for grouping and sorting. One new backend endpoint for folder crea
 - **Response:** `{ "path": string }` (full path of created directory)
 - **Validation:**
   - `name` matches `^[a-z0-9]+(-[a-z0-9]+)*$`
-  - `root` is in configured `workspace_roots` (prevents arbitrary path creation)
+  - `root` is in configured `workspace_roots` — compare using `config.ExpandPath` on both sides (handles `~` in config values vs absolute paths in requests)
   - Directory does not already exist at `{root}/{name}`
-- **Implementation:** `os.MkdirAll(filepath.Join(root, name), 0755)`
+- **Implementation:** `os.Mkdir(filepath.Join(root, name), 0755)` (single-level `Mkdir`, not `MkdirAll` — if the root doesn't exist, that's a misconfiguration that should surface as an error)
 - **Error responses:**
   - `400` — invalid name or root not in config
   - `409` — directory already exists
@@ -85,6 +90,8 @@ Frontend-only for grouping and sorting. One new backend endpoint for folder crea
 - Name validation happens client-side (instant feedback) and server-side (security)
 - If folder creation fails: toast error, dialog stays open
 - If session creation fails after folder was created: toast error, navigate back to dashboard
+
+**Note:** `POST /api/sessions` does not check for project markers — it works with empty directories. The newly created folder will work as a session workspace immediately.
 
 ## Files Changed
 
@@ -103,8 +110,9 @@ Frontend-only for grouping and sorting. One new backend endpoint for folder crea
 
 | File | Change |
 |------|--------|
-| `internal/server/api_workspaces.go` | Add `handleCreateFolder` handler |
+| `internal/server/api_workspaces.go` | Add `root` field to `WorkspaceInfo`, add `handleCreateFolder` handler |
 | `internal/server/server.go` | Register `POST /api/workspaces/folder` route |
+| `internal/server/server_test.go` | Tests for `handleCreateFolder` (validation, error codes, success) |
 
 ### Documentation
 
@@ -114,7 +122,7 @@ Frontend-only for grouping and sorting. One new backend endpoint for folder crea
 
 ## Out of Scope
 
-- Changing the API response shape (grouping stays frontend-only)
+- Major API response shape changes (only adding `root` field to `WorkspaceInfo`)
 - Recursive workspace discovery
 - Empty folder persistence in the discovery list
 - Folder deletion or renaming from the dashboard
