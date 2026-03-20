@@ -166,7 +166,7 @@ func (s *Server) handleCreateFolder(w http.ResponseWriter, r *http.Request) {
 		s.writeError(w, "directory already exists", 409)
 		return
 	}
-	if err := os.Mkdir(fullPath, 0755); err != nil {
+	if err := os.Mkdir(fullPath, 0o755); err != nil {
 		s.writeError(w, "failed to create directory: "+err.Error(), 500)
 		return
 	}

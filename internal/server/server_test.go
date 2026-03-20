@@ -291,7 +291,9 @@ func TestCreateFolder_Success(t *testing.T) {
 		t.Fatalf("expected 201, got %d: %s", w.Code, w.Body.String())
 	}
 
-	var resp struct{ Path string `json:"path"` }
+	var resp struct {
+		Path string `json:"path"`
+	}
 	if err := json.NewDecoder(w.Body).Decode(&resp); err != nil {
 		t.Fatalf("failed to decode: %v", err)
 	}
@@ -367,7 +369,7 @@ func TestCreateFolder_RootNotInConfig(t *testing.T) {
 
 func TestCreateFolder_AlreadyExists(t *testing.T) {
 	tmpDir := t.TempDir()
-	os.Mkdir(filepath.Join(tmpDir, "existing"), 0755)
+	os.Mkdir(filepath.Join(tmpDir, "existing"), 0o755)
 
 	cfg := testConfig()
 	cfg.Dashboard.WorkspaceRoots = []string{tmpDir}
@@ -391,7 +393,7 @@ func TestCreateFolder_AlreadyExists(t *testing.T) {
 func TestListWorkspacesIncludesRoot(t *testing.T) {
 	tmpDir := t.TempDir()
 	projDir := filepath.Join(tmpDir, "my-project")
-	if err := os.MkdirAll(filepath.Join(projDir, ".git"), 0755); err != nil {
+	if err := os.MkdirAll(filepath.Join(projDir, ".git"), 0o755); err != nil {
 		t.Fatal(err)
 	}
 
