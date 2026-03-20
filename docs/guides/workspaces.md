@@ -55,6 +55,22 @@ disable_shift = true
 Mount extra directories into the container beyond the workspace. Useful for shared credential
 stores, package caches, or other project-independent data.
 
+### SSH Keys (Recommended)
+
+If your git remotes use SSH URLs (`git@github.com:...`), mount your `~/.ssh` directory so that
+git operations inside the container work without SSH host verification prompts:
+
+```toml
+# ~/.config/clincus/config.toml
+[[mounts.default]]
+host = "~/.ssh"
+container = "/home/code/.ssh"
+```
+
+Without this mount, the container has no `known_hosts` file, so the first SSH connection
+(e.g., `git fetch`) triggers an interactive host verification prompt that can break
+automated tool sessions.
+
 ### Via CLI flag
 
 ```bash
