@@ -58,6 +58,16 @@ func TestServiceUnitPath(t *testing.T) {
 	}
 }
 
+func TestServiceUnitPath_XDGConfigHome(t *testing.T) {
+	t.Setenv("XDG_CONFIG_HOME", "/custom/config")
+
+	path := serviceUnitPath()
+	expected := "/custom/config/systemd/user/clincus.service"
+	if path != expected {
+		t.Errorf("expected %s, got %s", expected, path)
+	}
+}
+
 func TestResolveBinaryPath(t *testing.T) {
 	path, err := resolveBinaryPath()
 	if err != nil {

@@ -14,11 +14,15 @@ import (
 const serviceUnitName = "clincus.service"
 
 func serviceUnitPath() string {
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		homeDir = os.Getenv("HOME")
+	configDir := os.Getenv("XDG_CONFIG_HOME")
+	if configDir == "" {
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			homeDir = os.Getenv("HOME")
+		}
+		configDir = filepath.Join(homeDir, ".config")
 	}
-	return filepath.Join(homeDir, ".config", "systemd", "user", serviceUnitName)
+	return filepath.Join(configDir, "systemd", "user", serviceUnitName)
 }
 
 var serviceUnitTemplate = `[Unit]
@@ -109,8 +113,8 @@ var serviceStopCmd = &cobra.Command{
 }
 
 func serviceStartCommand(cmd *cobra.Command, args []string) error {
-	if err := exec.Command("systemctl", "--user", "start", serviceUnitName).Run(); err != nil {
-		return exitError(1, fmt.Sprintf("failed to start service: %v", err))
+	if out, err := exec.Command("systemctl", "--user", "start", serviceUnitName).CombinedOutput(); err != nil {
+		return exitError(1, systemctlError("failed to start service", out, err))
 	}
 
 	fmt.Fprintf(os.Stderr, "Service started.\n")
@@ -118,12 +122,21 @@ func serviceStartCommand(cmd *cobra.Command, args []string) error {
 }
 
 func serviceStopCommand(cmd *cobra.Command, args []string) error {
-	if err := exec.Command("systemctl", "--user", "stop", serviceUnitName).Run(); err != nil {
-		return exitError(1, fmt.Sprintf("failed to stop service: %v", err))
+	if out, err := exec.Command("systemctl", "--user", "stop", serviceUnitName).CombinedOutput(); err != nil {
+		return exitError(1, systemctlError("failed to stop service", out, err))
 	}
 
 	fmt.Fprintf(os.Stderr, "Service stopped.\n")
 	return nil
+}
+
+// systemctlError formats a systemctl error with its output for better diagnostics.
+func systemctlError(msg string, output []byte, err error) string {
+	s := fmt.Sprintf("%s: %v", msg, err)
+	if len(output) > 0 {
+		s += "\n" + string(bytes.TrimSpace(output))
+	}
+	return s
 }
 
 func serviceInstallCommand(cmd *cobra.Command, args []string) error {
@@ -153,13 +166,13 @@ func serviceInstallCommand(cmd *cobra.Command, args []string) error {
 	fmt.Fprintf(os.Stderr, "Installed unit file to %s\n", unitPath)
 
 	// Reload systemd user daemon
-	if err := exec.Command("systemctl", "--user", "daemon-reload").Run(); err != nil {
-		return exitError(1, fmt.Sprintf("failed to reload systemd daemon: %v", err))
+	if out, err := exec.Command("systemctl", "--user", "daemon-reload").CombinedOutput(); err != nil {
+		return exitError(1, systemctlError("failed to reload systemd daemon", out, err))
 	}
 
 	// Enable the service
-	if err := exec.Command("systemctl", "--user", "enable", serviceUnitName).Run(); err != nil {
-		return exitError(1, fmt.Sprintf("failed to enable service: %v", err))
+	if out, err := exec.Command("systemctl", "--user", "enable", serviceUnitName).CombinedOutput(); err != nil {
+		return exitError(1, systemctlError("failed to enable service", out, err))
 	}
 
 	fmt.Fprintf(os.Stderr, "Service enabled. Run 'clincus service start' to start it.\n")
@@ -199,8 +212,8 @@ func serviceRemoveCommand(cmd *cobra.Command, args []string) error {
 	}
 
 	// Reload systemd user daemon
-	if err := exec.Command("systemctl", "--user", "daemon-reload").Run(); err != nil {
-		return exitError(1, fmt.Sprintf("failed to reload systemd daemon: %v", err))
+	if out, err := exec.Command("systemctl", "--user", "daemon-reload").CombinedOutput(); err != nil {
+		return exitError(1, systemctlError("failed to reload systemd daemon", out, err))
 	}
 
 	fmt.Fprintf(os.Stderr, "Service removed.\n")
