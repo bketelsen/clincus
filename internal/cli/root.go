@@ -157,6 +157,7 @@ func init() {
 	rootCmd.AddCommand(snapshotCmd)
 	rootCmd.AddCommand(resumeCmd)
 	rootCmd.AddCommand(serveCmd)
+	rootCmd.AddCommand(serviceCmd)
 }
 
 var versionCmd = &cobra.Command{
