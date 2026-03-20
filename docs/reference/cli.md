@@ -361,6 +361,44 @@ clincus serve --open
 
 ---
 
+### `clincus service`
+
+Manage the clincus web dashboard as a systemd user service.
+
+```
+clincus service install
+clincus service start
+clincus service stop
+clincus service remove
+```
+
+#### `service install`
+
+Install the systemd user unit file to `~/.config/systemd/user/clincus.service`, reload the daemon, and enable the service to start on login. The unit runs `clincus serve` and restarts on failure.
+
+#### `service start`
+
+Start the clincus service via `systemctl --user start`.
+
+#### `service stop`
+
+Stop the clincus service via `systemctl --user stop`.
+
+#### `service remove`
+
+Stop the service, disable it, remove the unit file, and reload the systemd daemon.
+
+**Examples:**
+
+```bash
+clincus service install   # Install and enable the service
+clincus service start     # Start the dashboard
+clincus service stop      # Stop the dashboard
+clincus service remove    # Uninstall the service
+```
+
+---
+
 ### `clincus health`
 
 Check system health and dependencies.
