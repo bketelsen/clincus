@@ -10,6 +10,7 @@ export interface Session {
 export interface Workspace {
   path: string;
   name: string;
+  root: string;
   has_config: boolean;
   active_sessions: number;
 }

@@ -107,11 +107,13 @@ export const api = {
         post<{ id: string }>(`/api/sessions/${id}/resume`, undefined, opts),
     sessionHistory: (opts?: RequestOptions) => get<HistoryEntry[]>('/api/sessions/history', opts),
     listWorkspaces: (opts?: RequestOptions) =>
-        get<{ roots: string[]; workspaces: Workspace[] }>('/api/workspaces', opts),
+        get<{ roots: string[]; expanded_roots: string[]; workspaces: Workspace[] }>('/api/workspaces', opts),
     addWorkspace: (path: string, opts?: RequestOptions) =>
         post('/api/workspaces', { path }, opts),
     removeWorkspace: (path: string, opts?: RequestOptions) =>
         del(`/api/workspaces?path=${encodeURIComponent(path)}`, opts),
+    createFolder: (root: string, name: string, opts?: RequestOptions) =>
+        post<{ path: string }>('/api/workspaces/folder', { root, name }, opts),
     getTools: (opts?: RequestOptions) => get<string[]>('/api/tools', opts),
     getConfig: (opts?: RequestOptions) => get<ClincusConfig>('/api/config', opts),
     listFiles: (sessionId: string, path = '/', opts?: RequestOptions) =>
