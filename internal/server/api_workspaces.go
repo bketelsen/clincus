@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/bketelsen/clincus/internal/config"
@@ -13,13 +14,15 @@ import (
 type WorkspaceInfo struct {
 	Path           string `json:"path"`
 	Name           string `json:"name"`
+	Root           string `json:"root"`
 	HasConfig      bool   `json:"has_config"`
 	ActiveSessions int    `json:"active_sessions"`
 }
 
 type WorkspacesResponse struct {
-	Roots      []string        `json:"roots"`
-	Workspaces []WorkspaceInfo `json:"workspaces"`
+	Roots         []string        `json:"roots"`
+	ExpandedRoots []string        `json:"expanded_roots"`
+	Workspaces    []WorkspaceInfo `json:"workspaces"`
 }
 
 var projectMarkers = []string{
@@ -31,9 +34,11 @@ var projectMarkers = []string{
 func (s *Server) handleListWorkspaces(w http.ResponseWriter, r *http.Request) {
 	roots := s.GetConfig().Dashboard.WorkspaceRoots
 	var workspaces []WorkspaceInfo
+	expandedRoots := make([]string, 0, len(roots))
 
 	for _, root := range roots {
 		expanded := config.ExpandPath(root)
+		expandedRoots = append(expandedRoots, expanded)
 		entries, err := os.ReadDir(expanded)
 		if err != nil {
 			continue
@@ -50,6 +55,7 @@ func (s *Server) handleListWorkspaces(w http.ResponseWriter, r *http.Request) {
 			workspaces = append(workspaces, WorkspaceInfo{
 				Path:      fullPath,
 				Name:      e.Name(),
+				Root:      expanded,
 				HasConfig: coiErr == nil,
 			})
 		}
@@ -59,8 +65,9 @@ func (s *Server) handleListWorkspaces(w http.ResponseWriter, r *http.Request) {
 		workspaces = []WorkspaceInfo{}
 	}
 	s.writeJSON(w, WorkspacesResponse{
-		Roots:      roots,
-		Workspaces: workspaces,
+		Roots:         roots,
+		ExpandedRoots: expandedRoots,
+		Workspaces:    workspaces,
 	})
 }
 
@@ -121,6 +128,51 @@ func (s *Server) handleRemoveWorkspace(w http.ResponseWriter, r *http.Request) {
 	s.cfg.AppConfig.Dashboard.WorkspaceRoots = newRoots
 	s.cfgMu.Unlock()
 	w.WriteHeader(204)
+}
+
+var validFolderName = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
+
+func (s *Server) handleCreateFolder(w http.ResponseWriter, r *http.Request) {
+	var req struct {
+		Root string `json:"root"`
+		Name string `json:"name"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		s.writeError(w, "invalid request body", 400)
+		return
+	}
+
+	if !validFolderName.MatchString(req.Name) {
+		s.writeError(w, "invalid folder name: must be lowercase alphanumeric with hyphens (e.g., my-project)", 400)
+		return
+	}
+
+	expandedRoot := config.ExpandPath(req.Root)
+	roots := s.GetConfig().Dashboard.WorkspaceRoots
+	found := false
+	for _, cfgRoot := range roots {
+		if config.ExpandPath(cfgRoot) == expandedRoot {
+			found = true
+			break
+		}
+	}
+	if !found {
+		s.writeError(w, "root is not a configured workspace root", 400)
+		return
+	}
+
+	fullPath := filepath.Join(expandedRoot, req.Name)
+	if _, err := os.Stat(fullPath); err == nil {
+		s.writeError(w, "directory already exists", 409)
+		return
+	}
+	if err := os.Mkdir(fullPath, 0o755); err != nil {
+		s.writeError(w, "failed to create directory: "+err.Error(), 500)
+		return
+	}
+
+	w.WriteHeader(201)
+	s.writeJSON(w, map[string]string{"path": fullPath})
 }
 
 func isProject(dir string) bool {

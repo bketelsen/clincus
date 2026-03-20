@@ -204,13 +204,35 @@ Return session history from `~/.clincus/history.jsonl`.
 
 ### `GET /api/workspaces`
 
-Return the list of configured workspace roots plus any workspaces seen in session history.
+Return configured workspace roots and discovered project directories.
 
-**Response:** array of workspace path strings.
+**Response:**
 
 ```json
-["/home/user/projects", "/home/user/work", "/srv/repos/myapp"]
+{
+  "roots": ["~/projects", "~/work"],
+  "expanded_roots": ["/home/user/projects", "/home/user/work"],
+  "workspaces": [
+    {
+      "path": "/home/user/projects/my-app",
+      "name": "my-app",
+      "root": "/home/user/projects",
+      "has_config": true,
+      "active_sessions": 1
+    }
+  ]
+}
 ```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `roots` | string[] | Configured workspace roots (raw config values) |
+| `expanded_roots` | string[] | Workspace roots with `~` expanded to absolute paths |
+| `workspaces[].path` | string | Absolute path to the project directory |
+| `workspaces[].name` | string | Directory basename |
+| `workspaces[].root` | string | Expanded absolute path of the workspace root this project belongs to |
+| `workspaces[].has_config` | bool | Whether `.clincus.toml` exists in the project |
+| `workspaces[].active_sessions` | int | Number of active sessions for this project |
 
 ---
 
@@ -239,6 +261,44 @@ Remove a workspace root from the list.
 ```
 
 **Response:** `200 OK` with the updated list, or `400 Bad Request`.
+
+---
+
+### `POST /api/workspaces/folder`
+
+Create a new project directory inside a configured workspace root.
+
+**Request body:**
+
+```json
+{
+  "root": "/home/user/projects",
+  "name": "my-new-project"
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `root` | string | yes | Absolute path to a configured workspace root |
+| `name` | string | yes | Folder name (kebab-case: lowercase alphanumeric with hyphens) |
+
+**Folder name validation:** Must match `^[a-z0-9]+(-[a-z0-9]+)*$`. No spaces, uppercase, or special characters.
+
+**Response:** `201 Created`
+
+```json
+{
+  "path": "/home/user/projects/my-new-project"
+}
+```
+
+**Errors:**
+
+| Code | Condition |
+|------|-----------|
+| `400` | Invalid folder name or root not in configured workspace roots |
+| `409` | Directory already exists |
+| `500` | Filesystem error creating the directory |
 
 ---
 
