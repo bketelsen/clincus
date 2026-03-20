@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -40,5 +41,19 @@ func TestRenderUnitFile(t *testing.T) {
 	// Must have restart policy
 	if !strings.Contains(result, "Restart=on-failure") {
 		t.Error("should restart on failure")
+	}
+}
+
+func TestServiceUnitPath(t *testing.T) {
+	path := serviceUnitPath()
+
+	// Must be under ~/.config/systemd/user/
+	if !strings.Contains(path, filepath.Join(".config", "systemd", "user")) {
+		t.Errorf("expected path under .config/systemd/user/, got %s", path)
+	}
+
+	// Must end with clincus.service
+	if !strings.HasSuffix(path, "clincus.service") {
+		t.Errorf("expected path ending in clincus.service, got %s", path)
 	}
 }

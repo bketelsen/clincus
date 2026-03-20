@@ -3,8 +3,20 @@ package cli
 import (
 	"bytes"
 	"fmt"
+	"os"
+	"path/filepath"
 	"text/template"
 )
+
+const serviceUnitName = "clincus.service"
+
+func serviceUnitPath() string {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		homeDir = os.Getenv("HOME")
+	}
+	return filepath.Join(homeDir, ".config", "systemd", "user", serviceUnitName)
+}
 
 var serviceUnitTemplate = `[Unit]
 Description=Clincus Web Dashboard
