@@ -96,6 +96,36 @@ The unit runs 'clincus serve' and restarts on failure.
 	RunE: serviceInstallCommand,
 }
 
+var serviceStartCmd = &cobra.Command{
+	Use:   "start",
+	Short: "Start the clincus service",
+	RunE:  serviceStartCommand,
+}
+
+var serviceStopCmd = &cobra.Command{
+	Use:   "stop",
+	Short: "Stop the clincus service",
+	RunE:  serviceStopCommand,
+}
+
+func serviceStartCommand(cmd *cobra.Command, args []string) error {
+	if err := exec.Command("systemctl", "--user", "start", serviceUnitName).Run(); err != nil {
+		return exitError(1, fmt.Sprintf("failed to start service: %v", err))
+	}
+
+	fmt.Fprintf(os.Stderr, "Service started.\n")
+	return nil
+}
+
+func serviceStopCommand(cmd *cobra.Command, args []string) error {
+	if err := exec.Command("systemctl", "--user", "stop", serviceUnitName).Run(); err != nil {
+		return exitError(1, fmt.Sprintf("failed to stop service: %v", err))
+	}
+
+	fmt.Fprintf(os.Stderr, "Service stopped.\n")
+	return nil
+}
+
 func serviceInstallCommand(cmd *cobra.Command, args []string) error {
 	binaryPath, err := resolveBinaryPath()
 	if err != nil {
@@ -138,4 +168,6 @@ func serviceInstallCommand(cmd *cobra.Command, args []string) error {
 
 func init() {
 	serviceCmd.AddCommand(serviceInstallCmd)
+	serviceCmd.AddCommand(serviceStartCmd)
+	serviceCmd.AddCommand(serviceStopCmd)
 }
