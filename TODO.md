@@ -9,5 +9,5 @@
 - [ ] Expose some global settings in web app
 - [ ] Web app feature parity with cli (snapshots, other missing features)
 - [ ] Web app choose image option
-- [ ] systemd --user unit to start clincus
+- [x] systemd --user unit to start clincus
 - [ ] `clincus setup` or similar to create global configuration (maybe with wizard)
