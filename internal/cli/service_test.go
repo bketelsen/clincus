@@ -1,0 +1,44 @@
+package cli
+
+import (
+	"strings"
+	"testing"
+)
+
+func TestRenderUnitFile(t *testing.T) {
+	result, err := renderUnitFile("/home/testuser/.local/bin/clincus")
+	if err != nil {
+		t.Fatalf("renderUnitFile() error: %v", err)
+	}
+
+	// Must contain required systemd sections
+	if !strings.Contains(result, "[Unit]") {
+		t.Error("missing [Unit] section")
+	}
+	if !strings.Contains(result, "[Service]") {
+		t.Error("missing [Service] section")
+	}
+	if !strings.Contains(result, "[Install]") {
+		t.Error("missing [Install] section")
+	}
+
+	// Must reference the binary path
+	if !strings.Contains(result, "/home/testuser/.local/bin/clincus serve") {
+		t.Error("ExecStart should reference 'clincus serve'")
+	}
+
+	// Must target user session
+	if !strings.Contains(result, "WantedBy=default.target") {
+		t.Error("should be WantedBy=default.target for user units")
+	}
+
+	// Must use notify or simple type
+	if !strings.Contains(result, "Type=simple") {
+		t.Error("should use Type=simple")
+	}
+
+	// Must have restart policy
+	if !strings.Contains(result, "Restart=on-failure") {
+		t.Error("should restart on failure")
+	}
+}
