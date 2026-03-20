@@ -3,7 +3,10 @@ package server
 import (
 	"encoding/json"
 	"io/fs"
+	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"testing/fstest"
@@ -265,5 +268,41 @@ func TestPutConfigStillWorks(t *testing.T) {
 	}
 	if len(cfg.Dashboard.WorkspaceRoots) != 1 || cfg.Dashboard.WorkspaceRoots[0] != "/home/test/projects" {
 		t.Errorf("workspace_roots not updated correctly: %v", cfg.Dashboard.WorkspaceRoots)
+	}
+}
+
+func TestListWorkspacesIncludesRoot(t *testing.T) {
+	tmpDir := t.TempDir()
+	projDir := filepath.Join(tmpDir, "my-project")
+	if err := os.MkdirAll(filepath.Join(projDir, ".git"), 0755); err != nil {
+		t.Fatal(err)
+	}
+
+	cfg := testConfig()
+	cfg.Dashboard.WorkspaceRoots = []string{tmpDir}
+
+	srv := New(Options{
+		Port:      0,
+		Assets:    fstest.MapFS{"index.html": {Data: []byte("<html/>")}},
+		AppConfig: cfg,
+	})
+
+	req := httptest.NewRequest("GET", "/api/workspaces", nil)
+	w := httptest.NewRecorder()
+	srv.Handler().ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d", w.Code)
+	}
+
+	var resp WorkspacesResponse
+	if err := json.NewDecoder(w.Body).Decode(&resp); err != nil {
+		t.Fatalf("failed to decode: %v", err)
+	}
+	if len(resp.Workspaces) != 1 {
+		t.Fatalf("expected 1 workspace, got %d", len(resp.Workspaces))
+	}
+	if resp.Workspaces[0].Root != tmpDir {
+		t.Errorf("expected root %q, got %q", tmpDir, resp.Workspaces[0].Root)
 	}
 }

@@ -13,13 +13,15 @@ import (
 type WorkspaceInfo struct {
 	Path           string `json:"path"`
 	Name           string `json:"name"`
+	Root           string `json:"root"`
 	HasConfig      bool   `json:"has_config"`
 	ActiveSessions int    `json:"active_sessions"`
 }
 
 type WorkspacesResponse struct {
-	Roots      []string        `json:"roots"`
-	Workspaces []WorkspaceInfo `json:"workspaces"`
+	Roots         []string        `json:"roots"`
+	ExpandedRoots []string        `json:"expanded_roots"`
+	Workspaces    []WorkspaceInfo `json:"workspaces"`
 }
 
 var projectMarkers = []string{
@@ -31,9 +33,11 @@ var projectMarkers = []string{
 func (s *Server) handleListWorkspaces(w http.ResponseWriter, r *http.Request) {
 	roots := s.GetConfig().Dashboard.WorkspaceRoots
 	var workspaces []WorkspaceInfo
+	expandedRoots := make([]string, 0, len(roots))
 
 	for _, root := range roots {
 		expanded := config.ExpandPath(root)
+		expandedRoots = append(expandedRoots, expanded)
 		entries, err := os.ReadDir(expanded)
 		if err != nil {
 			continue
@@ -50,6 +54,7 @@ func (s *Server) handleListWorkspaces(w http.ResponseWriter, r *http.Request) {
 			workspaces = append(workspaces, WorkspaceInfo{
 				Path:      fullPath,
 				Name:      e.Name(),
+				Root:      expanded,
 				HasConfig: coiErr == nil,
 			})
 		}
@@ -59,8 +64,9 @@ func (s *Server) handleListWorkspaces(w http.ResponseWriter, r *http.Request) {
 		workspaces = []WorkspaceInfo{}
 	}
 	s.writeJSON(w, WorkspacesResponse{
-		Roots:      roots,
-		Workspaces: workspaces,
+		Roots:         roots,
+		ExpandedRoots: expandedRoots,
+		Workspaces:    workspaces,
 	})
 }
 
