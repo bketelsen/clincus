@@ -11,33 +11,13 @@ import (
 
 // ParseMountConfig creates MountConfig from config file and CLI flags
 func ParseMountConfig(cfg *config.Config, mountPairs []string) (*session.MountConfig, error) {
-	mountConfig := &session.MountConfig{
-		Mounts: []session.MountEntry{},
-	}
-
-	deviceNameCounter := 0
-
 	// Step 1: Add config file default mounts
-	for _, cfgMount := range cfg.Mounts.Default {
-		// Expand host path
-		hostPath := config.ExpandPath(cfgMount.Host)
-		absHost, err := filepath.Abs(hostPath)
-		if err != nil {
-			return nil, fmt.Errorf("invalid config mount host path '%s': %w", cfgMount.Host, err)
-		}
-
-		// Validate container path is absolute
-		if !filepath.IsAbs(cfgMount.Container) {
-			return nil, fmt.Errorf("config mount container path must be absolute: %s", cfgMount.Container)
-		}
-
-		mountConfig.Mounts = append(mountConfig.Mounts, session.MountEntry{
-			HostPath:      absHost,
-			ContainerPath: filepath.Clean(cfgMount.Container),
-			DeviceName:    fmt.Sprintf("mount-%d", deviceNameCounter),
-		})
-		deviceNameCounter++
+	mountConfig, err := session.MountConfigFromConfig(cfg)
+	if err != nil {
+		return nil, err
 	}
+
+	deviceNameCounter := len(mountConfig.Mounts)
 
 	// Step 2: Add --mount flags (can override config mounts)
 	for _, pair := range mountPairs {
