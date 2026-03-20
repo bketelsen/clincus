@@ -141,12 +141,12 @@ func serviceInstallCommand(cmd *cobra.Command, args []string) error {
 
 	// Ensure parent directory exists
 	unitDir := filepath.Dir(unitPath)
-	if err := os.MkdirAll(unitDir, 0755); err != nil {
+	if err := os.MkdirAll(unitDir, 0o755); err != nil {
 		return exitError(1, fmt.Sprintf("failed to create directory %s: %v", unitDir, err))
 	}
 
 	// Write unit file
-	if err := os.WriteFile(unitPath, []byte(unitContent), 0644); err != nil {
+	if err := os.WriteFile(unitPath, []byte(unitContent), 0o644); err != nil {
 		return exitError(1, fmt.Sprintf("failed to write unit file: %v", err))
 	}
 
@@ -166,8 +166,50 @@ func serviceInstallCommand(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
+var serviceRemoveCmd = &cobra.Command{
+	Use:   "remove",
+	Short: "Remove the systemd user unit",
+	Long: `Stop and remove the clincus systemd user service.
+
+This stops the service, disables it, removes the unit file, and reloads
+the systemd user daemon.
+`,
+	RunE: serviceRemoveCommand,
+}
+
+func serviceRemoveCommand(cmd *cobra.Command, args []string) error {
+	unitPath := serviceUnitPath()
+
+	// Check if unit file exists
+	if _, err := os.Stat(unitPath); os.IsNotExist(err) {
+		return exitError(1, "service is not installed")
+	}
+
+	// Stop the service (ignore error — it may not be running)
+	//nolint:errcheck
+	_ = exec.Command("systemctl", "--user", "stop", serviceUnitName).Run()
+
+	// Disable the service
+	//nolint:errcheck
+	_ = exec.Command("systemctl", "--user", "disable", serviceUnitName).Run()
+
+	// Remove unit file
+	if err := os.Remove(unitPath); err != nil {
+		return exitError(1, fmt.Sprintf("failed to remove unit file: %v", err))
+	}
+
+	// Reload systemd user daemon
+	if err := exec.Command("systemctl", "--user", "daemon-reload").Run(); err != nil {
+		return exitError(1, fmt.Sprintf("failed to reload systemd daemon: %v", err))
+	}
+
+	fmt.Fprintf(os.Stderr, "Service removed.\n")
+	return nil
+}
+
 func init() {
 	serviceCmd.AddCommand(serviceInstallCmd)
 	serviceCmd.AddCommand(serviceStartCmd)
 	serviceCmd.AddCommand(serviceStopCmd)
+	serviceCmd.AddCommand(serviceRemoveCmd)
 }
