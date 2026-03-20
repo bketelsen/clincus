@@ -271,6 +271,123 @@ func TestPutConfigStillWorks(t *testing.T) {
 	}
 }
 
+func TestCreateFolder_Success(t *testing.T) {
+	tmpDir := t.TempDir()
+	cfg := testConfig()
+	cfg.Dashboard.WorkspaceRoots = []string{tmpDir}
+
+	srv := New(Options{
+		Port:      0,
+		Assets:    fstest.MapFS{"index.html": {Data: []byte("<html/>")}},
+		AppConfig: cfg,
+	})
+
+	body := strings.NewReader(`{"root":"` + tmpDir + `","name":"my-project"}`)
+	req := httptest.NewRequest("POST", "/api/workspaces/folder", body)
+	w := httptest.NewRecorder()
+	srv.Handler().ServeHTTP(w, req)
+
+	if w.Code != 201 {
+		t.Fatalf("expected 201, got %d: %s", w.Code, w.Body.String())
+	}
+
+	var resp struct{ Path string `json:"path"` }
+	if err := json.NewDecoder(w.Body).Decode(&resp); err != nil {
+		t.Fatalf("failed to decode: %v", err)
+	}
+	expected := filepath.Join(tmpDir, "my-project")
+	if resp.Path != expected {
+		t.Errorf("expected path %q, got %q", expected, resp.Path)
+	}
+	// Verify directory was created
+	info, err := os.Stat(expected)
+	if err != nil {
+		t.Fatalf("directory not created: %v", err)
+	}
+	if !info.IsDir() {
+		t.Error("expected a directory")
+	}
+}
+
+func TestCreateFolder_InvalidName(t *testing.T) {
+	tmpDir := t.TempDir()
+	cfg := testConfig()
+	cfg.Dashboard.WorkspaceRoots = []string{tmpDir}
+
+	srv := New(Options{
+		Port:      0,
+		Assets:    fstest.MapFS{"index.html": {Data: []byte("<html/>")}},
+		AppConfig: cfg,
+	})
+
+	cases := []struct {
+		name string
+		body string
+	}{
+		{"spaces", `{"root":"` + tmpDir + `","name":"my project"}`},
+		{"uppercase", `{"root":"` + tmpDir + `","name":"MyProject"}`},
+		{"leading-hyphen", `{"root":"` + tmpDir + `","name":"-bad"}`},
+		{"trailing-hyphen", `{"root":"` + tmpDir + `","name":"bad-"}`},
+		{"empty", `{"root":"` + tmpDir + `","name":""}`},
+		{"slashes", `{"root":"` + tmpDir + `","name":"a/b"}`},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			body := strings.NewReader(tc.body)
+			req := httptest.NewRequest("POST", "/api/workspaces/folder", body)
+			w := httptest.NewRecorder()
+			srv.Handler().ServeHTTP(w, req)
+			if w.Code != 400 {
+				t.Errorf("expected 400, got %d for %q", w.Code, tc.name)
+			}
+		})
+	}
+}
+
+func TestCreateFolder_RootNotInConfig(t *testing.T) {
+	cfg := testConfig()
+	cfg.Dashboard.WorkspaceRoots = []string{"/some/configured/root"}
+
+	srv := New(Options{
+		Port:      0,
+		Assets:    fstest.MapFS{"index.html": {Data: []byte("<html/>")}},
+		AppConfig: cfg,
+	})
+
+	body := strings.NewReader(`{"root":"/not/configured","name":"test"}`)
+	req := httptest.NewRequest("POST", "/api/workspaces/folder", body)
+	w := httptest.NewRecorder()
+	srv.Handler().ServeHTTP(w, req)
+
+	if w.Code != 400 {
+		t.Errorf("expected 400, got %d", w.Code)
+	}
+}
+
+func TestCreateFolder_AlreadyExists(t *testing.T) {
+	tmpDir := t.TempDir()
+	os.Mkdir(filepath.Join(tmpDir, "existing"), 0755)
+
+	cfg := testConfig()
+	cfg.Dashboard.WorkspaceRoots = []string{tmpDir}
+
+	srv := New(Options{
+		Port:      0,
+		Assets:    fstest.MapFS{"index.html": {Data: []byte("<html/>")}},
+		AppConfig: cfg,
+	})
+
+	body := strings.NewReader(`{"root":"` + tmpDir + `","name":"existing"}`)
+	req := httptest.NewRequest("POST", "/api/workspaces/folder", body)
+	w := httptest.NewRecorder()
+	srv.Handler().ServeHTTP(w, req)
+
+	if w.Code != 409 {
+		t.Errorf("expected 409, got %d", w.Code)
+	}
+}
+
 func TestListWorkspacesIncludesRoot(t *testing.T) {
 	tmpDir := t.TempDir()
 	projDir := filepath.Join(tmpDir, "my-project")

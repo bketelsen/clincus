@@ -79,6 +79,7 @@ func (s *Server) routes() {
 	s.mux.HandleFunc("GET /api/workspaces", s.handleListWorkspaces)
 	s.mux.HandleFunc("POST /api/workspaces", s.handleAddWorkspace)
 	s.mux.HandleFunc("DELETE /api/workspaces", s.handleRemoveWorkspace)
+	s.mux.HandleFunc("POST /api/workspaces/folder", s.handleCreateFolder)
 	s.mux.HandleFunc("GET /ws/terminal/{id}", s.handleTerminalWS)
 	s.mux.HandleFunc("GET /ws/shell/{id}", s.handleShellWS)
 	s.mux.HandleFunc("GET /ws/events", s.handleEventsWS)
