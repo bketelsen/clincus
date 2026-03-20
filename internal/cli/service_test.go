@@ -57,3 +57,21 @@ func TestServiceUnitPath(t *testing.T) {
 		t.Errorf("expected path ending in clincus.service, got %s", path)
 	}
 }
+
+func TestResolveBinaryPath(t *testing.T) {
+	path, err := resolveBinaryPath()
+	if err != nil {
+		t.Fatalf("resolveBinaryPath() error: %v", err)
+	}
+
+	// Must be an absolute path
+	if !filepath.IsAbs(path) {
+		t.Errorf("expected absolute path, got %s", path)
+	}
+
+	// During testing, os.Executable() returns the test binary, so just
+	// verify it returns a valid absolute path without error.
+	if path == "" {
+		t.Error("expected non-empty path")
+	}
+}

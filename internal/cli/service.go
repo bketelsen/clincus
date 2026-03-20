@@ -36,6 +36,20 @@ type unitTemplateData struct {
 	BinaryPath string
 }
 
+func resolveBinaryPath() (string, error) {
+	exe, err := os.Executable()
+	if err != nil {
+		return "", fmt.Errorf("failed to resolve executable path: %w", err)
+	}
+
+	resolved, err := filepath.EvalSymlinks(exe)
+	if err != nil {
+		return "", fmt.Errorf("failed to resolve symlinks: %w", err)
+	}
+
+	return resolved, nil
+}
+
 func renderUnitFile(binaryPath string) (string, error) {
 	tmpl, err := template.New("unit").Parse(serviceUnitTemplate)
 	if err != nil {
