@@ -120,6 +120,18 @@ git tag -a v0.x.0 -m "v0.x.0 — description"
 git push origin v0.x.0  # Triggers GoReleaser release workflow
 ```
 
+## Verification
+
+- After frontend/Svelte changes, run `make build` (not just `make web`) to verify the full `go:embed` integration works end-to-end
+- After CI workflow changes, check that the golangci-lint version in `.github/workflows/ci.yml` matches the v2 config format — mismatches have caused repeated CI failures (e.g. `version: v2.11`, not just `v2`)
+- After changes to `.gitignore` or embed directives, confirm `cmd/clincus/` is not accidentally excluded and `webui/dist/.gitkeep` is still tracked
+
+## Web Dashboard Gotchas
+
+- SPA routing fallback must not intercept requests for static assets (JS, CSS, images) — only serve `index.html` for non-file paths
+- Containers need the `TERM` env var set for interactive sessions to work properly
+- Exec commands must use the correct container user, not root by default
+
 ## Important Notes
 
 - The `webui/dist/` directory needs a `.gitkeep` for `go:embed` — `make clean` removes built assets but the `.gitkeep` must remain tracked
