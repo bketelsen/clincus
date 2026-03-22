@@ -5,7 +5,7 @@ repo_url: https://github.com/bketelsen/clincus
 repo_name: bketelsen/clincus
 
 theme:
-  name: material
+  name: materialx
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
