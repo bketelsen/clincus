@@ -9,7 +9,7 @@ The web dashboard provides a browser-based interface for managing AI coding sess
 | Method | Path | Description |
 |--------|------|-------------|
 | GET | `/api/sessions` | List running sessions with container metadata |
-| POST | `/api/sessions` | Create session (body: workspace, tool, persistent) |
+| POST | `/api/sessions` | Create session (body: workspace, tool, persistent). Applies config mounts via `session.MountConfigFromConfig()` |
 | DELETE | `/api/sessions/{id}` | Stop session (`?force=true` to kill) |
 | POST | `/api/sessions/{id}/resume` | Resume stopped persistent session |
 | GET | `/api/sessions/history` | Session history (query: limit, offset) |

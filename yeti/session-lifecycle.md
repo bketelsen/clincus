@@ -130,6 +130,10 @@ Stored in `~/.clincus/sessions-<tool>/<session-id>/metadata.json`:
 - File locking prevents concurrent writes
 - `ListHistory()` merges start/stop records, returns newest first
 
+## Mount Configuration Sharing
+
+Config-defined mounts are parsed by `session.MountConfigFromConfig()` (`internal/session/types.go`), which handles tilde expansion and path validation. Both the CLI (`internal/cli/mount_parser.go`) and the web dashboard (`internal/server/api_sessions.go`) use this shared function to ensure config mounts (e.g., `~/.ssh` for git-over-SSH) are applied consistently. CLI-specific `--mount HOST:CONTAINER` flag parsing adds to the mount list but remains in the cli package.
+
 ## Mount Strategy
 
 | Mount Type | Source | Target | Shift | Read-Only |

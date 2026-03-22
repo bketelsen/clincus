@@ -1,6 +1,6 @@
 # CLI Commands Reference
 
-All commands are defined in `internal/cli/`. The root command (`clincus`) defaults to `shell` when no subcommand is given.
+All 21 top-level commands are defined in `internal/cli/`. The root command (`clincus`) defaults to `shell` when no subcommand is given. Some commands (`attach`, `shutdown`) register themselves via `init()` functions rather than in `root.go`'s central `AddCommand` block.
 
 ## Global Flags
 
