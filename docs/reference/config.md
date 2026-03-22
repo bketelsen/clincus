@@ -134,7 +134,7 @@ auto_stop = true
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| `name` | string | `"claude"` | Tool to run: `claude`, `opencode`, `aider` |
+| `name` | string | `"claude"` | Tool to run: `claude`, `copilot`, `opencode` |
 | `binary` | string | `""` | Override binary path (empty = use tool default) |
 
 ### `[tool.claude]`

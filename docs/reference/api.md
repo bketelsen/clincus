@@ -69,7 +69,7 @@ Return the list of supported AI tool names.
 **Response:**
 
 ```json
-["claude", "opencode", "aider"]
+["claude", "copilot", "opencode"]
 ```
 
 ---
