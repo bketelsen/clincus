@@ -15,6 +15,7 @@ setup, testing, code style, and pull request process.
 - **Incus** — see [Prerequisites](../getting-started/prerequisites.md)
 - **golangci-lint** — `go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest`
 - **pre-commit** — `pip install pre-commit` or `brew install pre-commit`
+- **MkDocs MaterialX** — `pip install mkdocs-materialx` (for local docs preview)
 
 ### Clone and Build
 
