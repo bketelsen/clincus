@@ -57,7 +57,7 @@ use `--background` to run detached.
 
 | Flag | Default | Description |
 |------|---------|-------------|
-| `--tool` | (from config) | AI tool to run: `claude`, `opencode`, `aider` |
+| `--tool` | (from config) | AI tool to run: `claude`, `copilot`, `opencode` |
 | `--debug` | `false` | Launch bash instead of the AI tool (for debugging) |
 | `--background` | `false` | Run the AI tool in a detached background tmux session |
 | `--tmux` | `true` | Use tmux for session management |

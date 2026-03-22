@@ -203,8 +203,8 @@ Run two AI tools on the same project simultaneously:
 # Terminal 1: Claude Code for architecture work
 clincus shell --slot 1 --tool claude ~/my-project
 
-# Terminal 2: Aider for quick edits
-clincus shell --slot 2 --tool aider ~/my-project
+# Terminal 2: opencode for quick edits
+clincus shell --slot 2 --tool opencode ~/my-project
 ```
 
 Both sessions share the same workspace directory on the host; each has its own isolated

@@ -205,7 +205,7 @@ internal/
   config/             — config.toml loading, merging, defaults
   container/          — Incus wrapper: launch, stop, delete, exec, mount, snapshot
   session/            — session lifecycle: resolve, setup, cleanup, history, naming
-  tool/               — tool abstraction: claude, opencode, aider, registry
+  tool/               — tool abstraction: claude, copilot, opencode, registry
   image/              — image build: clincus image and custom images
   health/             — health checks for all dependencies
   limits/             — resource limit application via incus CLI

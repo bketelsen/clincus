@@ -10,9 +10,8 @@ the project config (`.clincus.toml`), or the user config (`~/.config/clincus/con
 | Tool name | Description | Config mechanism |
 |-----------|-------------|-----------------|
 | `claude` | [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | `~/.claude/` directory |
-| `opencode` | [opencode](https://github.com/nicholasgasior/opencode) | `~/.opencode.json` file |
 | `copilot` | [GitHub Copilot CLI](https://gh.io/copilot) | `~/.copilot/` directory |
-| `aider` | [Aider](https://aider.chat) | `ANTHROPIC_API_KEY` env var |
+| `opencode` | [opencode](https://github.com/nicholasgasior/opencode) | `~/.opencode.json` file |
 
 ---
 
@@ -24,7 +23,6 @@ the project config (`.clincus.toml`), or the user config (`~/.config/clincus/con
 clincus shell --tool claude ~/my-project
 clincus shell --tool opencode ~/my-project
 clincus shell --tool copilot ~/my-project
-clincus shell --tool aider ~/my-project
 ```
 
 ### Per-project (`.clincus.toml`)
@@ -153,39 +151,11 @@ Clincus copies these files from `~/.copilot/` into the container:
 
 ---
 
-## Aider
-
-Aider uses environment variables for credentials (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, etc.).
-Pass them with the `--env` flag:
-
-```bash
-clincus shell --tool aider --env ANTHROPIC_API_KEY=sk-ant-... ~/my-project
-```
-
-Or set them in the project config so they are applied automatically:
-
-```toml
-# .clincus.toml
-[tool]
-name = "aider"
-```
-
-Then export the key in your shell profile and it will be passed through via `--env`:
-
-```bash
-# In ~/.bashrc or ~/.zshrc
-export ANTHROPIC_API_KEY=sk-ant-...
-```
-
-```bash
-clincus shell --env ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY
-```
-
----
-
 ## Custom Tools
 
 You can run any command-line tool in an Incus container by configuring a custom binary name.
+For a tool that does not match any built-in tool name, Clincus falls back to running the
+binary name directly. Session history and config copying will be best-effort.
 
 ```toml
 [tool]
@@ -193,8 +163,29 @@ name = "cursor"
 binary = "cursor-headless"
 ```
 
-For a fully custom tool that does not match any known tool, Clincus falls back to running
-the binary name directly. Session history and config copying will be best-effort.
+### Aider Example
+
+[Aider](https://aider.chat) can be used as a custom tool. It uses environment variables for
+credentials (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, etc.). Pass them with `--env`:
+
+```bash
+clincus shell --tool aider --env ANTHROPIC_API_KEY=sk-ant-... ~/my-project
+```
+
+Or set it in your project config:
+
+```toml
+# .clincus.toml
+[tool]
+name = "aider"
+binary = "aider"
+```
+
+Then pass the API key via `--env`:
+
+```bash
+clincus shell --env ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY
+```
 
 ---
 

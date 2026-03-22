@@ -117,7 +117,7 @@ Clincus supports multiple AI coding tools. Override the tool for a session:
 
 ```bash
 clincus shell --tool opencode ~/my-project
-clincus shell --tool aider ~/my-project
+clincus shell --tool copilot ~/my-project
 ```
 
 Or set a default in your project config (`.clincus.toml`):

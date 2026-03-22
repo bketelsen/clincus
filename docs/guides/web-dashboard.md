@@ -54,7 +54,7 @@ The main view shows all active Clincus containers with:
 Click **New Session** to open a dialog. Select:
 
 - **Workspace** — choose from your configured workspace roots or type a path
-- **Tool** — Claude Code, opencode, Aider, or any configured tool
+- **Tool** — Claude Code, Copilot, opencode, or any configured tool
 - **Persistent** — toggle persistent mode
 
 The dashboard calls `POST /api/sessions` to create the container and start the tool.
