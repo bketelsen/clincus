@@ -18,7 +18,7 @@ Derived from [code-on-incus](https://github.com/mensfeld/code-on-incus). Web das
 │         │                         │                      │
 │  ┌──────┴───────┐  ┌─────────────┴──────────────────┐   │
 │  │ internal/cli/ │  │ internal/server/               │   │
-│  │ 23 commands   │  │ REST API + WebSocket + Bridge  │   │
+│  │ 21 commands   │  │ REST API + WebSocket + Bridge  │   │
 │  └──────┬───────┘  └──────────────┬─────────────────┘   │
 │         │                         │                      │
 │  ┌──────┴─────────────────────────┴─────────────────┐   │
@@ -50,7 +50,7 @@ Derived from [code-on-incus](https://github.com/mensfeld/code-on-incus). Web das
 
 | Package | Path | Role |
 |---------|------|------|
-| **cli** | `internal/cli/` | 23 Cobra commands with global flags for workspace, slot, image, limits |
+| **cli** | `internal/cli/` | 21 Cobra commands with global flags for workspace, slot, image, limits |
 | **server** | `internal/server/` | HTTP API, WebSocket terminal/shell/events, PTY bridge |
 | **session** | `internal/session/` | Setup (11-step flow), cleanup, naming, history, persistence |
 | **container** | `internal/container/` | Incus operations: launch, exec, mount, snapshot, file transfer |
@@ -123,6 +123,10 @@ Config supports hot-reload via file watcher with 1-second debounce. Failed reloa
 - **Terminal bridge**: PTY ↔ WebSocket relay via `creack/pty`
 - **Events**: Incus lifecycle monitoring (`incus monitor`) broadcasts session.started/stopped
 - **Assets**: Embedded via `go:embed` from `webui/dist/`
+
+### Mount Configuration
+
+Mount parsing is shared between the CLI and web dashboard via `session.MountConfigFromConfig()` in `internal/session/types.go`. This ensures config-defined mounts (e.g., `~/.ssh` for git-over-SSH) are applied consistently whether a session is created from the CLI or the dashboard. CLI-specific `--mount` flag parsing remains in `internal/cli/mount_parser.go`.
 
 ### Build Pipeline
 
