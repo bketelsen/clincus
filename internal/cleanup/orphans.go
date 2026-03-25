@@ -1,21 +1,13 @@
 package cleanup
 
-// OrphanedResources holds information about orphaned system resources
-type OrphanedResources struct {
-	// Reserved for future orphan types (e.g., stopped containers)
-}
+import "os"
 
-// DetectAll detects all orphaned resources
-func DetectAll() (*OrphanedResources, error) {
-	return &OrphanedResources{}, nil
-}
-
-// CleanupAll cleans up all orphaned resources
-func CleanupAll(_ func(string)) error {
-	return nil
-}
-
-// HasOrphans returns true if there are any orphaned resources
-func HasOrphans() bool {
-	return false
+// IsOrphanedWorkspace returns true if the given workspace path no longer exists
+// on the host filesystem, indicating the container is orphaned.
+func IsOrphanedWorkspace(workspacePath string) bool {
+	if workspacePath == "" {
+		return false
+	}
+	_, err := os.Stat(workspacePath)
+	return os.IsNotExist(err)
 }
