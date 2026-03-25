@@ -114,6 +114,7 @@ type ContainerInfo struct {
 	CreatedAt string
 	Image     string
 	IPv4      string
+	Workspace string // from user.clincus.workspace metadata
 }
 
 // SessionInfo holds information about a saved session
@@ -145,9 +146,10 @@ func listActiveContainers() ([]ContainerInfo, error) {
 		status, _ := c["status"].(string)        // Type assertion, default to "" if fails
 		createdAt, _ := c["created_at"].(string) // Type assertion, default to "" if fails
 
-		// Get image info
-		config, _ := c["config"].(map[string]interface{}) // Type assertion
-		image, _ := config["image.description"].(string)  // Type assertion
+		// Get config values
+		config, _ := c["config"].(map[string]interface{})         // Type assertion
+		image, _ := config["image.description"].(string)          // Type assertion
+		workspace, _ := config["user.clincus.workspace"].(string) // Type assertion
 
 		// Parse created_at time
 		createdTime := ""
@@ -164,6 +166,7 @@ func listActiveContainers() ([]ContainerInfo, error) {
 			CreatedAt: createdTime,
 			Image:     image,
 			IPv4:      ipv4,
+			Workspace: workspace,
 		})
 	}
 

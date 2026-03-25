@@ -456,10 +456,19 @@ This is a shorthand for `clincus shell --resume=SESSION-ID`.
 
 ### `clincus clean`
 
-Remove orphaned session data from disk.
+Cleanup stopped containers, saved session data, and orphaned resources.
+
+By default, cleans only stopped containers. Use flags to control what gets cleaned.
+
+Orphaned containers (`--orphans`) are stopped containers whose workspace directory no longer exists on the host filesystem.
 
 ```
-clincus clean
+clincus clean                    # Clean stopped containers
+clincus clean --sessions         # Clean saved session data
+clincus clean --orphans          # Clean containers with missing workspaces
+clincus clean --all              # Clean everything
+clincus clean --all --force      # Clean without confirmation
+clincus clean --dry-run          # Show what would be cleaned
 ```
 
 ---
