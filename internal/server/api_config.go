@@ -20,14 +20,22 @@ func (s *Server) handleUpdateConfig(w http.ResponseWriter, r *http.Request) {
 		s.writeError(w, "invalid request", 400)
 		return
 	}
-	s.cfgMu.Lock()
+	// Clone the current config, apply mutations to the clone, then swap
+	// atomically via UpdateConfig to avoid partial mutation during concurrent
+	// hot-reloads.
+	current := s.GetConfig()
+	updated := *current
+	updated.Dashboard = current.Dashboard
 	if req.Port != nil {
-		s.cfg.AppConfig.Dashboard.Port = *req.Port
+		updated.Dashboard.Port = *req.Port
 	}
 	if req.WorkspaceRoots != nil {
-		s.cfg.AppConfig.Dashboard.WorkspaceRoots = *req.WorkspaceRoots
+		roots := make([]string, len(*req.WorkspaceRoots))
+		copy(roots, *req.WorkspaceRoots)
+		updated.Dashboard.WorkspaceRoots = roots
 	}
-	s.cfgMu.Unlock()
+	s.UpdateConfig(&updated)
+	s.BroadcastConfigReloaded()
 	s.writeJSON(w, map[string]string{"status": "updated"})
 }
 
