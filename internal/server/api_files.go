@@ -75,11 +75,7 @@ func (s *Server) handleListFiles(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	codeUID := 1000
-	appCfg := s.GetConfig()
-	if appCfg != nil && appCfg.Incus.CodeUID != 0 {
-		codeUID = appCfg.Incus.CodeUID
-	}
+	codeUID := s.codeUID()
 
 	// Use find to list directory contents with tab-delimited output
 	output, err := mgr.ExecArgsCapture(
@@ -156,11 +152,7 @@ func (s *Server) handleReadFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	codeUID := 1000
-	appCfg := s.GetConfig()
-	if appCfg != nil && appCfg.Incus.CodeUID != 0 {
-		codeUID = appCfg.Incus.CodeUID
-	}
+	codeUID := s.codeUID()
 
 	// Pre-check file size via stat
 	sizeOutput, err := mgr.ExecArgsCapture(
@@ -244,11 +236,7 @@ func (s *Server) handleWriteFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	codeUID := 1000
-	appCfg := s.GetConfig()
-	if appCfg != nil && appCfg.Incus.CodeUID != 0 {
-		codeUID = appCfg.Incus.CodeUID
-	}
+	codeUID := s.codeUID()
 
 	// Write to temp file on host, push to container, then fix ownership.
 	// Note: Chown uses -R which is a no-op for single files but harmless.
