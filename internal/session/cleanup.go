@@ -2,6 +2,7 @@ package session
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -172,7 +173,7 @@ func saveSessionData(mgr *container.Manager, sessionID string, persistent bool, 
 	}
 
 	metadataPath := filepath.Join(localSessionDir, "metadata.json")
-	if err := saveMetadata(metadataPath, metadata); err != nil {
+	if err := SaveMetadata(metadataPath, metadata); err != nil {
 		// Non-fatal - session data is already saved
 		logger(fmt.Sprintf("Warning: Failed to save metadata: %v", err))
 	}
@@ -190,19 +191,14 @@ type SessionMetadata struct {
 	SavedAt       string `json:"saved_at"`
 }
 
-// saveMetadata saves session metadata to a JSON file
-func saveMetadata(path string, metadata SessionMetadata) error {
-	// Simple JSON marshaling
-	content := fmt.Sprintf(`{
-  "session_id": "%s",
-  "container_name": "%s",
-  "persistent": %t,
-  "workspace": "%s",
-  "saved_at": "%s"
-}
-`, metadata.SessionID, metadata.ContainerName, metadata.Persistent, metadata.Workspace, metadata.SavedAt)
-
-	return os.WriteFile(path, []byte(content), 0o644)
+// SaveMetadata saves session metadata to a JSON file
+func SaveMetadata(path string, metadata SessionMetadata) error {
+	data, err := json.MarshalIndent(metadata, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal metadata: %w", err)
+	}
+	data = append(data, '\n')
+	return os.WriteFile(path, data, 0o644)
 }
 
 // getCurrentTime returns current time in RFC3339 format
@@ -227,7 +223,7 @@ func SaveMetadataEarly(sessionsDir, sessionID, containerName, workspace string, 
 	}
 
 	metadataPath := filepath.Join(sessionDir, "metadata.json")
-	return saveMetadata(metadataPath, metadata)
+	return SaveMetadata(metadataPath, metadata)
 }
 
 // SessionExists checks if a session with the given ID exists and is valid
@@ -363,21 +359,8 @@ func LoadSessionMetadata(path string) (*SessionMetadata, error) {
 	}
 
 	var metadata SessionMetadata
-	// Simple JSON parsing
-	lines := strings.Split(string(data), "\n")
-	for _, line := range lines {
-		line = strings.TrimSpace(line)
-		if strings.Contains(line, "\"session_id\"") {
-			metadata.SessionID = extractJSONValue(line)
-		} else if strings.Contains(line, "\"container_name\"") {
-			metadata.ContainerName = extractJSONValue(line)
-		} else if strings.Contains(line, "\"persistent\"") {
-			metadata.Persistent = strings.Contains(line, "true")
-		} else if strings.Contains(line, "\"workspace\"") {
-			metadata.Workspace = extractJSONValue(line)
-		} else if strings.Contains(line, "\"saved_at\"") {
-			metadata.SavedAt = extractJSONValue(line)
-		}
+	if err := json.Unmarshal(data, &metadata); err != nil {
+		return nil, fmt.Errorf("failed to parse metadata: %w", err)
 	}
 
 	if metadata.SessionID == "" {
@@ -385,19 +368,6 @@ func LoadSessionMetadata(path string) (*SessionMetadata, error) {
 	}
 
 	return &metadata, nil
-}
-
-// extractJSONValue extracts the value from a JSON line like `"key": "value",`
-func extractJSONValue(line string) string {
-	// Find the value between quotes after the colon
-	parts := strings.SplitN(line, ":", 2)
-	if len(parts) != 2 {
-		return ""
-	}
-
-	value := strings.TrimSpace(parts[1])
-	value = strings.Trim(value, `",`)
-	return value
 }
 
 // GetCLISessionID extracts the CLI tool's session ID from a saved clincus session.

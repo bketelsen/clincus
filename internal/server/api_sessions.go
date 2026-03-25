@@ -158,10 +158,7 @@ func (s *Server) handleCreateSession(w http.ResponseWriter, r *http.Request) {
 	tmuxName := fmt.Sprintf("clincus-%s", resolved.ContainerName)
 	toolCmd := t.BuildCommand(resolved.SessionID, false, "")
 	cmdStr := fmt.Sprintf("tmux new-session -d -s %s %s", tmuxName, strings.Join(toolCmd, " "))
-	codeUID := 1000
-	if appCfg != nil && appCfg.Incus.CodeUID != 0 {
-		codeUID = appCfg.Incus.CodeUID
-	}
+	codeUID := s.codeUID()
 	execOpts := container.ExecCommandOptions{
 		User: &codeUID,
 		Cwd:  result.ContainerWorkspacePath,

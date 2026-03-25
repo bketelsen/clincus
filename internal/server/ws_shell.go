@@ -29,11 +29,7 @@ func (s *Server) handleShellWS(w http.ResponseWriter, r *http.Request) {
 	}
 	defer ws.Close()
 
-	codeUID := 1000
-	appCfg := s.GetConfig()
-	if appCfg != nil && appCfg.Incus.CodeUID != 0 {
-		codeUID = appCfg.Incus.CodeUID
-	}
+	codeUID := s.codeUID()
 
 	codeUser := container.CodeUser
 	homeDir := fmt.Sprintf("/home/%s", codeUser)

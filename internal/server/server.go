@@ -117,6 +117,16 @@ func (s *Server) writeError(w http.ResponseWriter, msg string, code int) {
 	_ = json.NewEncoder(w).Encode(map[string]string{"error": msg})
 }
 
+// codeUID returns the UID to use for in-container command execution.
+// It defaults to 1000 unless overridden via config.
+func (s *Server) codeUID() int {
+	uid := 1000
+	if appCfg := s.GetConfig(); appCfg != nil && appCfg.Incus.CodeUID != 0 {
+		uid = appCfg.Incus.CodeUID
+	}
+	return uid
+}
+
 func (s *Server) historyPath() string {
 	home, _ := os.UserHomeDir()
 	return filepath.Join(home, ".clincus", "history.jsonl")
