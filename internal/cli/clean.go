@@ -260,4 +260,3 @@ func cleanSavedSessions(sessionsDir string) (int, bool, error) {
 
 	return cleaned, false, nil
 }
-

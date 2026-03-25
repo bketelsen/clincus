@@ -147,9 +147,9 @@ func listActiveContainers() ([]ContainerInfo, error) {
 		createdAt, _ := c["created_at"].(string) // Type assertion, default to "" if fails
 
 		// Get config values
-		config, _ := c["config"].(map[string]interface{})            // Type assertion
-		image, _ := config["image.description"].(string)             // Type assertion
-		workspace, _ := config["user.clincus.workspace"].(string)    // Type assertion
+		config, _ := c["config"].(map[string]interface{})         // Type assertion
+		image, _ := config["image.description"].(string)          // Type assertion
+		workspace, _ := config["user.clincus.workspace"].(string) // Type assertion
 
 		// Parse created_at time
 		createdTime := ""
