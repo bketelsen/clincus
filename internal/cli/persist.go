@@ -211,16 +211,6 @@ func updatePersistentFlag(metadataPath string, persistent bool) error {
 	// Update persistent field
 	metadata.Persistent = persistent
 
-	// Write back using same format as cleanup.go:saveMetadata
-	content := fmt.Sprintf(`{
-  "session_id": "%s",
-  "container_name": "%s",
-  "persistent": %t,
-  "workspace": "%s",
-  "saved_at": "%s"
-}
-`, metadata.SessionID, metadata.ContainerName, metadata.Persistent,
-		metadata.Workspace, metadata.SavedAt)
-
-	return os.WriteFile(metadataPath, []byte(content), 0o644)
+	// Write back using the shared metadata serializer
+	return session.SaveMetadata(metadataPath, *metadata)
 }
