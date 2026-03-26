@@ -90,6 +90,17 @@ func configureToolAccess(opts *SetupOptions, result *SetupResult, skipLaunch boo
 	}
 }
 
+// buildJSONMergeCommand builds a Python one-liner that deep-merges a JSON
+// string into an existing JSON file.  Dict values are merged with
+// setdefault+update; all other values are overwritten.
+func buildJSONMergeCommand(filePath, settingsJSON string) string {
+	escapedJSON := strings.ReplaceAll(settingsJSON, "'", "'\"'\"'")
+	return fmt.Sprintf(
+		`python3 -c 'import json; f=open("%s","r+"); d=json.load(f); updates=json.loads('"'"'%s'"'"'); [d.setdefault(k,{}).update(v) if isinstance(v,dict) and isinstance(d.get(k),dict) else d.__setitem__(k,v) for k,v in updates.items()]; f.seek(0); json.dump(d,f,indent=2); f.truncate()'`,
+		filePath, escapedJSON,
+	)
+}
+
 // restoreSessionData restores tool config directory from a saved session
 // Used when resuming a non-persistent session (container was deleted and recreated)
 func restoreSessionData(mgr *container.Manager, resumeID, homeDir, sessionsDir string, t tool.Tool, logger func(string)) error {
@@ -167,13 +178,7 @@ func injectCredentials(mgr *container.Manager, hostCLIConfigPath, homeDir string
 				if err != nil {
 					logger(fmt.Sprintf("Warning: Failed to build JSON from settings: %v", err))
 				} else {
-					// Properly escape the JSON string for shell command
-					escapedJSON := strings.ReplaceAll(settingsJSON, "'", "'\"'\"'")
-					injectCmd := fmt.Sprintf(
-						`python3 -c 'import json; f=open("%s","r+"); d=json.load(f); updates=json.loads('"'"'%s'"'"'); [d.setdefault(k,{}).update(v) if isinstance(v,dict) and isinstance(d.get(k),dict) else d.__setitem__(k,v) for k,v in updates.items()]; f.seek(0); json.dump(d,f,indent=2); f.truncate()'`,
-						stateJsonDest,
-						escapedJSON,
-					)
+					injectCmd := buildJSONMergeCommand(stateJsonDest, settingsJSON)
 					if _, err := mgr.ExecCommand(injectCmd, container.ExecCommandOptions{Capture: true}); err != nil {
 						logger(fmt.Sprintf("Warning: Failed to inject settings into %s: %v", stateConfigFilename, err))
 					}
@@ -285,13 +290,7 @@ func setupCLIConfig(mgr *container.Manager, hostCLIConfigPath, homeDir string, t
 			} else {
 				// File exists, merge sandbox settings into it
 				logger("Merging sandbox settings into existing settings.json")
-				// Properly escape the JSON string for shell command
-				escapedJSON := strings.ReplaceAll(settingsJSON, "'", "'\"'\"'")
-				injectCmd := fmt.Sprintf(
-					`python3 -c 'import json; f=open("%s","r+"); d=json.load(f); updates=json.loads('"'"'%s'"'"'); [d.setdefault(k,{}).update(v) if isinstance(v,dict) and isinstance(d.get(k),dict) else d.__setitem__(k,v) for k,v in updates.items()]; f.seek(0); json.dump(d,f,indent=2); f.truncate()'`,
-					settingsPath,
-					escapedJSON,
-				)
+				injectCmd := buildJSONMergeCommand(settingsPath, settingsJSON)
 				if _, err := mgr.ExecCommand(injectCmd, container.ExecCommandOptions{Capture: true}); err != nil {
 					logger(fmt.Sprintf("Warning: Failed to inject settings into settings.json: %v", err))
 				} else {
@@ -327,13 +326,7 @@ func setupCLIConfig(mgr *container.Manager, hostCLIConfigPath, homeDir string, t
 			if err != nil {
 				logger(fmt.Sprintf("Warning: Failed to build JSON from settings: %v", err))
 			} else {
-				// Properly escape the JSON string for shell command
-				escapedJSON := strings.ReplaceAll(settingsJSON, "'", "'\"'\"'")
-				injectCmd := fmt.Sprintf(
-					`python3 -c 'import json; f=open("%s","r+"); d=json.load(f); updates=json.loads('"'"'%s'"'"'); [d.setdefault(k,{}).update(v) if isinstance(v,dict) and isinstance(d.get(k),dict) else d.__setitem__(k,v) for k,v in updates.items()]; f.seek(0); json.dump(d,f,indent=2); f.truncate()'`,
-					stateJsonDest,
-					escapedJSON,
-				)
+				injectCmd := buildJSONMergeCommand(stateJsonDest, settingsJSON)
 				if _, err := mgr.ExecCommand(injectCmd, container.ExecCommandOptions{Capture: true}); err != nil {
 					logger(fmt.Sprintf("Warning: Failed to inject settings into %s: %v", stateConfigFilename, err))
 				} else {
@@ -435,10 +428,7 @@ func setupHomeConfigFile(mgr *container.Manager, hostConfigFilePath, homeDir str
 			if err != nil {
 				logger(fmt.Sprintf("Warning: Failed to build JSON from settings: %v", err))
 			} else {
-				escapedJSON := strings.ReplaceAll(settingsJSON, "'", "'\"'\"'")
-				mergeCmd := fmt.Sprintf(
-					`python3 -c 'import json; f=open("%s","r+"); d=json.load(f); updates=json.loads('"'"'%s'"'"'); [d.setdefault(k,{}).update(v) if isinstance(v,dict) and isinstance(d.get(k),dict) else d.__setitem__(k,v) for k,v in updates.items()]; f.seek(0); json.dump(d,f,indent=2); f.truncate()'`,
-					destPath, escapedJSON)
+				mergeCmd := buildJSONMergeCommand(destPath, settingsJSON)
 				if _, err := mgr.ExecCommand(mergeCmd, container.ExecCommandOptions{Capture: true}); err != nil {
 					logger(fmt.Sprintf("Warning: Failed to inject settings into %s: %v", twh.HomeConfigFileName(), err))
 				}
