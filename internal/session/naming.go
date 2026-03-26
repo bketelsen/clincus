@@ -45,6 +45,44 @@ func ContainerName(workspacePath string, slot int) string {
 	return fmt.Sprintf("%s%s-%d", prefix, hash, slot)
 }
 
+// parseContainerNames extracts container names from `incus list --format=json` output.
+// Uses JSON parsing with a regex fallback if the output is malformed.
+func parseContainerNames(output string) []string {
+	var containers []struct {
+		Name string `json:"name"`
+	}
+	if err := json.Unmarshal([]byte(output), &containers); err != nil {
+		// Fallback: if JSON parsing fails, try regex on raw output
+		var names []string
+		nameMatches := regexp.MustCompile(`"name"\s*:\s*"([^"]+)"`).FindAllStringSubmatch(output, -1)
+		for _, match := range nameMatches {
+			if len(match) > 1 {
+				names = append(names, match[1])
+			}
+		}
+		return names
+	}
+
+	names := make([]string, 0, len(containers))
+	for _, c := range containers {
+		names = append(names, c.Name)
+	}
+	return names
+}
+
+// matchingSlots returns a map of slot numbers found in names that match the given prefix regex.
+func matchingSlots(names []string, re *regexp.Regexp) map[int]bool {
+	slots := make(map[int]bool)
+	for _, name := range names {
+		if matches := re.FindStringSubmatch(name); len(matches) > 1 {
+			if slotNum, err := strconv.Atoi(matches[1]); err == nil {
+				slots[slotNum] = true
+			}
+		}
+	}
+	return slots
+}
+
 // AllocateSlot finds the next available slot for a workspace
 // Returns the slot number (1, 2, 3, ...) or 0 if no slots available
 func AllocateSlot(workspacePath string, maxSlots int) (int, error) {
@@ -55,42 +93,13 @@ func AllocateSlot(workspacePath string, maxSlots int) (int, error) {
 	hash := WorkspaceHash(workspacePath)
 	prefix := fmt.Sprintf("%s%s-", GetContainerPrefix(), hash)
 
-	// Get all containers matching our workspace
 	output, err := container.IncusOutput("list", "--format=json")
 	if err != nil {
 		return 0, err
 	}
 
-	// Parse running containers using proper JSON parsing
-	runningSlots := make(map[int]bool)
 	re := regexp.MustCompile(fmt.Sprintf(`^%s(\d+)$`, regexp.QuoteMeta(prefix)))
-
-	// Parse JSON array of containers
-	var containers []struct {
-		Name string `json:"name"`
-	}
-	if err := json.Unmarshal([]byte(output), &containers); err != nil {
-		// Fallback: if JSON parsing fails, try regex on raw output
-		nameMatches := regexp.MustCompile(`"name"\s*:\s*"([^"]+)"`).FindAllStringSubmatch(output, -1)
-		for _, match := range nameMatches {
-			if len(match) > 1 {
-				containerName := match[1]
-				if matches := re.FindStringSubmatch(containerName); len(matches) > 1 {
-					if slotNum, err := strconv.Atoi(matches[1]); err == nil {
-						runningSlots[slotNum] = true
-					}
-				}
-			}
-		}
-	} else {
-		for _, c := range containers {
-			if matches := re.FindStringSubmatch(c.Name); len(matches) > 1 {
-				if slotNum, err := strconv.Atoi(matches[1]); err == nil {
-					runningSlots[slotNum] = true
-				}
-			}
-		}
-	}
+	runningSlots := matchingSlots(parseContainerNames(output), re)
 
 	// Find first available slot
 	for slot := 1; slot <= maxSlots; slot++ {
@@ -112,42 +121,13 @@ func AllocateSlotFrom(workspacePath string, startSlot, maxSlots int) (int, error
 	hash := WorkspaceHash(workspacePath)
 	prefix := fmt.Sprintf("%s%s-", GetContainerPrefix(), hash)
 
-	// Get all containers matching our workspace
 	output, err := container.IncusOutput("list", "--format=json")
 	if err != nil {
 		return 0, err
 	}
 
-	// Parse running containers using proper JSON parsing
-	runningSlots := make(map[int]bool)
 	re := regexp.MustCompile(fmt.Sprintf(`^%s(\d+)$`, regexp.QuoteMeta(prefix)))
-
-	// Parse JSON array of containers
-	var containers []struct {
-		Name string `json:"name"`
-	}
-	if err := json.Unmarshal([]byte(output), &containers); err != nil {
-		// Fallback: if JSON parsing fails, try regex on raw output
-		nameMatches := regexp.MustCompile(`"name"\s*:\s*"([^"]+)"`).FindAllStringSubmatch(output, -1)
-		for _, match := range nameMatches {
-			if len(match) > 1 {
-				containerName := match[1]
-				if matches := re.FindStringSubmatch(containerName); len(matches) > 1 {
-					if slotNum, err := strconv.Atoi(matches[1]); err == nil {
-						runningSlots[slotNum] = true
-					}
-				}
-			}
-		}
-	} else {
-		for _, c := range containers {
-			if matches := re.FindStringSubmatch(c.Name); len(matches) > 1 {
-				if slotNum, err := strconv.Atoi(matches[1]); err == nil {
-					runningSlots[slotNum] = true
-				}
-			}
-		}
-	}
+	runningSlots := matchingSlots(parseContainerNames(output), re)
 
 	// Find first available slot starting from startSlot
 	for slot := startSlot; slot <= maxSlots; slot++ {
@@ -202,29 +182,10 @@ func ListWorkspaceSessions(workspacePath string) (map[int]string, error) {
 	sessions := make(map[int]string)
 	re := regexp.MustCompile(fmt.Sprintf(`^%s(\d+)$`, regexp.QuoteMeta(prefix)))
 
-	// Parse JSON array of containers
-	var containers []struct {
-		Name string `json:"name"`
-	}
-	if err := json.Unmarshal([]byte(output), &containers); err != nil {
-		// Fallback: if JSON parsing fails, try regex on raw output
-		nameMatches := regexp.MustCompile(`"name"\s*:\s*"([^"]+)"`).FindAllStringSubmatch(output, -1)
-		for _, match := range nameMatches {
-			if len(match) > 1 {
-				containerName := match[1]
-				if matches := re.FindStringSubmatch(containerName); len(matches) > 1 {
-					if slotNum, err := strconv.Atoi(matches[1]); err == nil {
-						sessions[slotNum] = containerName
-					}
-				}
-			}
-		}
-	} else {
-		for _, c := range containers {
-			if matches := re.FindStringSubmatch(c.Name); len(matches) > 1 {
-				if slotNum, err := strconv.Atoi(matches[1]); err == nil {
-					sessions[slotNum] = c.Name
-				}
+	for _, name := range parseContainerNames(output) {
+		if matches := re.FindStringSubmatch(name); len(matches) > 1 {
+			if slotNum, err := strconv.Atoi(matches[1]); err == nil {
+				sessions[slotNum] = name
 			}
 		}
 	}

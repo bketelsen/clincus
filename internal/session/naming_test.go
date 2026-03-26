@@ -3,6 +3,7 @@ package session
 import (
 	"crypto/sha256"
 	"fmt"
+	"regexp"
 	"testing"
 )
 
@@ -219,6 +220,76 @@ func TestParseContainerName(t *testing.T) {
 				t.Errorf("ParseContainerName() slot = %d, want %d", slot, tt.wantSlot)
 			}
 		})
+	}
+}
+
+func TestParseContainerNames(t *testing.T) {
+	tests := []struct {
+		name   string
+		output string
+		want   []string
+	}{
+		{
+			name:   "valid JSON",
+			output: `[{"name":"clincus-abc12345-1"},{"name":"clincus-abc12345-2"},{"name":"other-container"}]`,
+			want:   []string{"clincus-abc12345-1", "clincus-abc12345-2", "other-container"},
+		},
+		{
+			name:   "empty JSON array",
+			output: `[]`,
+			want:   []string{},
+		},
+		{
+			name:   "malformed JSON falls back to regex",
+			output: `{"name": "clincus-abc12345-1"} some garbage {"name": "clincus-abc12345-2"}`,
+			want:   []string{"clincus-abc12345-1", "clincus-abc12345-2"},
+		},
+		{
+			name:   "completely invalid output",
+			output: `not json at all`,
+			want:   nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := parseContainerNames(tt.output)
+			if len(got) != len(tt.want) {
+				t.Errorf("parseContainerNames() returned %d names, want %d", len(got), len(tt.want))
+				return
+			}
+			for i := range got {
+				if got[i] != tt.want[i] {
+					t.Errorf("parseContainerNames()[%d] = %s, want %s", i, got[i], tt.want[i])
+				}
+			}
+		})
+	}
+}
+
+func TestMatchingSlots(t *testing.T) {
+	re := regexp.MustCompile(`^clincus-abc12345-(\d+)$`)
+
+	names := []string{
+		"clincus-abc12345-1",
+		"clincus-abc12345-3",
+		"clincus-other000-2",
+		"unrelated",
+	}
+
+	slots := matchingSlots(names, re)
+
+	if !slots[1] {
+		t.Error("matchingSlots() missing slot 1")
+	}
+	if !slots[3] {
+		t.Error("matchingSlots() missing slot 3")
+	}
+	if slots[2] {
+		t.Error("matchingSlots() incorrectly matched slot 2 from different hash")
+	}
+	if len(slots) != 2 {
+		t.Errorf("matchingSlots() returned %d slots, want 2", len(slots))
 	}
 }
 
