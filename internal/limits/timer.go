@@ -116,16 +116,3 @@ func (tm *TimeoutMonitor) Stop() {
 func (tm *TimeoutMonitor) Wait() {
 	<-tm.done
 }
-
-// Remaining returns the remaining time until timeout
-// Returns 0 if the monitor has already stopped or timed out
-func (tm *TimeoutMonitor) Remaining() time.Duration {
-	select {
-	case <-tm.done:
-		return 0
-	default:
-		// This is approximate - we don't track start time precisely
-		// For a more accurate implementation, we'd need to store start time
-		return tm.MaxDuration
-	}
-}
