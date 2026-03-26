@@ -11,6 +11,20 @@ import (
 	"github.com/bketelsen/clincus/internal/tool"
 )
 
+// shellQuote quotes a string for safe use in a shell command.
+func shellQuote(s string) string {
+	return "'" + strings.ReplaceAll(s, "'", "'\\''") + "'"
+}
+
+// sedEscape escapes a string for use in a sed replacement expression
+// with | as the delimiter.
+func sedEscape(s string) string {
+	s = strings.ReplaceAll(s, `\`, `\\`)
+	s = strings.ReplaceAll(s, `|`, `\|`)
+	s = strings.ReplaceAll(s, `&`, `\&`)
+	return s
+}
+
 // configureToolAccess handles resume/restore, credential injection, and CLI tool
 // config setup. Steps 9-11 of Setup().
 // Note: this function has no error return -- all errors are logged as warnings.
@@ -200,7 +214,7 @@ func setupCLIConfig(mgr *container.Manager, hostCLIConfigPath, homeDir string, t
 
 	// Create config directory in container
 	logger(fmt.Sprintf("Creating %s directory in container...", configDirName))
-	mkdirCmd := fmt.Sprintf("mkdir -p %s", stateDir)
+	mkdirCmd := fmt.Sprintf("mkdir -p %s", shellQuote(stateDir))
 	if _, err := mgr.ExecCommand(mkdirCmd, container.ExecCommandOptions{Capture: true}); err != nil {
 		return fmt.Errorf("failed to create %s directory: %w", configDirName, err)
 	}
@@ -252,7 +266,7 @@ func setupCLIConfig(mgr *container.Manager, hostCLIConfigPath, homeDir string, t
 		logger(fmt.Sprintf("Rewriting paths in config files: %s → %s", hostHomeDir, homeDir))
 		rewriteCmd := fmt.Sprintf(
 			`find %s -name '*.json' -exec sed -i 's|%s|%s|g' {} +`,
-			stateDir, hostHomeDir, homeDir,
+			shellQuote(stateDir), sedEscape(hostHomeDir), sedEscape(homeDir),
 		)
 		if _, err := mgr.ExecCommand(rewriteCmd, container.ExecCommandOptions{Capture: true}); err != nil {
 			logger(fmt.Sprintf("Warning: Failed to rewrite paths in config files: %v", err))
@@ -371,9 +385,8 @@ func setupCLIConfig(mgr *container.Manager, hostCLIConfigPath, homeDir string, t
 			if err != nil {
 				logger(fmt.Sprintf("Warning: Failed to build JSON from settings: %v", err))
 			} else {
-				// Create new file with sandbox settings
-				createCmd := fmt.Sprintf("echo '%s' > %s", settingsJSON, stateJsonDest)
-				if _, err := mgr.ExecCommand(createCmd, container.ExecCommandOptions{Capture: true}); err != nil {
+				// Create new file with sandbox settings using CreateFile to avoid shell interpretation
+				if err := mgr.CreateFile(stateJsonDest, settingsJSON+"\n"); err != nil {
 					logger(fmt.Sprintf("Warning: Failed to create %s: %v", stateConfigFilename, err))
 				} else {
 					logger(fmt.Sprintf("Created %s with sandbox settings", stateConfigFilename))
