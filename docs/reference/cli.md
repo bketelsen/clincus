@@ -473,6 +473,61 @@ clincus clean --dry-run          # Show what would be cleaned
 
 ---
 
+### `clincus shutdown`
+
+Gracefully stop and delete one or more containers. Attempts a graceful shutdown first,
+waiting for the timeout before force-killing if necessary.
+
+```
+clincus shutdown [container-name...] [flags]
+```
+
+**Flags:**
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--timeout` | `60` | Seconds to wait for graceful shutdown before force-killing |
+| `--force` | `false` | Skip confirmation prompts |
+| `--all` | `false` | Shutdown all containers |
+
+**Examples:**
+
+```bash
+clincus shutdown clincus-a1b2c3-1                # Graceful shutdown (60s timeout)
+clincus shutdown --timeout=30 clincus-a1b2c3-1   # 30 second timeout
+clincus shutdown --all                            # Shutdown all containers
+clincus shutdown --all --force                    # Shutdown all without confirmation
+```
+
+---
+
+### `clincus persist`
+
+Convert ephemeral sessions to persistent mode. Persistent containers are not automatically
+deleted when stopped, preserving installed tools and configurations across sessions.
+
+```
+clincus persist [container-name...] [flags]
+```
+
+**Flags:**
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--force` | `false` | Skip confirmation prompts |
+| `--all` | `false` | Persist all containers |
+
+**Examples:**
+
+```bash
+clincus persist clincus-a1b2c3-1                              # Persist specific container
+clincus persist clincus-a1b2c3-1 clincus-xyz78901-2           # Persist multiple containers
+clincus persist --all                                          # Persist all (with confirmation)
+clincus persist --all --force                                  # Persist all without confirmation
+```
+
+---
+
 ### `clincus version`
 
 Print version, commit, and build date.

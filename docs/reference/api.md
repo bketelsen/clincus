@@ -191,11 +191,13 @@ Return session history from `~/.clincus/history.jsonl`.
 ```json
 [
   {
-    "session_id": "abc123",
+    "id": "abc123",
     "workspace": "/home/user/my-project",
     "tool": "claude",
-    "started_at": "2026-01-01T12:00:00Z",
-    "ended_at": "2026-01-01T14:30:00Z"
+    "started": "2026-01-01T12:00:00Z",
+    "stopped": "2026-01-01T14:30:00Z",
+    "persistent": false,
+    "exit_code": 0
   }
 ]
 ```
