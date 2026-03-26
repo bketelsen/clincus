@@ -50,7 +50,7 @@ Derived from [code-on-incus](https://github.com/mensfeld/code-on-incus). Web das
 
 | Package | Path | Role |
 |---------|------|------|
-| **cli** | `internal/cli/` | 21 Cobra commands with global flags for workspace, slot, image, limits |
+| **cli** | `internal/cli/` | 21 Cobra commands (19 in root.go + attach/shutdown via init()) with global flags for workspace, slot, image, limits |
 | **server** | `internal/server/` | HTTP API, WebSocket terminal/shell/events, PTY bridge |
 | **session** | `internal/session/` | Setup (11-step flow), cleanup, naming, history, persistence |
 | **container** | `internal/container/` | Incus operations: launch, exec, mount, snapshot, file transfer |
@@ -60,7 +60,7 @@ Derived from [code-on-incus](https://github.com/mensfeld/code-on-incus). Web das
 | **image** | `internal/image/` | Image building with versioning, network waits, DNS fixes |
 | **terminal** | `internal/terminal/` | TERM sanitization (exotic → xterm-256color) |
 | **health** | `internal/health/` | System checks: Incus, storage, network, permissions |
-| **cleanup** | `internal/cleanup/` | Orphan detection (placeholder, not yet implemented) |
+| **cleanup** | `internal/cleanup/` | Orphan detection: `IsOrphanedWorkspace()` checks if a container's workspace path still exists on host |
 | **webui** | `webui/` | `go:embed` wrapper for built Svelte frontend assets |
 
 ## Key Patterns
@@ -128,6 +128,16 @@ Config supports hot-reload via file watcher with 1-second debounce. Failed reloa
 
 Mount parsing is shared between the CLI and web dashboard via `session.MountConfigFromConfig()` in `internal/session/types.go`. This ensures config-defined mounts (e.g., `~/.ssh` for git-over-SSH) are applied consistently whether a session is created from the CLI or the dashboard. CLI-specific `--mount` flag parsing remains in `internal/cli/mount_parser.go`.
 
+### Server Internals
+
+- **Config hot-reload**: `ConfigManager` uses `fsnotify` with 1-second debounce. `handleUpdateConfig` clones the current config, mutates the clone, then atomically swaps via `UpdateConfig()` under a `sync.RWMutex`
+- **CodeUID resolution**: `Server.codeUID()` helper centralizes container user ID lookup (defaults to 1000, overridable via `incus.code_uid` config). Used by terminal, shell, session, and file API handlers
+- **Clean command**: Stopped-container and orphaned-container cleanup share `confirmAndDeleteContainers()` helper for confirmation prompts and deletion logic
+
+### CLI Framework
+
+The CLI uses Cobra for command structure with `charm.land/fang/v2` for styled output and version display. The `Execute()` function wraps Cobra's execution with fang options (`WithVersion`, `WithCommit`). Config is loaded in `PersistentPreRunE` so it's available to all subcommands. CLI limit flags are merged with config-file limits in `mergeLimitsConfig()`, with CLI flags taking precedence.
+
 ### Build Pipeline
 
 - `make web` builds Svelte frontend → `webui/dist/`
@@ -141,7 +151,7 @@ See [configuration.md](configuration.md) for the complete config reference with 
 
 ## Detailed Documentation
 
-- [CLI Commands](cli-commands.md) — All 23 commands with flags and behavior
+- [CLI Commands](cli-commands.md) — All 21 commands with flags and behavior
 - [Web Dashboard & API](web-dashboard.md) — REST API, WebSocket protocol, frontend architecture
 - [Session Lifecycle](session-lifecycle.md) — Setup flow, persistence, cleanup, naming
 - [Configuration](configuration.md) — Complete TOML reference with defaults and env vars
