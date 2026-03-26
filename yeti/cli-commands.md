@@ -1,6 +1,6 @@
 # CLI Commands Reference
 
-All 21 top-level commands are defined in `internal/cli/`. The root command (`clincus`) defaults to `shell` when no subcommand is given. Some commands (`attach`, `shutdown`) register themselves via `init()` functions rather than in `root.go`'s central `AddCommand` block.
+All 21 top-level commands are defined in `internal/cli/`. The root command (`clincus`) defaults to `shell` when no subcommand is given. 19 commands are registered in `root.go`'s `init()` block; `attach` and `shutdown` register themselves via their own `init()` functions.
 
 ## Global Flags
 
@@ -109,6 +109,14 @@ clincus build [--force]
 clincus build custom <name> --script <path> [--base clincus] [--force]
 ```
 
+### images (legacy alias)
+
+Legacy alias for `image list`. Lists available Incus images.
+
+```
+clincus images [--all]
+```
+
 ### image
 
 Image management subcommands:
@@ -174,13 +182,13 @@ Interact with tmux sessions in containers:
 
 ### clean
 
-Cleanup resources.
+Cleanup resources. By default cleans only stopped containers. Orphaned containers are those whose workspace directory no longer exists on the host (detected via `cleanup.IsOrphanedWorkspace()`). Stopped-container and orphaned-container cleanup share a `confirmAndDeleteContainers()` helper for consistent confirmation and deletion logic.
 
 | Flag | Description |
 |------|-------------|
 | `--all` | Clean containers + sessions + orphans |
 | `--sessions` | Clean saved session data |
-| `--orphans` | Clean orphaned stopped containers |
+| `--orphans` | Clean stopped containers whose workspace no longer exists |
 | `--force` | Skip confirmation |
 | `--dry-run` | Show what would be cleaned |
 

@@ -39,7 +39,7 @@ The web dashboard provides a browser-based interface for managing AI coding sess
 | GET | `/api/sessions/{id}/files/content?path=...` | Read file (max 5MB) |
 | PUT | `/api/sessions/{id}/files/content?path=...` | Write file |
 
-File security: path traversal rejected, binary detection (null byte in first 512 bytes), operations run as `CodeUID` (1000).
+File security: path traversal rejected, binary detection (null byte in first 512 bytes), operations run as `CodeUID` (default 1000, configurable via `incus.code_uid`). The `Server.codeUID()` helper centralizes UID resolution across terminal, shell, session, and file handlers.
 
 ## WebSocket Endpoints
 
@@ -146,8 +146,9 @@ Retry strategy: exponential backoff 1s→2s→4s, max 3 retries. Retries on netw
 
 1. `ConfigManager` watches system and user config files (`fsnotify`)
 2. 1-second debounce, failed reloads retain previous config
-3. Server broadcasts `config.reloaded` via WebSocket events
-4. Frontend refetches config + workspaces on event receipt
+3. `handleUpdateConfig` uses atomic config swap: clones current config, mutates clone, swaps atomically via `UpdateConfig()` under `sync.RWMutex`
+4. Server broadcasts `config.reloaded` via WebSocket events
+5. Frontend refetches config + workspaces on event receipt
 
 ## Session Container Metadata
 
