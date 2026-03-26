@@ -326,7 +326,7 @@ func listAllImages() error {
 
 		// Format size (convert bytes to human readable)
 		var sizeBytes int64
-		fmt.Sscanf(size, "%d", &sizeBytes)
+		_, _ = fmt.Sscanf(size, "%d", &sizeBytes)
 		sizeFormatted := formatBytes(sizeBytes)
 
 		fmt.Printf("  %-30s %-15s %s\n", alias, sizeFormatted, uploadDate)
