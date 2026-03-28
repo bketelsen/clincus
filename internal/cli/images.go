@@ -226,7 +226,7 @@ func imageListCommand(cmd *cobra.Command, args []string) error {
 		fmt.Println(strings.Repeat("-", 80))
 		for _, img := range images {
 			for _, alias := range img.Aliases {
-				sizeFormatted := formatSize(fmt.Sprintf("%d", img.Size))
+				sizeFormatted := formatBytes(img.Size)
 				createdFormatted := img.CreatedAt.Format("2006-01-02 15:04")
 				fmt.Printf("%-40s %-20s %s\n", alias, sizeFormatted, createdFormatted)
 			}
@@ -325,26 +325,12 @@ func listAllImages() error {
 		uploadDate := parts[2]
 
 		// Format size (convert bytes to human readable)
-		sizeFormatted := formatSize(size)
+		var sizeBytes int64
+		_, _ = fmt.Sscanf(size, "%d", &sizeBytes)
+		sizeFormatted := formatBytes(sizeBytes)
 
 		fmt.Printf("  %-30s %-15s %s\n", alias, sizeFormatted, uploadDate)
 	}
 
 	return nil
-}
-
-// formatSize converts byte string to human readable
-func formatSize(sizeStr string) string {
-	// Size is in bytes as string, convert to MB/GB
-	var bytes int64
-	_, _ = fmt.Sscanf(sizeStr, "%d", &bytes) // Ignore error, default to 0 if parse fails
-
-	if bytes < 1024 {
-		return fmt.Sprintf("%dB", bytes)
-	} else if bytes < 1024*1024 {
-		return fmt.Sprintf("%.1fKB", float64(bytes)/1024)
-	} else if bytes < 1024*1024*1024 {
-		return fmt.Sprintf("%.1fMB", float64(bytes)/(1024*1024))
-	}
-	return fmt.Sprintf("%.1fGB", float64(bytes)/(1024*1024*1024))
 }
