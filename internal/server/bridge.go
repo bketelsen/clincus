@@ -28,7 +28,7 @@ type Bridge struct {
 	once sync.Once
 }
 
-func NewBridge(ws *websocket.Conn, containerName string, execArgs []string, uid int) (*Bridge, error) {
+func NewBridge(ws *websocket.Conn, containerName string, execArgs []string) (*Bridge, error) {
 	incusArgs := execArgs
 
 	var cmd *exec.Cmd

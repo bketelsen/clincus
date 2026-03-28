@@ -45,7 +45,7 @@ func (s *Server) handleShellWS(w http.ResponseWriter, r *http.Request) {
 		fmt.Sprintf("cd %s && exec bash --login", workspacePath),
 	}
 
-	bridge, err := NewBridge(ws, containerID, execArgs, codeUID)
+	bridge, err := NewBridge(ws, containerID, execArgs)
 	if err != nil {
 		//nolint:errcheck // best-effort error notification to client
 		_ = ws.WriteJSON(WSMessage{Type: "error", Msg: err.Error()})
